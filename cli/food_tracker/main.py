@@ -1,11 +1,11 @@
 import typer
 
 from food_tracker.commands.catalog import catalog_app
+from food_tracker.commands.meal import meal_app
 from food_tracker.commands.pantry import pantry_app
 
 app = typer.Typer(name="food", help="Food tracker CLI")
 
-meal_app = typer.Typer(help="Log and manage meals")
 goal_app = typer.Typer(help="Manage nutrition goals")
 
 app.add_typer(catalog_app, name="catalog")
