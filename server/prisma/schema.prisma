@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model FoodCatalog {
+  id                   Int                 @id @default(autoincrement())
+  name                 String
+  brand                String              @default("")
+  serving_size_g       Float
+  protein_per_serving  Float
+  carbs_per_serving    Float
+  fat_per_serving      Float
+  calories_per_serving Float?
+  health_notes         String?
+  transactions         PantryTransaction[]
+
+  @@unique([name, brand], name: "uq_catalog_name_brand")
+  @@map("food_catalog")
+}
+
+model Meal {
+  id           Int                 @id @default(autoincrement())
+  logged_at    DateTime
+  name         String
+  protein_g    Float
+  carbs_g      Float
+  fat_g        Float
+  calories     Float?
+  is_estimate  Boolean             @default(false)
+  notes        String?
+  transactions PantryTransaction[]
+
+  @@map("meals")
+}
+
+model PantryTransaction {
+  id          Int         @id @default(autoincrement())
+  catalog_id  Int
+  delta       Float
+  reason      String
+  meal_id     Int?
+  occurred_at DateTime
+  catalog     FoodCatalog @relation(fields: [catalog_id], references: [id])
+  meal        Meal?       @relation(fields: [meal_id], references: [id])
+
+  @@map("pantry_transactions")
+}
+
+model Goal {
+  id         Int      @id @default(autoincrement())
+  name       String
+  start_date DateTime
+  end_date   DateTime
+  protein_g  Float?
+  carbs_g    Float?
+  fat_g      Float?
+  calories   Float?
+
+  @@map("goals")
+}
