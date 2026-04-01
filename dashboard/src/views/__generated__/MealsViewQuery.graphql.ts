@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5c162bb7fecd381ca67eebdb2ad86108>>
+ * @generated SignedSource<<ba4123de0672e0c23d373c5d622bb069>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,8 @@
 
 import { ConcreteRequest, Query } from 'relay-runtime';
 export type MealsViewQuery$variables = {
-  first?: number | null | undefined;
+  dateFrom?: string | null | undefined;
+  dateTo?: string | null | undefined;
 };
 export type MealsViewQuery$data = {
   readonly meals: {
@@ -47,14 +48,29 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "first"
+    "name": "dateFrom"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "dateTo"
   }
 ],
 v1 = [
   {
     "kind": "Variable",
+    "name": "dateFrom",
+    "variableName": "dateFrom"
+  },
+  {
+    "kind": "Variable",
+    "name": "dateTo",
+    "variableName": "dateTo"
+  },
+  {
+    "kind": "Literal",
     "name": "first",
-    "variableName": "first"
+    "value": 200
   }
 ],
 v2 = {
@@ -298,16 +314,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d231c157e25f7586bb44ef6c6fb1e15c",
+    "cacheID": "de645dd42b806b1d1e38630ab88cc9f8",
     "id": null,
     "metadata": {},
     "name": "MealsViewQuery",
     "operationKind": "query",
-    "text": "query MealsViewQuery(\n  $first: Int\n) {\n  meals(first: $first) {\n    edges {\n      node {\n        id\n        name\n        loggedAt\n        proteinG\n        carbsG\n        fatG\n        calories\n        isEstimate\n        notes\n        ingredients {\n          servingsUsed\n          proteinContributed\n          catalogItem {\n            name\n            brand\n            id\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query MealsViewQuery(\n  $dateFrom: String\n  $dateTo: String\n) {\n  meals(first: 200, dateFrom: $dateFrom, dateTo: $dateTo) {\n    edges {\n      node {\n        id\n        name\n        loggedAt\n        proteinG\n        carbsG\n        fatG\n        calories\n        isEstimate\n        notes\n        ingredients {\n          servingsUsed\n          proteinContributed\n          catalogItem {\n            name\n            brand\n            id\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "e4832c352bb7cc2be4171ec90a2802a7";
+(node as any).hash = "d15c03473f37ec85f4209d7527dbcd17";
 
 export default node;

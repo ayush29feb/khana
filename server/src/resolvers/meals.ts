@@ -38,15 +38,19 @@ export function mealResolvers(prisma: PrismaClient) {
     Query: {
       async meals(
         _: unknown,
-        args: { first?: number; after?: string; date?: string }
+        args: { first?: number; after?: string; date?: string; dateFrom?: string; dateTo?: string }
       ) {
-        const limit = args.first ?? 20;
+        const limit = args.first ?? 200;
         const cols = `id, name, substr(logged_at,1,23) as logged_at, protein_g, carbs_g, fat_g, calories, is_estimate, notes`;
         let sql: string;
-        if (args.date) {
+        if (args.dateFrom && args.dateTo) {
+          const start = args.dateFrom + ' 00:00:00';
+          const end = args.dateTo + ' 23:59:59.999999';
+          sql = `SELECT ${cols} FROM meals WHERE logged_at >= '${start}' AND logged_at <= '${end}' ORDER BY logged_at ASC LIMIT ${limit}`;
+        } else if (args.date) {
           const start = args.date + ' 00:00:00';
           const end = args.date + ' 23:59:59.999999';
-          sql = `SELECT ${cols} FROM meals WHERE logged_at >= '${start}' AND logged_at <= '${end}' ORDER BY logged_at DESC LIMIT ${limit}`;
+          sql = `SELECT ${cols} FROM meals WHERE logged_at >= '${start}' AND logged_at <= '${end}' ORDER BY logged_at ASC LIMIT ${limit}`;
         } else {
           sql = `SELECT ${cols} FROM meals ORDER BY logged_at DESC LIMIT ${limit}`;
         }

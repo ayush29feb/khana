@@ -142,7 +142,7 @@ export const typeDefs = /* GraphQL */ `
     goals(first: Int, last: Int, after: String, before: String): GoalConnection!
     pantry: PantryEntryConnection!
     pantryProteinTotal: Float!
-    meals(first: Int, after: String, date: String): MealConnection!
+    meals(first: Int, after: String, date: String, dateFrom: String, dateTo: String): MealConnection!
     catalog(first: Int, search: String): FoodCatalogItemConnection!
   }
 `;

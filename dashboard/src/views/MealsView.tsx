@@ -1,10 +1,12 @@
 import { graphql, useLazyLoadQuery } from 'react-relay';
+import { useMemo } from 'react';
 import MealCard from '../components/MealCard.js';
+import { useDateRange } from '../DateRangeContext.js';
 import type { MealsViewQuery } from './__generated__/MealsViewQuery.graphql.js';
 
 const query = graphql`
-  query MealsViewQuery($first: Int) {
-    meals(first: $first) {
+  query MealsViewQuery($dateFrom: String, $dateTo: String) {
+    meals(first: 200, dateFrom: $dateFrom, dateTo: $dateTo) {
       edges {
         node {
           id
@@ -27,27 +29,80 @@ const query = graphql`
   }
 `;
 
+type Meal = {
+  id: string;
+  name: string;
+  loggedAt: string;
+  proteinG: number;
+  carbsG: number;
+  fatG: number;
+  calories: number | null | undefined;
+  isEstimate: boolean;
+  notes: string | null | undefined;
+  ingredients: readonly { servingsUsed: number; proteinContributed: number; catalogItem: { name: string; brand: string } }[];
+};
+
+function DaySection({ date, meals }: { date: string; meals: Meal[] }) {
+  const totalProtein = meals.reduce((s, m) => s + m.proteinG, 0);
+  const totalCarbs = meals.reduce((s, m) => s + m.carbsG, 0);
+  const totalFat = meals.reduce((s, m) => s + m.fatG, 0);
+  const totalCals = meals.reduce((s, m) => s + (m.calories ?? 0), 0);
+
+  // Parse as noon local time to avoid timezone date-shift
+  const label = new Date(date + 'T12:00:00').toLocaleDateString(undefined, {
+    weekday: 'short', month: 'short', day: 'numeric', year: 'numeric',
+  });
+
+  return (
+    <div style={{ marginBottom: 28 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8, borderBottom: '1px solid #e5e7eb', paddingBottom: 4 }}>
+        <strong style={{ fontSize: 14 }}>{label}</strong>
+        <span style={{ fontSize: 12, color: '#777' }}>
+          P: <strong>{totalProtein.toFixed(0)}g</strong>
+          {' · '}C: {totalCarbs.toFixed(0)}g
+          {' · '}F: {totalFat.toFixed(0)}g
+          {totalCals > 0 && <> · {totalCals.toFixed(0)} kcal</>}
+        </span>
+      </div>
+      {meals.map(meal => (
+        <MealCard
+          key={meal.id}
+          name={meal.name}
+          loggedAt={meal.loggedAt}
+          proteinG={meal.proteinG}
+          carbsG={meal.carbsG}
+          fatG={meal.fatG}
+          calories={meal.calories ?? null}
+          isEstimate={meal.isEstimate}
+          notes={meal.notes ?? null}
+          ingredients={meal.ingredients}
+        />
+      ))}
+    </div>
+  );
+}
+
 export default function MealsView() {
-  const data = useLazyLoadQuery<MealsViewQuery>(query, { first: 30 });
-  const meals = data.meals.edges;
+  const { dateFrom, dateTo } = useDateRange();
+  const data = useLazyLoadQuery<MealsViewQuery>(query, { dateFrom, dateTo }, { fetchPolicy: 'network-only' });
+  const meals = data.meals.edges.map(e => e.node);
+
+  const byDay = useMemo(() => {
+    const map = new Map<string, Meal[]>();
+    for (const meal of meals) {
+      const day = meal.loggedAt.slice(0, 10);
+      if (!map.has(day)) map.set(day, []);
+      map.get(day)!.push(meal);
+    }
+    return Array.from(map.entries()).sort(([a], [b]) => a.localeCompare(b));
+  }, [meals]);
 
   return (
     <div>
       <h2 style={{ marginTop: 0 }}>Meals</h2>
-      {meals.length === 0 && <p>No meals logged yet.</p>}
-      {meals.map(({ node }) => (
-        <MealCard
-          key={node.id}
-          name={node.name}
-          loggedAt={node.loggedAt}
-          proteinG={node.proteinG}
-          carbsG={node.carbsG}
-          fatG={node.fatG}
-          calories={node.calories ?? null}
-          isEstimate={node.isEstimate}
-          notes={node.notes ?? null}
-          ingredients={node.ingredients}
-        />
+      {byDay.length === 0 && <p style={{ color: '#777' }}>No meals logged in this range.</p>}
+      {byDay.map(([date, dayMeals]) => (
+        <DaySection key={date} date={date} meals={dayMeals} />
       ))}
     </div>
   );

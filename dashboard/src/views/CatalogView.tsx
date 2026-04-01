@@ -31,7 +31,7 @@ export default function CatalogView() {
       <p style={{ color: '#555', fontSize: 14 }}>{items.length} items</p>
 
       {items.length === 0 && (
-        <p>No items. Run <code>python scripts/seed_catalog.py</code> to seed.</p>
+        <p>No items. Use <code>food catalog add</code> to add items.</p>
       )}
 
       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
