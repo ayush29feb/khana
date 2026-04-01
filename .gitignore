@@ -1,0 +1,6 @@
+cli/__pycache__/
+cli/*.egg-info/
+cli/.venv/
+cli/dist/
+*.pyc
+.env
