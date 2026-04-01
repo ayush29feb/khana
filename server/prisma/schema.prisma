@@ -25,7 +25,7 @@ model FoodCatalog {
 
 model Meal {
   id           Int                 @id @default(autoincrement())
-  logged_at    DateTime
+  logged_at    String
   name         String
   protein_g    Float
   carbs_g      Float
@@ -44,7 +44,7 @@ model PantryTransaction {
   delta       Float
   reason      String
   meal_id     Int?
-  occurred_at DateTime
+  occurred_at String
   catalog     FoodCatalog @relation(fields: [catalog_id], references: [id])
   meal        Meal?       @relation(fields: [meal_id], references: [id])
 
@@ -54,8 +54,8 @@ model PantryTransaction {
 model Goal {
   id         Int      @id @default(autoincrement())
   name       String
-  start_date DateTime
-  end_date   DateTime
+  start_date String
+  end_date   String
   protein_g  Float?
   carbs_g    Float?
   fat_g      Float?

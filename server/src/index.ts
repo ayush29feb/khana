@@ -10,7 +10,7 @@ const port = parseInt(process.env.PORT ?? '4000', 10);
 const yoga = createYoga({
   schema: createSchema({
     typeDefs,
-    resolvers: buildResolvers(prisma) as Record<string, unknown>,
+    resolvers: buildResolvers(prisma) as any,
   }),
 });
 

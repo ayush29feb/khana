@@ -2,28 +2,33 @@ import { PrismaClient } from '@prisma/client';
 import { buildConnection, toGlobalId } from '../relay.js';
 import { catalogItemToGql } from './catalog.js';
 
+// SQLAlchemy stores datetimes as "2026-03-25 08:00:00.000000"
+function parseDate(s: string): Date {
+  return new Date(s.replace(' ', 'T').replace(/(\.\d{3})\d+/, '$1'));
+}
+
 type DBMeal = {
   id: number;
   name: string;
-  logged_at: Date;
+  logged_at: string;
   protein_g: number;
   carbs_g: number;
   fat_g: number;
   calories: number | null;
-  is_estimate: boolean;
+  is_estimate: number | boolean;
   notes: string | null;
 };
 
 export function mealToGql(meal: DBMeal) {
   return {
-    id: meal.id,
+    id: Number(meal.id),
     name: meal.name,
-    loggedAt: meal.logged_at.toISOString(),
-    proteinG: meal.protein_g,
-    carbsG: meal.carbs_g,
-    fatG: meal.fat_g,
-    calories: meal.calories,
-    isEstimate: meal.is_estimate,
+    loggedAt: parseDate(meal.logged_at).toISOString(),
+    proteinG: Number(meal.protein_g),
+    carbsG: Number(meal.carbs_g),
+    fatG: Number(meal.fat_g),
+    calories: meal.calories != null ? Number(meal.calories) : null,
+    isEstimate: Boolean(meal.is_estimate),
     notes: meal.notes,
   };
 }
@@ -36,21 +41,17 @@ export function mealResolvers(prisma: PrismaClient) {
         args: { first?: number; after?: string; date?: string }
       ) {
         const limit = args.first ?? 20;
-        const where: Parameters<typeof prisma.meal.findMany>[0]['where'] = {};
-
+        const cols = `id, name, substr(logged_at,1,23) as logged_at, protein_g, carbs_g, fat_g, calories, is_estimate, notes`;
+        let sql: string;
         if (args.date) {
-          const start = new Date(args.date + 'T00:00:00.000Z');
-          const end = new Date(args.date + 'T23:59:59.999Z');
-          where.logged_at = { gte: start, lte: end };
+          const start = args.date + ' 00:00:00';
+          const end = args.date + ' 23:59:59.999999';
+          sql = `SELECT ${cols} FROM meals WHERE logged_at >= '${start}' AND logged_at <= '${end}' ORDER BY logged_at DESC LIMIT ${limit}`;
+        } else {
+          sql = `SELECT ${cols} FROM meals ORDER BY logged_at DESC LIMIT ${limit}`;
         }
-
-        const meals = await prisma.meal.findMany({
-          where,
-          orderBy: { logged_at: 'desc' },
-          take: limit,
-        });
-
-        return buildConnection(meals.map(mealToGql), 'Meal');
+        const rows = await prisma.$queryRawUnsafe<DBMeal[]>(sql);
+        return buildConnection(rows.map(mealToGql), 'Meal');
       },
     },
 
@@ -62,7 +63,6 @@ export function mealResolvers(prisma: PrismaClient) {
           where: { meal_id: meal.id, reason: 'meal' },
           include: { catalog: true },
         });
-
         return txns.map((t) => ({
           catalogItem: catalogItemToGql(t.catalog),
           servingsUsed: Math.abs(t.delta),

@@ -7,7 +7,7 @@ export function createTestYoga(prisma: PrismaClient) {
   return createYoga({
     schema: createSchema({
       typeDefs,
-      resolvers: buildResolvers(prisma) as Record<string, unknown>,
+      resolvers: buildResolvers(prisma) as any,
     }),
     logging: false,
   });
