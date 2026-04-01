@@ -1,4 +1,5 @@
 import os
+from collections.abc import Iterator
 from contextlib import contextmanager
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, Session
@@ -9,7 +10,8 @@ DB_PATH = os.environ.get(
 )
 
 PANTRY_VIEW_SQL = """
-CREATE VIEW IF NOT EXISTS pantry AS
+DROP VIEW IF EXISTS pantry;
+CREATE VIEW pantry AS
 SELECT
     c.id          AS catalog_id,
     c.name,
@@ -31,7 +33,10 @@ def _make_engine(path: str):
     from .models import Base
     Base.metadata.create_all(engine)
     with engine.connect() as conn:
-        conn.execute(text(PANTRY_VIEW_SQL))
+        for stmt in PANTRY_VIEW_SQL.split(";"):
+            stmt = stmt.strip()
+            if stmt:
+                conn.execute(text(stmt))
         conn.commit()
     return engine
 
@@ -50,7 +55,7 @@ SessionLocal = None
 
 
 @contextmanager
-def get_session() -> Session:
+def get_session() -> Iterator[Session]:
     global SessionLocal
     if SessionLocal is None:
         SessionLocal = sessionmaker(bind=get_engine())

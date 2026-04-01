@@ -1,7 +1,7 @@
 from enum import Enum
 from sqlalchemy import (
     Column, Integer, Float, String, Boolean, DateTime, Date,
-    ForeignKey, Enum as SAEnum, Index,
+    ForeignKey, Enum as SAEnum, Index, UniqueConstraint,
 )
 from sqlalchemy.orm import DeclarativeBase, relationship
 
@@ -12,6 +12,7 @@ class Base(DeclarativeBase):
 
 class FoodCatalog(Base):
     __tablename__ = "food_catalog"
+    __table_args__ = (UniqueConstraint("name", "brand", name="uq_catalog_name_brand"),)
 
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
@@ -33,6 +34,7 @@ class TransactionReason(str, Enum):
 
 class Meal(Base):
     __tablename__ = "meals"
+    __table_args__ = (Index("idx_meals_logged_at", "logged_at"),)
 
     id = Column(Integer, primary_key=True)
     logged_at = Column(DateTime, nullable=False)
