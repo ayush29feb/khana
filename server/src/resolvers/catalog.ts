@@ -1,4 +1,5 @@
-import { toGlobalId } from '../relay.js';
+import { PrismaClient } from '@prisma/client';
+import { buildConnection, toGlobalId } from '../relay.js';
 
 type DBCatalog = {
   id: number;
@@ -11,6 +12,30 @@ type DBCatalog = {
   calories_per_serving: number | null;
   health_notes: string | null;
 };
+
+export function catalogResolvers(prisma: PrismaClient) {
+  return {
+    Query: {
+      async catalog(_: unknown, args: { first?: number; search?: string }) {
+        const take = args.first ?? 100;
+        let items;
+        if (args.search) {
+          const s = `%${args.search}%`;
+          items = await prisma.$queryRawUnsafe<any[]>(
+            `SELECT * FROM food_catalog WHERE name LIKE '${s}' OR brand LIKE '${s}' ORDER BY name ASC LIMIT ${take}`
+          );
+        } else {
+          items = await prisma.foodCatalog.findMany({
+            orderBy: { name: 'asc' },
+            take,
+          });
+        }
+        const mapped = items.map((c: any) => ({ ...catalogItemToGql(c), _raw: c }));
+        return buildConnection(mapped, 'FoodCatalogItem');
+      },
+    },
+  };
+}
 
 export function catalogItemToGql(c: DBCatalog) {
   return {

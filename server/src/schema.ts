@@ -125,6 +125,16 @@ export const typeDefs = /* GraphQL */ `
     pageInfo: PageInfo!
   }
 
+  type FoodCatalogItemEdge {
+    cursor: String!
+    node: FoodCatalogItem!
+  }
+
+  type FoodCatalogItemConnection {
+    edges: [FoodCatalogItemEdge!]!
+    pageInfo: PageInfo!
+  }
+
   type Query {
     node(id: ID!): Node
     activeGoals: GoalConnection!
@@ -133,5 +143,6 @@ export const typeDefs = /* GraphQL */ `
     pantry: PantryEntryConnection!
     pantryProteinTotal: Float!
     meals(first: Int, after: String, date: String): MealConnection!
+    catalog(first: Int, search: String): FoodCatalogItemConnection!
   }
 `;

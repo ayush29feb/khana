@@ -124,6 +124,16 @@ type GoalConnection {
   pageInfo: PageInfo!
 }
 
+type FoodCatalogItemEdge {
+  cursor: String!
+  node: FoodCatalogItem!
+}
+
+type FoodCatalogItemConnection {
+  edges: [FoodCatalogItemEdge!]!
+  pageInfo: PageInfo!
+}
+
 type Query {
   node(id: ID!): Node
   activeGoals: GoalConnection!
@@ -132,4 +142,5 @@ type Query {
   pantry: PantryEntryConnection!
   pantryProteinTotal: Float!
   meals(first: Int, after: String, date: String): MealConnection!
+  catalog(first: Int, search: String): FoodCatalogItemConnection!
 }

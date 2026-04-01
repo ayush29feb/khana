@@ -4,6 +4,7 @@ import HomeView from './views/HomeView.js';
 import MealsView from './views/MealsView.js';
 import PantryView from './views/PantryView.js';
 import TrendsView from './views/TrendsView.js';
+import CatalogView from './views/CatalogView.js';
 
 const navStyle = ({ isActive }: { isActive: boolean }): React.CSSProperties => ({
   marginRight: 16,
@@ -20,6 +21,7 @@ export default function App() {
         <NavLink to="/meals" style={navStyle}>Meals</NavLink>
         <NavLink to="/pantry" style={navStyle}>Pantry</NavLink>
         <NavLink to="/trends" style={navStyle}>Trends</NavLink>
+        <NavLink to="/catalog" style={navStyle}>Catalog</NavLink>
       </nav>
       <Suspense fallback={<div>Loading…</div>}>
         <Routes>
@@ -28,6 +30,7 @@ export default function App() {
           <Route path="/meals" element={<MealsView />} />
           <Route path="/pantry" element={<PantryView />} />
           <Route path="/trends" element={<TrendsView />} />
+          <Route path="/catalog" element={<CatalogView />} />
         </Routes>
       </Suspense>
     </div>
