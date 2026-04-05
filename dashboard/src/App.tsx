@@ -156,7 +156,7 @@ function AppShell() {
     <>
       <header className="topbar">
         <div className="topbar-inner">
-          <span className="topbar-brand">🥗 tracker</span>
+          <span className="topbar-brand">🥗 Khana</span>
           <DateRangePicker />
         </div>
       </header>
