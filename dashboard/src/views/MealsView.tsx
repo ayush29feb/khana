@@ -1,5 +1,5 @@
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { useMemo } from 'react';
+import { Suspense, useMemo } from 'react';
 import MealCard from '../components/MealCard.js';
 import { useDateRange } from '../DateRangeContext.js';
 import type { MealsViewQuery } from './__generated__/MealsViewQuery.graphql.js';
@@ -48,7 +48,6 @@ function DaySection({ date, meals }: { date: string; meals: Meal[] }) {
   const totalFat = meals.reduce((s, m) => s + m.fatG, 0);
   const totalCals = meals.reduce((s, m) => s + (m.calories ?? 0), 0);
 
-  // Parse as noon local time to avoid timezone date-shift
   const label = new Date(date + 'T12:00:00').toLocaleDateString(undefined, {
     weekday: 'short', month: 'short', day: 'numeric', year: 'numeric',
   });
@@ -82,15 +81,14 @@ function DaySection({ date, meals }: { date: string; meals: Meal[] }) {
   );
 }
 
-export default function MealsView() {
-  const { dateFrom, dateTo } = useDateRange();
-  const data = useLazyLoadQuery<MealsViewQuery>(query, { dateFrom, dateTo }, { fetchPolicy: 'network-only' });
+function MealsContent({ dateFrom, dateTo }: { dateFrom: string; dateTo: string }) {
+  const data = useLazyLoadQuery<MealsViewQuery>(query, { dateFrom, dateTo });
   const meals = data.meals.edges.map(e => e.node);
 
   const byDay = useMemo(() => {
     const map = new Map<string, Meal[]>();
     for (const meal of meals) {
-      const day = meal.loggedAt.slice(0, 10);
+      const day = new Date(meal.loggedAt).toLocaleDateString('en-CA');
       if (!map.has(day)) map.set(day, []);
       map.get(day)!.push(meal);
     }
@@ -98,12 +96,23 @@ export default function MealsView() {
   }, [meals]);
 
   return (
-    <div>
-      <h2 style={{ marginTop: 0 }}>Meals</h2>
+    <>
       {byDay.length === 0 && <p style={{ color: '#777' }}>No meals logged in this range.</p>}
       {byDay.map(([date, dayMeals]) => (
         <DaySection key={date} date={date} meals={dayMeals} />
       ))}
+    </>
+  );
+}
+
+export default function MealsView() {
+  const { dateFrom, dateTo } = useDateRange();
+  return (
+    <div>
+      <h2 style={{ marginTop: 0 }}>Meals</h2>
+      <Suspense fallback={<p style={{ color: '#aaa' }}>Loading…</p>}>
+        <MealsContent key={`${dateFrom}|${dateTo}`} dateFrom={dateFrom} dateTo={dateTo} />
+      </Suspense>
     </div>
   );
 }

@@ -63,14 +63,31 @@ export function mealResolvers(prisma: PrismaClient) {
       id: (meal: { id: number }) => toGlobalId('Meal', meal.id),
 
       async ingredients(meal: { id: number }) {
-        const txns = await prisma.pantryTransaction.findMany({
-          where: { meal_id: meal.id, reason: 'meal' },
-          include: { catalog: true },
-        });
+        type TxnRow = {
+          id: number; catalog_id: number; delta: number;
+          name: string; brand: string; serving_size_g: number;
+          protein_per_serving: number; carbs_per_serving: number;
+          fat_per_serving: number; calories_per_serving: number | null;
+          health_notes: string | null;
+        };
+        const txns = await prisma.$queryRawUnsafe<TxnRow[]>(`
+          SELECT pt.id, pt.catalog_id, pt.delta,
+                 fc.name, fc.brand, fc.serving_size_g,
+                 fc.protein_per_serving, fc.carbs_per_serving,
+                 fc.fat_per_serving, fc.calories_per_serving, fc.health_notes
+          FROM pantry_transactions pt
+          JOIN food_catalog fc ON fc.id = pt.catalog_id
+          WHERE pt.meal_id = ${meal.id} AND pt.reason = 'meal'
+        `);
         return txns.map((t) => ({
-          catalogItem: catalogItemToGql(t.catalog),
-          servingsUsed: Math.abs(t.delta),
-          proteinContributed: Math.abs(t.delta) * t.catalog.protein_per_serving,
+          catalogItem: catalogItemToGql({
+            id: t.catalog_id, name: t.name, brand: t.brand,
+            serving_size_g: t.serving_size_g, protein_per_serving: t.protein_per_serving,
+            carbs_per_serving: t.carbs_per_serving, fat_per_serving: t.fat_per_serving,
+            calories_per_serving: t.calories_per_serving, health_notes: t.health_notes,
+          }),
+          servingsUsed: Math.abs(Number(t.delta)),
+          proteinContributed: Math.abs(Number(t.delta)) * Number(t.protein_per_serving),
         }));
       },
     },
