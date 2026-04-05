@@ -7,83 +7,107 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    /* ── Design tokens — exact match to dashboard/src/index.css ── */
     :root {
-      --bg: #0f0f0f;
-      --bg-card: #161616;
-      --bg-card-2: #1c1c1c;
-      --border: #242424;
-      --border-soft: #1e1e1e;
-      --text: #efefef;
-      --text-2: #888;
-      --text-3: #4a4a4a;
-      --accent: #4ade80;
-      --accent-dim: rgba(74, 222, 128, 0.09);
-      --accent-border: rgba(74, 222, 128, 0.16);
-      --amber: #fbbf24;
-      --orange: #f97316;
-      --blue: #60a5fa;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --border-light: #f1f5f9;
+      --text: #0f172a;
+      --text-2: #475569;
+      --text-3: #94a3b8;
+      --accent: #10b981;
+      --accent-bg: #d1fae5;
+      --accent-text: #065f46;
+      --amber: #f59e0b;
+      --amber-bg: #fef9c3;
+      --red: #ef4444;
+      --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+      --shadow-md: 0 4px 6px rgba(0,0,0,.05), 0 2px 4px rgba(0,0,0,.04);
+      --radius: 12px;
+      --radius-sm: 6px;
     }
 
     body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: var(--bg);
       color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      line-height: 1.6;
+      line-height: 1.5;
       -webkit-font-smoothing: antialiased;
     }
 
     a { color: inherit; text-decoration: none; }
+    h1, h2, h3 { font-weight: 600; line-height: 1.25; }
 
     .container {
-      max-width: 680px;
+      max-width: 720px;
       margin: 0 auto;
-      padding: 0 24px;
+      padding: 0 16px;
     }
 
-    /* ── Nav ── */
-    nav {
-      padding: 18px 0;
-      border-bottom: 1px solid var(--border-soft);
+    /* ── Topbar — same as dashboard ── */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
     }
-    nav .container {
+    .topbar-inner {
+      max-width: 720px;
+      margin: 0 auto;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      height: 52px;
+      padding: 0 16px;
+      gap: 12px;
     }
-    .nav-logo { font-size: 17px; font-weight: 700; letter-spacing: -0.03em; }
-    .nav-logo span { color: var(--accent); }
-    .nav-link {
-      font-size: 13px;
-      color: var(--text-2);
-      display: flex;
+    .topbar-brand {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.3px;
+    }
+    .gh-link {
+      display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: color 0.15s;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-2);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 5px 10px;
+      transition: color 0.15s, background 0.15s;
     }
-    .nav-link:hover { color: var(--text); }
-    .nav-link svg { width: 16px; height: 16px; }
+    .gh-link:hover { color: var(--text); background: var(--border-light); }
+    .gh-link svg { width: 15px; height: 15px; }
 
     /* ── Hero ── */
     .hero {
-      padding: 80px 0 72px;
+      padding: 64px 16px 56px;
       text-align: center;
     }
     .hero h1 {
-      font-size: clamp(32px, 7vw, 54px);
-      font-weight: 800;
-      letter-spacing: -0.04em;
-      line-height: 1.1;
-      margin-bottom: 20px;
+      font-size: clamp(28px, 6vw, 48px);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 14px;
+      color: var(--text);
     }
     .hero h1 em {
       font-style: normal;
       color: var(--accent);
     }
     .hero-sub {
-      font-size: 17px;
+      font-size: 16px;
       color: var(--text-2);
-      max-width: 420px;
-      margin: 0 auto 40px;
+      max-width: 440px;
+      margin: 0 auto 32px;
       line-height: 1.65;
     }
     .hero-actions {
@@ -96,42 +120,55 @@
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      padding: 10px 18px;
-      border-radius: 8px;
+      padding: 9px 18px;
+      border-radius: var(--radius-sm);
       font-size: 14px;
       font-weight: 600;
       transition: opacity 0.15s, transform 0.1s;
+      box-shadow: var(--shadow);
     }
-    .btn:hover { opacity: 0.82; transform: translateY(-1px); }
-    .btn-primary { background: var(--accent); color: #0f0f0f; }
-    .btn-secondary { background: var(--bg-card); color: var(--text-2); border: 1px solid var(--border); }
+    .btn:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-secondary { background: var(--card); color: var(--text-2); border: 1px solid var(--border); }
+
+    /* ── Card — same as dashboard .card ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
 
     /* ── Flow sections ── */
     .flow-section {
-      padding: 64px 0;
-      border-top: 1px solid var(--border-soft);
+      padding: 48px 0;
+      border-top: 1px solid var(--border);
     }
-    .flow-step {
-      display: inline-block;
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--accent);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      margin-bottom: 10px;
+    .flow-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-text);
+      background: var(--accent-bg);
+      padding: 3px 10px;
+      border-radius: 99px;
+      margin-bottom: 12px;
+      letter-spacing: 0.03em;
     }
     .flow-section h2 {
-      font-size: 26px;
+      font-size: 22px;
       font-weight: 700;
-      letter-spacing: -0.03em;
-      line-height: 1.2;
-      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+      color: var(--text);
     }
     .flow-section .lead {
-      font-size: 15px;
+      font-size: 14px;
       color: var(--text-2);
       line-height: 1.7;
-      margin-bottom: 32px;
+      margin-bottom: 24px;
       max-width: 540px;
     }
 
@@ -139,12 +176,11 @@
     .chat {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      margin-bottom: 0;
+      gap: 7px;
     }
     .bubble {
-      max-width: 84%;
-      padding: 10px 14px;
+      max-width: 82%;
+      padding: 9px 13px;
       border-radius: 14px;
       font-size: 14px;
       line-height: 1.55;
@@ -152,205 +188,143 @@
     .bubble.user {
       align-self: flex-end;
       background: var(--accent);
-      color: #0f0f0f;
+      color: #fff;
       font-weight: 500;
       border-bottom-right-radius: 4px;
     }
     .bubble.claude {
       align-self: flex-start;
-      background: var(--bg-card);
+      background: var(--card);
       border: 1px solid var(--border);
       color: var(--text);
       border-bottom-left-radius: 4px;
+      box-shadow: var(--shadow);
     }
     .bubble code {
       font-family: 'SF Mono', 'Fira Code', monospace;
       font-size: 12px;
-      background: rgba(255,255,255,0.07);
-      padding: 2px 5px;
+      background: var(--bg);
+      padding: 1px 5px;
       border-radius: 4px;
+      border: 1px solid var(--border);
     }
     .confirm { color: var(--accent); font-weight: 600; }
-    .muted { color: var(--text-2); }
+    .subdued { color: var(--text-3); font-size: 12px; }
 
-    /* ── Photo card ── */
-    .photo-hint {
+    /* ── Hint card (photo tip) ── */
+    .hint-card {
       display: flex;
+      gap: 12px;
       align-items: flex-start;
-      gap: 14px;
-      padding: 18px 20px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      margin-bottom: 20px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      border-left: 3px solid var(--accent);
     }
-    .photo-hint .icon {
-      font-size: 22px;
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
-    .photo-hint p {
-      font-size: 14px;
-      color: var(--text-2);
-      line-height: 1.6;
-    }
-    .photo-hint p strong { color: var(--text); }
+    .hint-card .icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .hint-card p { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+    .hint-card p strong { color: var(--text); }
 
-    /* ── Dashboard mockup ── */
-    .dash-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-    }
-    .dash-header {
-      padding: 14px 18px;
-      border-bottom: 1px solid var(--border);
+    /* ── MacroBar — same as dashboard component ── */
+    .macro-bar-row {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-    }
-    .dash-header .title {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-2);
-    }
-    .dash-header .date {
-      font-size: 12px;
-      color: var(--text-3);
-    }
-    .dash-body { padding: 18px; }
-    .dash-goal-label {
-      font-size: 11px;
-      color: var(--text-3);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 10px;
-    }
-    .dash-macros {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
       gap: 8px;
-      margin-bottom: 18px;
+      margin-bottom: 6px;
+      font-size: 13px;
     }
-    .dash-macro {
-      background: var(--bg-card-2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 10px 10px 8px;
-    }
-    .dm-val {
-      font-size: 20px;
-      font-weight: 700;
-      font-variant-numeric: tabular-nums;
-      letter-spacing: -0.02em;
-      line-height: 1;
-      margin-bottom: 3px;
-    }
-    .dm-label { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; }
-    .dm-sub { font-size: 10px; color: var(--text-3); margin-top: 1px; }
-    .dm-protein .dm-val { color: var(--accent); }
-    .dm-carbs .dm-val { color: var(--amber); }
-    .dm-fat .dm-val { color: var(--orange); }
-    .dm-kcal .dm-val { color: var(--text-2); }
-    .dash-bar-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 8px;
-    }
-    .dash-bar-label { font-size: 12px; color: var(--text-2); width: 56px; flex-shrink: 0; }
-    .dash-bar-track {
+    .macro-bar-label { width: 52px; color: var(--text-2); flex-shrink: 0; }
+    .macro-bar-track {
       flex: 1;
-      height: 5px;
-      background: var(--bg-card-2);
+      height: 6px;
+      background: var(--bg);
       border-radius: 99px;
       overflow: hidden;
     }
-    .dash-bar-fill {
-      height: 100%;
-      border-radius: 99px;
-    }
-    .dash-bar-pct { font-size: 11px; color: var(--text-3); width: 36px; text-align: right; flex-shrink: 0; }
-    .dash-footer {
-      padding: 12px 18px;
-      border-top: 1px solid var(--border-soft);
-      font-size: 12px;
-      color: var(--text-3);
-    }
-    .on-pace { color: var(--accent); font-weight: 600; }
+    .macro-bar-fill { height: 100%; border-radius: 99px; background: var(--accent); }
+    .macro-bar-fill.carbs { background: var(--amber); }
+    .macro-bar-fill.fat { background: #f97316; }
+    .macro-bar-fill.calories { background: var(--text-3); }
+    .macro-bar-nums { font-size: 12px; color: var(--text-3); white-space: nowrap; }
 
-    /* ── Pantry snapshot ── */
-    .pantry-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-    }
-    .pantry-row {
-      display: flex;
+    /* ── Badge — same as dashboard ── */
+    .badge {
+      display: inline-flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 12px 18px;
-      border-bottom: 1px solid var(--border-soft);
-      font-size: 14px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 99px;
     }
-    .pantry-row:last-child { border-bottom: none; }
-    .pantry-row .name { color: var(--text-2); }
-    .pantry-row .amt { font-weight: 600; font-variant-numeric: tabular-nums; }
-    .pantry-row .protein { font-size: 12px; color: var(--text-3); margin-left: 8px; }
+    .badge-on_track { color: var(--accent-text); background: var(--accent-bg); }
+    .badge-est { color: #92400e; background: var(--amber-bg); }
 
     /* ── Phone frames ── */
     .phone-row {
       display: flex;
-      gap: 16px;
+      gap: 14px;
       justify-content: center;
       align-items: flex-start;
     }
+    .phone-wrap { flex: 1; max-width: 195px; }
     .phone-frame {
-      flex: 1;
-      max-width: 200px;
-      background: #1a1a1a;
-      border: 1px solid #2e2e2e;
-      border-radius: 28px;
-      padding: 10px;
-      box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      padding: 9px;
+      box-shadow: var(--shadow-md), 0 12px 40px rgba(0,0,0,0.10);
     }
     .phone-frame img {
       width: 100%;
-      border-radius: 20px;
+      border-radius: 18px;
       display: block;
     }
     .phone-caption {
       text-align: center;
       font-size: 11px;
+      font-weight: 600;
       color: var(--text-3);
-      margin-top: 10px;
+      margin-top: 8px;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.07em;
     }
 
-    /* ── Traits ── */
+    /* ── Inline goal card (matching HomeView style) ── */
+    .goal-card-inner {
+      padding: 12px 14px;
+    }
+    .goal-card-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .goal-name { font-size: 13px; font-weight: 600; }
+    .goal-dates { font-size: 11px; color: var(--text-3); margin-left: auto; }
+
+    /* ── Traits row ── */
+    .traits-section {
+      padding: 32px 0 48px;
+      border-top: 1px solid var(--border);
+    }
     .traits {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      padding: 40px 0 56px;
-      border-top: 1px solid var(--border-soft);
-      justify-content: center;
     }
     .trait {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: var(--bg-card);
+      background: var(--card);
       border: 1px solid var(--border);
       border-radius: 99px;
-      padding: 6px 14px;
+      padding: 5px 12px;
       font-size: 13px;
       color: var(--text-2);
+      box-shadow: var(--shadow);
     }
-    .trait .dot {
+    .trait-dot {
       width: 6px;
       height: 6px;
       border-radius: 50%;
@@ -360,39 +334,39 @@
 
     /* ── Footer ── */
     footer {
-      border-top: 1px solid var(--border-soft);
-      padding: 28px 0;
+      border-top: 1px solid var(--border);
+      padding: 24px 16px;
       text-align: center;
+      background: var(--card);
     }
     footer p { font-size: 13px; color: var(--text-3); }
     footer a { color: var(--text-2); transition: color 0.15s; }
     footer a:hover { color: var(--text); }
 
     @media (max-width: 480px) {
-      .hero { padding: 52px 0 48px; }
-      .dash-macros { grid-template-columns: repeat(2, 1fr); }
+      .hero { padding: 44px 16px 40px; }
+      .phone-row { gap: 8px; }
     }
   </style>
 </head>
 <body>
 
-  <nav>
-    <div class="container">
-      <div class="nav-logo">kha<span>na</span></div>
-      <a class="nav-link" href="https://github.com/ayush29feb/khana" target="_blank">
+  <!-- ── Topbar — same structure as dashboard ── -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="topbar-brand">tracker</div>
+      <a class="gh-link" href="https://github.com/ayush29feb/khana" target="_blank">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.744 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
         GitHub
       </a>
     </div>
-  </nav>
+  </header>
 
   <!-- ── Hero ── -->
   <section class="hero">
-    <div class="container">
+    <div class="container" style="padding: 0 16px;">
       <h1>Log food by<br /><em>talking to Claude.</em></h1>
-      <p class="hero-sub">
-        Open Claude on your phone, say what you bought or what you ate, and Khana handles the rest — catalog, pantry, macros, goals.
-      </p>
+      <p class="hero-sub">Open Claude on your phone, say what you bought or what you ate, and Khana handles the rest — catalog, pantry, macros, goals.</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="https://github.com/ayush29feb/khana" target="_blank">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.744 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
@@ -406,15 +380,15 @@
   <!-- ── 1. At the store ── -->
   <section class="flow-section">
     <div class="container">
-      <div class="flow-step">At the grocery store</div>
+      <div class="flow-eyebrow">At the grocery store</div>
       <h2>Snap a label. It's in your catalog.</h2>
-      <p class="lead">
-        You're buying something new. Take a photo of the nutrition label and send it to Claude. It reads the macros, confirms every number with you, and adds the item to your food catalog and pantry — including how many servings are in the package.
-      </p>
-      <div class="photo-hint" style="margin-bottom: 16px;">
+      <p class="lead">Take a photo of any nutrition label and send it to Claude. It reads the macros, confirms every number, and adds the item to your catalog and pantry — including how many servings are in the package.</p>
+
+      <div class="card hint-card" style="margin-bottom: 16px;">
         <div class="icon">📷</div>
         <p><strong>Claude reads the label.</strong> Serving size, protein, carbs, fat, calories — confirmed with you before anything is saved. Once it's in the catalog, you never enter those macros again.</p>
       </div>
+
       <div class="chat">
         <div class="bubble user">just bought these [photo of Trader Joe's pistachios label]</div>
         <div class="bubble claude">
@@ -433,12 +407,11 @@
   <!-- ── 2. Cooking at home ── -->
   <section class="flow-section">
     <div class="container">
-      <div class="flow-step">Cooking at home</div>
+      <div class="flow-eyebrow">Cooking at home</div>
       <h2>Say what you used. Macros are calculated.</h2>
-      <p class="lead">
-        Name the ingredients and how much of each you used. Claude maps them to your catalog, adds up the macros, and deducts the servings from your pantry — so your pantry always reflects what's actually left in your kitchen.
-      </p>
-      <div class="chat">
+      <p class="lead">Name the ingredients and how much of each you used. Claude maps them to your catalog, sums the macros, and deducts from your pantry — so it always reflects what's actually in your kitchen.</p>
+
+      <div class="chat" style="margin-bottom: 20px;">
         <div class="bubble user">log lunch — yogurt bowl. 280g Fage, one serving granola, 11g chia seeds</div>
         <div class="bubble claude">
           <strong>Yogurt Bowl</strong><br />
@@ -446,7 +419,7 @@
           · Almond Granola &nbsp;×1 srv &nbsp;&rarr;&nbsp; 4g P<br />
           · Chia Seeds &nbsp;×0.46 srv &nbsp;&rarr;&nbsp; 2g P<br /><br />
           <strong>41g P &nbsp;·&nbsp; 49g C &nbsp;·&nbsp; 8g F &nbsp;·&nbsp; 434 kcal</strong><br />
-          <span class="muted" style="font-size:13px;">Pantry will deduct all three items.</span><br />
+          <span class="subdued">Pantry will deduct all three items.</span><br />
           <span class="confirm">Confirm?</span>
         </div>
         <div class="bubble user">yes</div>
@@ -458,15 +431,14 @@
   <!-- ── 3. Eating out ── -->
   <section class="flow-section">
     <div class="container">
-      <div class="flow-step">Eating out</div>
+      <div class="flow-eyebrow">Eating out</div>
       <h2>Estimates are fine. Just log it.</h2>
-      <p class="lead">
-        You don't always know the exact macros. Give your best guess and Claude marks it as an estimate — still counted toward your goal, still in your history. Nothing stays unlogged just because it wasn't measured perfectly.
-      </p>
+      <p class="lead">You don't always know the exact macros. Give your best guess and Claude marks it as an estimate — still counted toward your goal, still in your history. Nothing stays unlogged because it wasn't measured perfectly.</p>
+
       <div class="chat">
         <div class="bubble user">chipotle bowl for dinner. ~52g protein, ~80g carbs, ~720 cal. estimate</div>
         <div class="bubble claude">
-          <strong>Chipotle Bowl</strong> <span class="muted">(estimated)</span><br />
+          <strong>Chipotle Bowl</strong> &nbsp;<span class="badge badge-est">estimated</span><br />
           52g P &nbsp;·&nbsp; 80g C &nbsp;·&nbsp; ~720 kcal<br /><br />
           <span class="confirm">Confirm?</span>
         </div>
@@ -476,28 +448,27 @@
     </div>
   </section>
 
-  <!-- ── 4. Check in ── -->
+  <!-- ── 4. Dashboard ── -->
   <section class="flow-section">
     <div class="container">
-      <div class="flow-step">Checking in</div>
+      <div class="flow-eyebrow">Checking in</div>
       <h2>Open the dashboard. See where you stand.</h2>
-      <p class="lead">
-        Not every check-in needs a conversation. Open the Khana dashboard on your phone and see today's goal progress, your meal history, and what's left in your pantry — all visual, no typing required.
-      </p>
+      <p class="lead">Not every check-in needs a conversation. Open the Khana dashboard on your phone to see today's goal progress, your meal history, and what's left in your pantry — all visual, no typing required.</p>
+
       <div class="phone-row">
-        <div>
+        <div class="phone-wrap">
           <div class="phone-frame">
             <img src="images/home.png" alt="Khana Home — goal progress" />
           </div>
           <div class="phone-caption">Goals</div>
         </div>
-        <div>
+        <div class="phone-wrap">
           <div class="phone-frame">
             <img src="images/meals.png" alt="Khana Meals — meal history" />
           </div>
           <div class="phone-caption">Meals</div>
         </div>
-        <div>
+        <div class="phone-wrap">
           <div class="phone-frame">
             <img src="images/pantry.png" alt="Khana Pantry — inventory" />
           </div>
@@ -510,13 +481,12 @@
   <!-- ── 5. Goals ── -->
   <section class="flow-section">
     <div class="container">
-      <div class="flow-step">Goals</div>
+      <div class="flow-eyebrow">Goals</div>
       <h2>Set a target. Track your pace.</h2>
-      <p class="lead">
-        Name a goal, pick a date range, set your macro targets. The dashboard shows your daily progress and whether you're on pace — no manual math required. Goals can overlap date ranges, change between phases, whatever fits your plan.
-      </p>
-      <div class="chat">
-        <div class="bubble user">new goal — "April Cut" from April 1 to April 30. 160g protein, 200g carbs, 60g fat, 2200 calories per day</div>
+      <p class="lead">Name a goal, pick a date range, set your macro targets. The dashboard shows daily progress and whether you're on pace — no manual math required.</p>
+
+      <div class="chat" style="margin-bottom: 20px;">
+        <div class="bubble user">new goal — "April Cut", April 1–30. 160g protein, 200g carbs, 60g fat, 2200 cal per day</div>
         <div class="bubble claude">
           <strong>April Cut</strong> &nbsp;·&nbsp; Apr 1 – Apr 30<br />
           160g P &nbsp;·&nbsp; 200g C &nbsp;·&nbsp; 60g F &nbsp;·&nbsp; 2,200 kcal / day<br /><br />
@@ -525,18 +495,51 @@
         <div class="bubble user">yes</div>
         <div class="bubble claude">Goal set. Dashboard will show daily pace starting today.</div>
       </div>
+
+      <!-- Goal card — same layout as HomeView -->
+      <div class="card">
+        <div class="goal-card-inner">
+          <div class="goal-card-header">
+            <span class="goal-name">April Cut</span>
+            <span class="badge badge-on_track">on track</span>
+            <span class="goal-dates">Apr 1 – Apr 30</span>
+          </div>
+          <div class="macro-bar-row">
+            <div class="macro-bar-label">Protein</div>
+            <div class="macro-bar-track"><div class="macro-bar-fill" style="width: 74%;"></div></div>
+            <div class="macro-bar-nums">118 / 160g</div>
+          </div>
+          <div class="macro-bar-row">
+            <div class="macro-bar-label">Carbs</div>
+            <div class="macro-bar-track"><div class="macro-bar-fill carbs" style="width: 71%;"></div></div>
+            <div class="macro-bar-nums">142 / 200g</div>
+          </div>
+          <div class="macro-bar-row">
+            <div class="macro-bar-label">Fat</div>
+            <div class="macro-bar-track"><div class="macro-bar-fill fat" style="width: 57%;"></div></div>
+            <div class="macro-bar-nums">34 / 60g</div>
+          </div>
+          <div class="macro-bar-row" style="margin-bottom:0;">
+            <div class="macro-bar-label">Calories</div>
+            <div class="macro-bar-track"><div class="macro-bar-fill calories" style="width: 68%;"></div></div>
+            <div class="macro-bar-nums">1,490 / 2,200</div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- ── Traits ── -->
   <div class="container">
-    <div class="traits">
-      <div class="trait"><span class="dot"></span> Fully local — SQLite on your Mac</div>
-      <div class="trait"><span class="dot"></span> No account or subscription</div>
-      <div class="trait"><span class="dot"></span> Open source</div>
-      <div class="trait"><span class="dot"></span> Dashboard on your phone via Tailscale</div>
-      <div class="trait"><span class="dot"></span> Photos of labels and meals</div>
-      <div class="trait"><span class="dot"></span> Pantry deducted automatically</div>
+    <div class="traits-section">
+      <div class="traits">
+        <div class="trait"><span class="trait-dot"></span>Fully local — SQLite on your Mac</div>
+        <div class="trait"><span class="trait-dot"></span>No account or subscription</div>
+        <div class="trait"><span class="trait-dot"></span>Open source</div>
+        <div class="trait"><span class="trait-dot"></span>Dashboard on your phone via Tailscale</div>
+        <div class="trait"><span class="trait-dot"></span>Photos of labels and meals</div>
+        <div class="trait"><span class="trait-dot"></span>Pantry deducted automatically</div>
+      </div>
     </div>
   </div>
 
