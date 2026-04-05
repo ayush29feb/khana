@@ -53,12 +53,17 @@ Tell the user: **Both servers are running.**
 
 Tell the user:
 
-> To control Khana from your phone, you need to enable remote access in the Claude app:
-> 1. Open the Claude app on your phone
+> To control Khana from your phone, you need to do two things:
+>
+> **On your Mac (Claude Code):**
+> Run `/remote-control` — this registers the session so it shows up on your phone. Without this step, the session won't appear.
+>
+> **On your phone (Claude app):**
+> 1. Open the Claude app
 > 2. Go to **Settings → Claude Code**
 > 3. Enable **Remote access**
 >
-> Once enabled, messages you send from your phone will run Claude Code on this Mac — including all the Khana commands.
+> Once both are done, messages you send from your phone will run Claude Code on this Mac — including all the Khana commands.
 
 Wait for them to confirm before continuing.
 
@@ -71,18 +76,23 @@ Tell the user:
 > To open the dashboard in your phone's browser, you need Tailscale — a free tool that creates a private connection between your Mac and phone.
 >
 > **On your Mac:**
-> - Install Tailscale: `brew install --cask tailscale` or download from tailscale.com
-> - Open it from the menu bar and sign in (free account)
+> 1. Go to **tailscale.com/download** and click **Download for Mac**
+> 2. Open the downloaded `.pkg` and follow the installer
+> 3. Launch Tailscale from your Applications folder — it will appear in the menu bar
+> 4. Click the menu bar icon and sign in (free account)
 >
 > **On your phone:**
-> - Install the Tailscale app (App Store / Play Store)
-> - Sign in with the same account and toggle it on
+> 1. Search for **Tailscale** in the App Store (iPhone) or Play Store (Android)
+> 2. Install and open it
+> 3. Sign in with the same account and toggle Tailscale on
 >
-> Once both devices show as connected, run this to find your Mac's IP:
-> ```bash
-> tailscale ip -4
-> ```
-> Then open `http://<that-ip>:47320` in your phone's browser. Bookmark it.
+> Once both devices show as connected in the Tailscale app, let me know and I'll find your Mac's IP so you can open the dashboard.
+
+Once they confirm both are connected, run:
+```bash
+tailscale ip -4
+```
+Then tell the user: open `http://<that-ip>:47320` in your phone's browser and bookmark it.
 
 ---
 
