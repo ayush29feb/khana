@@ -172,7 +172,7 @@
       max-width: 960px; margin: 0 auto; padding: 0 20px;
     }
     /* ── Terminal block ── */
-    .terminal-wrap { margin-top: 32px; }
+    .terminal-wrap { margin-top: 32px; text-align: left; }
     .terminal {
       background: #0d1117; border-radius: 10px;
       overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,.18);
@@ -260,17 +260,24 @@
       font-size: 13px; color: var(--text-2); line-height: 1.6; margin-bottom: 16px;
     }
 
-    /* ── Traits ── */
-    .traits-section { border-top: 1px solid var(--border); padding: 36px 0 52px; }
-    .traits-inner { max-width: 960px; margin: 0 auto; padding: 0 20px; }
-    .traits { display: flex; flex-wrap: wrap; gap: 8px; }
-    .trait {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 99px; padding: 5px 12px;
-      font-size: 13px; color: var(--text-2); box-shadow: var(--shadow);
+    /* ── Features ── */
+    .features-section { border-top: 1px solid var(--border); padding: 48px 0 64px; }
+    .features-inner { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
     }
-    .trait-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+    .feat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+    .feat-icon { font-size: 22px; margin-bottom: 10px; }
+    .feat-card h3 { font-size: 14px; font-weight: 600; color: var(--text); margin: 0 0 6px; }
+    .feat-card p { font-size: 13px; color: var(--text-2); line-height: 1.5; margin: 0; }
 
     /* ── Footer ── */
     footer {
@@ -286,6 +293,7 @@
       .phone-frame { position: static; max-width: 260px; margin: 0 auto; }
       .flow-visual { order: -1; }
       .grow-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr 1fr; }
       .hero { padding: 48px 20px 40px; }
     }
   </style>
@@ -304,8 +312,8 @@
 
   <!-- ── Hero ── -->
   <section class="hero">
-    <h1>Log food by<br /><em>talking to Claude.</em></h1>
-    <p class="hero-sub">Open Claude on your phone, say what you bought or ate, and Khana handles the rest — catalog, pantry, macros, goals.</p>
+    <h1>Hit your food goals<br /><em>with help from Claude.</em></h1>
+    <p class="hero-sub">Tell Claude what you bought or ate. It logs everything, tracks your pantry, and keeps you on pace toward your macro goals.</p>
     <div class="terminal-wrap">
 
       <div class="terminal">
@@ -315,8 +323,8 @@
         </div>
         <div class="terminal-body">
           <span class="terminal-prompt">$</span>
-          <span class="terminal-cmd" id="install-cmd">git clone https://github.com/ayush29feb/khana && cd khana && claude</span>
-          <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('install-cmd').textContent).then(()=>{this.innerHTML='Copied';setTimeout(()=>{this.innerHTML='<svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><rect x=\'9\' y=\'9\' width=\'13\' height=\'13\' rx=\'2\'/><path d=\'M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1\'/></svg> Copy'},1500)})">
+          <span class="terminal-cmd" id="install-cmd">git clone https://github.com/ayush29feb/khana &amp;&amp; cd khana &amp;&amp; claude</span>
+          <button class="copy-btn" id="copy-btn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
             Copy
           </button>
@@ -328,16 +336,7 @@
         <div class="cc-body">
           <div class="cc-user">
             <span class="cc-prompt-sym">&gt;</span>
-            <span class="cc-user-text">help me set up Khana for the first time</span>
-          </div>
-          <div class="cc-response">
-            <strong>Sure — I'll walk you through everything.</strong><br /><br />
-            <div class="cc-step"><span class="cc-step-num">1/4</span><span>Installing dependencies (Python, Node, dashboard)…</span></div>
-            <div class="cc-step"><span class="cc-step-num">2/4</span><span>Creating the database and starting both servers…</span></div>
-            <div class="cc-step"><span class="cc-step-num">3/4</span><span>Servers are up. Enable remote access in Claude app → Settings → Claude Code, then come back.</span></div>
-            <div class="cc-step"><span class="cc-step-num">4/4</span><span>Install Tailscale on your Mac and phone, sign in with the same account — I'll give you the dashboard URL.</span></div>
-            <br />
-            <strong>You're all set.</strong> Open Claude on your phone and start logging.<span class="cc-cursor"></span>
+            <span class="cc-user-text">help me set up Khana for the first time<span class="cc-cursor"></span></span>
           </div>
         </div>
         <div class="cc-footer">
@@ -564,19 +563,54 @@
         </div>
 
       </div>
+
+      <p style="margin-top: 28px; font-size: 13px; color: var(--text-3); max-width: 520px; line-height: 1.7;">
+        One more thing: this entire project — the dashboard, the server, the CLI — was built inside a Claude Code session. You're using the same tool to run it. There's something a little strange about that.
+      </p>
     </div>
   </section>
 
-  <!-- ── Traits ── -->
-  <div class="traits-section">
-    <div class="traits-inner">
-      <div class="traits">
-        <div class="trait"><span class="trait-dot"></span>Fully local — SQLite on your Mac</div>
-        <div class="trait"><span class="trait-dot"></span>No account or subscription</div>
-        <div class="trait"><span class="trait-dot"></span>Open source — modify anything</div>
-        <div class="trait"><span class="trait-dot"></span>Dashboard on your phone via Tailscale</div>
-        <div class="trait"><span class="trait-dot"></span>Photos of labels and meals</div>
-        <div class="trait"><span class="trait-dot"></span>Pantry deducted automatically on home meals</div>
+  <!-- ── Features ── -->
+  <div class="features-section">
+    <div class="features-inner">
+      <div class="features-grid">
+
+        <div class="feat-card">
+          <div class="feat-icon">🔒</div>
+          <h3>Fully local</h3>
+          <p>Everything lives on your Mac — one file, no cloud, no account, no subscription. Your eating habits are yours.</p>
+        </div>
+
+        <div class="feat-card">
+          <div class="feat-icon">📷</div>
+          <h3>Photo uploads from the dashboard</h3>
+          <p>Tap any meal or catalog item to expand it, then upload a photo directly in the browser — no extra tools. Nutrition labels, meal photos, all attached and stored locally.</p>
+        </div>
+
+        <div class="feat-card">
+          <div class="feat-icon">🥫</div>
+          <h3>Pantry that tracks itself</h3>
+          <p>Home meals automatically deduct from your pantry. You always know exactly what's left and how much protein you're sitting on before your next shop.</p>
+        </div>
+
+        <div class="feat-card">
+          <div class="feat-icon">🎯</div>
+          <h3>Goals with daily pacing</h3>
+          <p>Set macro targets for any date range. The Goals page shows whether you're ahead, on pace, or behind — updated every time you log a meal.</p>
+        </div>
+
+        <div class="feat-card">
+          <div class="feat-icon">✦</div>
+          <h3>Runs inside Claude Code</h3>
+          <p>Khana isn't an app you log into — it's a session you open. Claude has the full context of your data and can query, update, or change anything through conversation.</p>
+        </div>
+
+        <div class="feat-card">
+          <div class="feat-icon">⬡</div>
+          <h3>Open source</h3>
+          <p>All the code is on GitHub. Clone it, change it, make it your own. There's no platform to depend on — just your Mac and your data.</p>
+        </div>
+
       </div>
     </div>
   </div>
@@ -584,6 +618,18 @@
   <footer>
     <p>Built by <a href="https://ayushsaraf.com" target="_blank">Ayush Saraf</a> &nbsp;·&nbsp; <a href="https://github.com/ayush29feb/khana" target="_blank">github.com/ayush29feb/khana</a></p>
   </footer>
+
+  <script>
+    document.getElementById('copy-btn').addEventListener('click', function() {
+      const cmd = 'git clone https://github.com/ayush29feb/khana && cd khana && claude';
+      navigator.clipboard.writeText(cmd).then(() => {
+        this.textContent = 'Copied';
+        setTimeout(() => {
+          this.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy';
+        }, 1500);
+      });
+    });
+  </script>
 
 </body>
 </html>
