@@ -290,9 +290,10 @@ const page = await browser.newPage();
 await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 2 });
 
 const routes = [
-  { path: '/', name: 'home' },
-  { path: '/meals', name: 'meals' },
-  { path: '/pantry', name: 'pantry' },
+  { path: '/goals',   name: 'goals'   },
+  { path: '/meals',   name: 'meals'   },
+  { path: '/pantry',  name: 'pantry'  },
+  { path: '/catalog', name: 'catalog' },
 ];
 
 for (const route of routes) {
