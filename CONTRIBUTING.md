@@ -240,6 +240,82 @@ khana catalog add --name "..." --label-photo ~/path/to/label.jpg
 
 ---
 
+## Updating Landing Page Screenshots
+
+The dashboard section of `docs/index.html` uses real screenshots captured from the running app. When the dashboard UI changes, regenerate them.
+
+### Prerequisites
+
+Both servers must be running (ports 3000 and 4000). If they're not:
+
+```bash
+cd /Users/ayush29feb/.openclaw/food-tracker/server && npm start &> /tmp/khana-server.log &
+cd /Users/ayush29feb/.openclaw/food-tracker/dashboard && npm run dev -- --host &> /tmp/khana-dashboard.log &
+sleep 3 && lsof -i :4000 -i :3000 | grep LISTEN
+```
+
+### Capture screenshots
+
+The capture script lives at `/tmp/khana-screenshot/capture.mjs`. If the temp directory was cleaned up, recreate it:
+
+```bash
+mkdir -p /tmp/khana-screenshot && cd /tmp/khana-screenshot
+npm init -y && npm install puppeteer
+```
+
+Then run:
+
+```bash
+cd /tmp/khana-screenshot && node capture.mjs
+```
+
+This captures Home, Meals, and Pantry views at iPhone 14 Pro viewport (390×844 @2x) and writes them to `docs/images/{home,meals,pantry}.png`.
+
+### Script contents (recreate if lost)
+
+```js
+import puppeteer from 'puppeteer';
+import { mkdir } from 'fs/promises';
+import path from 'path';
+
+const OUT = '/Users/ayush29feb/.openclaw/food-tracker/docs/images';
+await mkdir(OUT, { recursive: true });
+
+const browser = await puppeteer.launch({
+  headless: true,
+  args: ['--no-sandbox', '--disable-setuid-sandbox'],
+});
+
+const page = await browser.newPage();
+await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 2 });
+
+const routes = [
+  { path: '/', name: 'home' },
+  { path: '/meals', name: 'meals' },
+  { path: '/pantry', name: 'pantry' },
+];
+
+for (const route of routes) {
+  await page.goto(`http://localhost:3000${route.path}`, { waitUntil: 'networkidle0', timeout: 15000 });
+  await new Promise(r => setTimeout(r, 800));
+  await page.screenshot({ path: path.join(OUT, `${route.name}.png`), fullPage: false });
+  console.log(`captured ${route.name}`);
+}
+
+await browser.close();
+```
+
+### Commit the updated images
+
+```bash
+cd /Users/ayush29feb/.openclaw/food-tracker
+git add docs/images/
+git commit -m "docs: refresh landing page screenshots"
+git push
+```
+
+---
+
 ## Testing
 
 ```bash
