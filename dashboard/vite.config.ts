@@ -5,11 +5,11 @@ import relay from 'vite-plugin-relay';
 export default defineConfig({
   plugins: [react(), relay],
   server: {
-    port: 3000,
+    port: 47320,
     proxy: {
-      '/graphql': 'http://localhost:4000',
-      '/images':  'http://localhost:4000',
-      '/upload':  'http://localhost:4000',
+      '/graphql': 'http://localhost:47321',
+      '/images':  'http://localhost:47321',
+      '/upload':  'http://localhost:47321',
     },
   },
 });

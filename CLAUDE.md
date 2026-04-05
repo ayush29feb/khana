@@ -20,16 +20,30 @@ Tell the user: **Dependencies installed and database created.**
 
 ### Step 2 — Start the servers
 
+**Before starting**, check if anything is already running on the Khana ports:
+
+```bash
+lsof -ti :47321 -ti :47320
+```
+
+If any PIDs are returned, explain to the user: "There are already processes running on Khana's ports (47321 and/or 47320) — likely a previous Khana session. Can I kill them and start fresh?" Only proceed to kill after the user confirms:
+
+```bash
+lsof -ti :47321 -ti :47320 | xargs kill -9 2>/dev/null || true
+```
+
+Then start the servers:
+
 ```bash
 KHANA=$(git rev-parse --show-toplevel)
 cd "$KHANA/server" && npm start &> /tmp/khana-server.log &
 cd "$KHANA/dashboard" && npm run dev -- --host &> /tmp/khana-dashboard.log &
-sleep 3 && lsof -i :4000 -i :3000 | grep LISTEN
+sleep 3 && lsof -i :47321 -i :47320 | grep LISTEN
 ```
 
 Tell the user: **Both servers are running.**
-- GraphQL server: `http://localhost:4000/graphql`
-- Dashboard: `http://localhost:3000` (also accessible on your phone — see next step)
+- GraphQL server: `http://localhost:47321/graphql`
+- Dashboard: `http://localhost:47320` (also accessible on your phone — see next step)
 
 ---
 
@@ -66,7 +80,7 @@ Tell the user:
 > ```bash
 > tailscale ip -4
 > ```
-> Then open `http://<that-ip>:3000` in your phone's browser. Bookmark it.
+> Then open `http://<that-ip>:47320` in your phone's browser. Bookmark it.
 
 ---
 
@@ -103,17 +117,25 @@ All paths are relative to the repo root (wherever you cloned it). Run `git rev-p
 
 ### Start both servers
 
+**First, check for and kill any existing processes on Khana's ports** (ask user for confirmation if any are found — see Step 2 in First-Time Setup for the exact wording):
+
+```bash
+lsof -ti :47321 -ti :47320 | xargs kill -9 2>/dev/null || true
+```
+
+Then start:
+
 ```bash
 KHANA=$(git rev-parse --show-toplevel)
 cd "$KHANA/server" && npm start &> /tmp/khana-server.log &
 cd "$KHANA/dashboard" && npm run dev -- --host &> /tmp/khana-dashboard.log &
-sleep 2 && lsof -i :4000 -i :3000 | grep LISTEN
+sleep 2 && lsof -i :47321 -i :47320 | grep LISTEN
 ```
 
 ### Check if running
 
 ```bash
-lsof -i :4000 -i :3000 | grep LISTEN
+lsof -i :47321 -i :47320 | grep LISTEN
 ```
 
 ### View logs
@@ -136,6 +158,7 @@ pkill -f "vite"
 They should type in the Claude chat (the `!` prefix runs it directly in the session terminal):
 
 ```
+! lsof -ti :47321 -ti :47320 | xargs kill -9 2>/dev/null || true
 ! KHANA=$(git rev-parse --show-toplevel) && cd "$KHANA/server" && npm start &> /tmp/khana-server.log &
 ! KHANA=$(git rev-parse --show-toplevel) && cd "$KHANA/dashboard" && npm run dev -- --host &> /tmp/khana-dashboard.log &
 ```
@@ -160,7 +183,7 @@ KHANA=$(git rev-parse --show-toplevel) && cd "$KHANA/cli" && uv run khana <comma
 tailscale ip -4   # find Mac's Tailscale IP
 ```
 
-Dashboard URL on phone: `http://<tailscale-ip>:3000`
+Dashboard URL on phone: `http://<tailscale-ip>:47320`
 
 The `--host` flag on Vite is required — without it Vite only binds to localhost and the phone can't reach it.
 
@@ -302,7 +325,7 @@ cd "$KHANA/server" && npx prisma generate && npm run build
 ### Port already in use
 
 ```bash
-lsof -i :4000 | grep LISTEN   # find what's on port 4000
+lsof -i :47321 -i :47320 | grep LISTEN   # find what's on Khana's ports
 kill -9 <PID>
 ```
 
@@ -342,7 +365,7 @@ const routes = [
 ];
 
 for (const route of routes) {
-  await page.goto(`http://localhost:3000${route.path}`, { waitUntil: 'networkidle0', timeout: 15000 });
+  await page.goto(`http://localhost:47320${route.path}`, { waitUntil: 'networkidle0', timeout: 15000 });
   await new Promise(r => setTimeout(r, 800));
   await page.screenshot({ path: path.join(OUT, `${route.name}.png`), fullPage: false });
   console.log(`captured ${route.name}`);

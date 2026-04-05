@@ -30,7 +30,7 @@ Dashboard (React/Relay/Vite)
     ├── queries → /graphql
     ├── loads images → /images/*
     └── uploads → /upload/*
-        (all proxied to localhost:4000 by Vite dev server)
+        (all proxied to localhost:47321 by Vite dev server)
 ```
 
 The CLI and server never conflict — the CLI only writes, the server only reads (except for image path updates via upload endpoint).
@@ -107,7 +107,7 @@ npm install
 
 ### Development
 
-Start the GraphQL server (port 4000):
+Start the GraphQL server (port 47321):
 
 ```bash
 cd server
@@ -116,7 +116,7 @@ npm run dev        # tsx watch — auto-restarts on changes
 npm start          # runs compiled dist/index.js (after npm run build)
 ```
 
-Start the dashboard (port 3000):
+Start the dashboard (port 47320):
 
 ```bash
 cd dashboard
@@ -124,7 +124,7 @@ npm run dev                  # localhost only
 npm run dev -- --host        # bind to all interfaces (for Tailscale / remote access)
 ```
 
-The Vite dev server proxies `/graphql`, `/images`, and `/upload` to `http://localhost:4000`.
+The Vite dev server proxies `/graphql`, `/images`, and `/upload` to `http://localhost:47321`.
 
 ### After schema changes
 
@@ -248,13 +248,13 @@ The dashboard section of `docs/index.html` uses real screenshots captured from t
 
 ### Prerequisites
 
-Both servers must be running (ports 3000 and 4000). If they're not:
+Both servers must be running (ports 47320 and 47321). If they're not:
 
 ```bash
 KHANA=$(git rev-parse --show-toplevel)
 cd "$KHANA/server" && npm start &> /tmp/khana-server.log &
 cd "$KHANA/dashboard" && npm run dev -- --host &> /tmp/khana-dashboard.log &
-sleep 3 && lsof -i :4000 -i :3000 | grep LISTEN
+sleep 3 && lsof -i :47321 -i :47320 | grep LISTEN
 ```
 
 ### Capture screenshots
@@ -302,7 +302,7 @@ const routes = [
 ];
 
 for (const route of routes) {
-  await page.goto(`http://localhost:3000${route.path}`, { waitUntil: 'networkidle0', timeout: 15000 });
+  await page.goto(`http://localhost:47320${route.path}`, { waitUntil: 'networkidle0', timeout: 15000 });
   await new Promise(r => setTimeout(r, 800));
   await page.screenshot({ path: path.join(OUT, `${route.name}.png`), fullPage: false });
   console.log(`captured ${route.name}`);

@@ -8,7 +8,7 @@ import { typeDefs } from './schema.js';
 import { buildResolvers } from './resolvers/index.js';
 
 const prisma = new PrismaClient();
-const port = parseInt(process.env.PORT ?? '4000', 10);
+const port = parseInt(process.env.PORT ?? '47321', 10);
 
 // Derive images root as a sibling of the DB file
 const dbPath = (process.env.DATABASE_URL ?? '').replace(/^file:/, '');

@@ -16,7 +16,7 @@ Khana runs on your Mac and you interact with it remotely from your phone using t
 ```
 Your phone
   ├── Claude.ai (mobile) ──remote──► Claude Code (Mac) ──► khana CLI ──► food.db
-  └── Safari / Chrome ───Tailscale──► Dashboard (localhost:3000)
+  └── Safari / Chrome ───Tailscale──► Dashboard (localhost:47320)
 ```
 
 ---
@@ -68,11 +68,11 @@ npm run dev -- --host
 Vite will print your machine's Tailscale IP, e.g.:
 
 ```
-  ➜  Local:   http://localhost:3000/
-  ➜  Network: http://100.x.x.x:3000/
+  ➜  Local:   http://localhost:47320/
+  ➜  Network: http://100.x.x.x:47320/
 ```
 
-On your phone (with Tailscale connected), open `http://100.x.x.x:3000` in your browser. Bookmark it for quick access.
+On your phone (with Tailscale connected), open `http://100.x.x.x:47320` in your browser. Bookmark it for quick access.
 
 ---
 
