@@ -198,22 +198,6 @@
     .mod-card .mod-result {
       font-size: 12px; color: var(--text-2); line-height: 1.6;
     }
-    .code-note {
-      display: flex; gap: 10px; align-items: flex-start;
-      padding: 14px 16px; margin-bottom: 24px;
-      background: var(--card); border: 1px solid var(--border);
-      border-left: 3px solid var(--amber);
-      border-radius: var(--radius-sm); box-shadow: var(--shadow);
-    }
-    .code-note .icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
-    .code-note p { font-size: 13px; color: var(--text-2); line-height: 1.65; }
-    .code-note p strong { color: var(--text); }
-    .code-note code {
-      font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px;
-      background: var(--bg); padding: 1px 5px; border-radius: 4px;
-      border: 1px solid var(--border);
-    }
-
     /* ── Traits ── */
     .traits-section { border-top: 1px solid var(--border); padding: 36px 0 52px; }
     .traits-inner { max-width: 960px; margin: 0 auto; padding: 0 20px; }
@@ -311,7 +295,7 @@
           <div class="bubble user">what do I have in my pantry right now?</div>
           <div class="bubble claude">
             You have 22 items. High-protein highlights:<br />
-            · Chicken Breast — 3 srv &nbsp;·&nbsp; 81g P total<br />
+            · Firm Tofu — 4 srv &nbsp;·&nbsp; 52g P total<br />
             · Whey Protein — 12 srv &nbsp;·&nbsp; 300g P total<br />
             · Fage Total 0% — 4.2 srv &nbsp;·&nbsp; 50g P total<br />
             · Eggs — 6 left &nbsp;·&nbsp; 36g P total<br />
@@ -321,8 +305,8 @@
           <div class="bubble claude">
             Based on what you have and your goal, here are three options:<br /><br />
             <div class="recipe-block">
-              <strong>Chicken stir fry</strong> — 2 srv chicken + eggs + olive oil<br />
-              ~52g P &nbsp;·&nbsp; 8g C &nbsp;·&nbsp; 18g F &nbsp;·&nbsp; ~400 kcal
+              <strong>Tofu stir fry</strong> — 2 srv tofu + eggs + sesame oil<br />
+              ~40g P &nbsp;·&nbsp; 8g C &nbsp;·&nbsp; 18g F &nbsp;·&nbsp; ~380 kcal
             </div>
             <div class="recipe-block">
               <strong>Protein yogurt bowl</strong> — Fage + 1 scoop whey + granola<br />
@@ -334,7 +318,7 @@
             </div>
             Which one?
           </div>
-          <div class="bubble user">let's do the stir fry</div>
+          <div class="bubble user">let's do the tofu stir fry</div>
           <div class="bubble claude">
             Ready to log when you're done. Just say the word.
           </div>
@@ -355,18 +339,18 @@
         <h2>Confirm what you cooked. Pantry updates itself.</h2>
         <p class="lead">When you're done cooking, Claude breaks the meal down to exact ingredients and servings, calculates macros, and shows you the full picture before writing anything. One confirmation and it's logged — pantry deducted, macros recorded.</p>
         <div class="chat">
-          <div class="bubble user">done, made the stir fry. used 2 chicken breasts and 2 eggs, a little olive oil</div>
+          <div class="bubble user">done, made the stir fry. used 200g tofu, 2 eggs, a little sesame oil</div>
           <div class="bubble claude">
-            <strong>Chicken Stir Fry</strong><br />
-            · Chicken Breast ×2 srv &nbsp;&rarr;&nbsp; 54g P<br />
+            <strong>Tofu Stir Fry</strong><br />
+            · Firm Tofu ×2 srv &nbsp;&rarr;&nbsp; 26g P<br />
             · Eggs ×2 &nbsp;&rarr;&nbsp; 12g P<br />
-            · Olive Oil ×0.5 srv &nbsp;&rarr;&nbsp; 0g P<br /><br />
-            <strong>66g P &nbsp;·&nbsp; 2g C &nbsp;·&nbsp; 22g F &nbsp;·&nbsp; 466 kcal</strong><br />
-            <span class="subdued">Pantry: chicken −2 srv, eggs −2, olive oil −0.5 srv</span><br /><br />
+            · Sesame Oil ×0.5 srv &nbsp;&rarr;&nbsp; 0g P<br /><br />
+            <strong>38g P &nbsp;·&nbsp; 6g C &nbsp;·&nbsp; 20g F &nbsp;·&nbsp; 358 kcal</strong><br />
+            <span class="subdued">Pantry: tofu −2 srv, eggs −2, sesame oil −0.5 srv</span><br /><br />
             <span class="confirm">Confirm?</span>
           </div>
           <div class="bubble user">yes</div>
-          <div class="bubble claude">Logged ✓ — you're now at 158g protein today. Almost at goal.</div>
+          <div class="bubble claude">Logged ✓ — you're now at 151g protein today. Almost at goal.</div>
         </div>
       </div>
       <div class="flow-visual">
@@ -406,38 +390,76 @@
     </div>
   </section>
 
-  <!-- ── 5. Make it yours ── -->
+  <!-- ── 5. End of week shopping ── -->
+  <section class="flow-section">
+    <div class="flow-inner">
+      <div class="flow-content">
+        <div class="flow-eyebrow">End of the week</div>
+        <h2>Going shopping? Claude plans your list.</h2>
+        <p class="lead">At the end of the week, before your next grocery run, ask Claude to look at what you've used, what's running low, and whether your pantry is actually helping you hit your goals. It'll give you a specific shopping list — no guesswork, no over-buying.</p>
+        <div class="chat">
+          <div class="bubble user">going grocery shopping tomorrow. what's running low and what ran out this week?</div>
+          <div class="bubble claude">
+            Here's what you've gone through this week:<br /><br />
+            <strong>Ran out:</strong> Firm Tofu, Greek Yogurt, Eggs<br />
+            <strong>Running low (&lt;2 srv):</strong> Whey Protein, Cottage Cheese, Chickpeas<br />
+            <strong>Still stocked:</strong> Oats, Almonds, Pistachios, Olive Oil
+          </div>
+          <div class="bubble user">I missed my protein goal 4 out of 7 days. what should I stock up on to make next week easier?</div>
+          <div class="bubble claude">
+            The gap was mostly at dinner — you had lower-protein options those nights. To close it easily:<br /><br />
+            · More Greek yogurt or cottage cheese (easy high-protein snacks)<br />
+            · Paneer or tofu for dinners — you used it on your best days<br />
+            · Lentils or chickpeas as a base option when you don't want to cook much
+          </div>
+          <div class="bubble user">okay give me the full shopping list</div>
+          <div class="bubble claude">
+            <strong>Shopping list for next week:</strong><br /><br />
+            · Firm Tofu ×2 packs<br />
+            · Fage Total 0% ×2 large tubs<br />
+            · Eggs ×1 dozen<br />
+            · Paneer ×1 pack<br />
+            · Cottage Cheese ×1 tub<br />
+            · Whey Protein (running low — top up)<br />
+            · Canned Chickpeas ×3 cans<br />
+            · Red Lentils ×1 bag
+          </div>
+        </div>
+      </div>
+      <div class="flow-visual">
+        <div class="phone-frame"><img src="images/pantry.png" alt="Pantry" /></div>
+        <div class="phone-label">Pantry</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 6. It grows with you ── -->
   <section class="flow-section">
     <div class="flow-inner-wide">
-      <div class="flow-eyebrow">Make it yours</div>
-      <h2>The dashboard is just code. Change it.</h2>
-      <p class="lead" style="max-width: 600px;">Because you're running Khana in a Claude Code session with the full source code open, you can ask Claude to modify the dashboard however you want — add columns, change the design, add new views. It's your software.</p>
-
-      <div class="code-note">
-        <div class="icon">💡</div>
-        <p>When you open Khana in Claude Code, Claude has access to the full codebase. You can ask it to change anything — <code>dashboard/src/views/</code> for UI, <code>server/src/schema.ts</code> for data, <code>cli/food_tracker/</code> for new commands.</p>
-      </div>
+      <div class="flow-eyebrow">It grows with you</div>
+      <h2>This isn't an app. It's Claude with your data.</h2>
+      <p class="lead" style="max-width: 640px;">Because Khana runs inside a Claude session, Claude isn't just a front-end for a food log — it's a thinking partner that knows your history. It remembers what you tell it, learns how you like to work, and can change how the whole thing behaves when you ask. Not everything has to be perfectly structured. Claude handles the fuzzy stuff too.</p>
 
       <div class="malleable-grid">
         <div class="mod-card">
-          <div class="mod-eyebrow">Design</div>
-          <div class="mod-prompt">"Change the accent color to indigo and make the cards slightly more rounded"</div>
-          <div class="mod-result">Claude edits <code>index.css</code>, updates <code>--accent</code> and <code>--radius</code>. Changes appear instantly in your browser.</div>
+          <div class="mod-eyebrow">It remembers your preferences</div>
+          <div class="mod-prompt">"I'm vegetarian and I don't like mushrooms. Always keep that in mind when suggesting meals."</div>
+          <div class="mod-result">From that point on, every meal suggestion, every recipe idea, every shopping recommendation filters around this. You never have to say it again.</div>
         </div>
         <div class="mod-card">
-          <div class="mod-eyebrow">New column</div>
-          <div class="mod-prompt">"Add a fiber column to the pantry table"</div>
-          <div class="mod-result">Claude adds <code>fiber</code> to the GraphQL schema, Prisma model, CLI commands, and pantry table view. One request, full stack.</div>
+          <div class="mod-eyebrow">Fuzzy memory works too</div>
+          <div class="mod-prompt">"I think I had that dal at my friend's place last Tuesday — can you log it as an estimate? I remember it was pretty high protein."</div>
+          <div class="mod-result">Claude logs it with your best guess, flags it as an estimate, and moves on. Not everything needs to be exact to be useful.</div>
         </div>
         <div class="mod-card">
-          <div class="mod-eyebrow">New view</div>
-          <div class="mod-prompt">"Add a weekly summary tab that shows total macros per week"</div>
-          <div class="mod-result">Claude creates the new view component, adds a route, and adds it to the bottom nav. Done in one session.</div>
+          <div class="mod-eyebrow">Teach it your workflow</div>
+          <div class="mod-prompt">"From now on, when I ask what to cook, always lead with whatever uses the most of what's about to expire in my pantry."</div>
+          <div class="mod-result">Claude learns this preference. Next time you ask, it checks your pantry dates first and leads with the most urgent ingredients.</div>
         </div>
         <div class="mod-card">
-          <div class="mod-eyebrow">New command</div>
-          <div class="mod-prompt">"Add a CLI command to export my meal history to CSV"</div>
-          <div class="mod-result">Claude adds the command to <code>cli/food_tracker/commands/</code> and wires it up. Run it with <code>khana export csv</code>.</div>
+          <div class="mod-eyebrow">Ask it to change itself</div>
+          <div class="mod-prompt">"Can you add a way to log how I'm feeling after meals? I want to see if certain foods are affecting my energy."</div>
+          <div class="mod-result">Claude adds a mood/energy field to meal logging and builds a view for it in the dashboard. Your idea, working the same day.</div>
         </div>
       </div>
     </div>
