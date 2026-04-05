@@ -10,7 +10,7 @@ For architecture, setup, CLI reference, and technical details see [CONTRIBUTING.
 
 Khana runs on your Mac and you interact with it remotely from your phone using two tools:
 
-- **Claude Code** (remote) — Khana is a Claude chat on your phone. You talk to Khana to log meals, add foods, and query your data. Khana runs the CLI commands on your Mac.
+- **Claude Code** (remote) — you talk to Claude on your phone to log meals, add foods, and query your data. Claude runs the CLI commands on your Mac.
 - **Tailscale** — exposes the dashboard running on your Mac to your phone over a private network, so you can open it in your phone's browser.
 
 ```
@@ -46,11 +46,11 @@ cd food-tracker
 claude
 ```
 
-Then ask Khana:
+Then ask Claude:
 
 > "Set up Khana for the first time — install dependencies, create the database, and start the servers."
 
-Khana will install all dependencies, create `server/.env`, initialize the database, and start both servers.
+Claude will install all dependencies, create `server/.env`, initialize the database, and start both servers.
 
 ### 2. Connect Claude Code to your phone
 
@@ -78,12 +78,12 @@ On your phone (with Tailscale connected), open `http://100.x.x.x:47320` in your 
 
 ## Daily use
 
-With both servers running and Claude Code connected, just open the Claude app on your phone and talk to Khana:
+With both servers running and Claude Code connected, just open the Claude app on your phone and talk to it:
 
-- **"Log my lunch — grilled chicken bowl with rice and salsa"** — Khana finds the catalog items, calculates macros, confirms, and logs it
-- **"I just bought a bag of pistachios"** — share a photo of the label, Khana reads the macros and servings, confirms, then adds to catalog and pantry
-- **"How much protein have I had today?"** — Khana queries the database and tells you
-- **"Start the servers"** — if they're not running, Khana starts them on your Mac
+- **"Log my lunch — grilled chicken bowl with rice and salsa"** — Claude finds the catalog items, calculates macros, confirms, and logs it
+- **"I just bought a bag of pistachios"** — share a photo of the label, Claude reads the macros and servings, confirms, then adds to catalog and pantry
+- **"How much protein have I had today?"** — Claude queries the database and tells you
+- **"Start the servers"** — if they're not running, Claude starts them on your Mac
 
 Then open the dashboard on your phone browser via Tailscale to see your meals, trends, and goal progress visually.
 
@@ -91,7 +91,7 @@ Then open the dashboard on your phone browser via Tailscale to see your meals, t
 
 ## Tips
 
-- Share a photo of a nutrition label directly in the Khana chat — Khana will read all values before adding anything
-- Khana always confirms the full entry before writing to the database
-- If you have multiple catalog updates, list them all first — Khana will confirm everything at once before executing
+- Share a photo of a nutrition label directly in the Claude chat — Claude will read all values before adding anything
+- Claude always confirms the full entry before writing to the database
+- If you have multiple catalog updates, list them all first — Claude will confirm everything at once before executing
 - The dashboard date range picker (top-right) filters all views simultaneously
