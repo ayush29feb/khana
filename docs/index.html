@@ -7,7 +7,6 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ── Design tokens — exact match to dashboard/src/index.css ── */
     :root {
       --bg: #f1f5f9;
       --card: #ffffff;
@@ -21,9 +20,9 @@
       --accent-text: #065f46;
       --amber: #f59e0b;
       --amber-bg: #fef9c3;
-      --red: #ef4444;
       --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
       --shadow-md: 0 4px 6px rgba(0,0,0,.05), 0 2px 4px rgba(0,0,0,.04);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,.08), 0 4px 10px rgba(0,0,0,.05);
       --radius: 12px;
       --radius-sm: 6px;
     }
@@ -39,13 +38,7 @@
     a { color: inherit; text-decoration: none; }
     h1, h2, h3 { font-weight: 600; line-height: 1.25; }
 
-    .container {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 0 16px;
-    }
-
-    /* ── Topbar — same as dashboard ── */
+    /* ── Topbar ── */
     .topbar {
       position: sticky;
       top: 0;
@@ -55,14 +48,13 @@
       border-bottom: 1px solid var(--border);
     }
     .topbar-inner {
-      max-width: 720px;
+      max-width: 960px;
       margin: 0 auto;
       display: flex;
       align-items: center;
       justify-content: space-between;
       height: 52px;
-      padding: 0 16px;
-      gap: 12px;
+      padding: 0 20px;
     }
     .topbar-brand {
       font-size: 16px;
@@ -83,30 +75,28 @@
       padding: 5px 10px;
       transition: color 0.15s, background 0.15s;
     }
-    .gh-link:hover { color: var(--text); background: var(--border-light); }
+    .gh-link:hover { color: var(--text); background: var(--border); }
     .gh-link svg { width: 15px; height: 15px; }
 
     /* ── Hero ── */
     .hero {
-      padding: 64px 16px 56px;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 72px 20px 60px;
       text-align: center;
     }
     .hero h1 {
-      font-size: clamp(28px, 6vw, 48px);
+      font-size: clamp(30px, 5.5vw, 52px);
       font-weight: 700;
       letter-spacing: -0.03em;
-      line-height: 1.15;
-      margin-bottom: 14px;
-      color: var(--text);
+      line-height: 1.1;
+      margin-bottom: 16px;
     }
-    .hero h1 em {
-      font-style: normal;
-      color: var(--accent);
-    }
+    .hero h1 em { font-style: normal; color: var(--accent); }
     .hero-sub {
       font-size: 16px;
       color: var(--text-2);
-      max-width: 440px;
+      max-width: 460px;
       margin: 0 auto 32px;
       line-height: 1.65;
     }
@@ -124,25 +114,26 @@
       border-radius: var(--radius-sm);
       font-size: 14px;
       font-weight: 600;
-      transition: opacity 0.15s, transform 0.1s;
       box-shadow: var(--shadow);
+      transition: opacity 0.15s, transform 0.1s;
     }
     .btn:hover { opacity: 0.88; transform: translateY(-1px); }
     .btn-primary { background: var(--accent); color: #fff; }
     .btn-secondary { background: var(--card); color: var(--text-2); border: 1px solid var(--border); }
 
-    /* ── Card — same as dashboard .card ── */
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-    }
-
     /* ── Flow sections ── */
     .flow-section {
-      padding: 48px 0;
       border-top: 1px solid var(--border);
+      padding: 56px 0;
+    }
+    .flow-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr 220px;
+      gap: 40px;
+      align-items: start;
     }
     .flow-eyebrow {
       display: inline-flex;
@@ -154,35 +145,29 @@
       background: var(--accent-bg);
       padding: 3px 10px;
       border-radius: 99px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       letter-spacing: 0.03em;
     }
-    .flow-section h2 {
-      font-size: 22px;
+    .flow-content h2 {
+      font-size: 20px;
       font-weight: 700;
       letter-spacing: -0.02em;
       margin-bottom: 8px;
-      color: var(--text);
     }
-    .flow-section .lead {
+    .flow-content .lead {
       font-size: 14px;
       color: var(--text-2);
       line-height: 1.7;
-      margin-bottom: 24px;
-      max-width: 540px;
+      margin-bottom: 20px;
     }
 
     /* ── Chat bubbles ── */
-    .chat {
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-    }
+    .chat { display: flex; flex-direction: column; gap: 6px; }
     .bubble {
-      max-width: 82%;
+      max-width: 88%;
       padding: 9px 13px;
       border-radius: 14px;
-      font-size: 14px;
+      font-size: 13px;
       line-height: 1.55;
     }
     .bubble.user {
@@ -200,53 +185,10 @@
       border-bottom-left-radius: 4px;
       box-shadow: var(--shadow);
     }
-    .bubble code {
-      font-family: 'SF Mono', 'Fira Code', monospace;
-      font-size: 12px;
-      background: var(--bg);
-      padding: 1px 5px;
-      border-radius: 4px;
-      border: 1px solid var(--border);
-    }
     .confirm { color: var(--accent); font-weight: 600; }
     .subdued { color: var(--text-3); font-size: 12px; }
 
-    /* ── Hint card (photo tip) ── */
-    .hint-card {
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-      padding: 14px 16px;
-      margin-bottom: 16px;
-      border-left: 3px solid var(--accent);
-    }
-    .hint-card .icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
-    .hint-card p { font-size: 13px; color: var(--text-2); line-height: 1.6; }
-    .hint-card p strong { color: var(--text); }
-
-    /* ── MacroBar — same as dashboard component ── */
-    .macro-bar-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 6px;
-      font-size: 13px;
-    }
-    .macro-bar-label { width: 52px; color: var(--text-2); flex-shrink: 0; }
-    .macro-bar-track {
-      flex: 1;
-      height: 6px;
-      background: var(--bg);
-      border-radius: 99px;
-      overflow: hidden;
-    }
-    .macro-bar-fill { height: 100%; border-radius: 99px; background: var(--accent); }
-    .macro-bar-fill.carbs { background: var(--amber); }
-    .macro-bar-fill.fat { background: #f97316; }
-    .macro-bar-fill.calories { background: var(--text-3); }
-    .macro-bar-nums { font-size: 12px; color: var(--text-3); white-space: nowrap; }
-
-    /* ── Badge — same as dashboard ── */
+    /* ── Badge ── */
     .badge {
       display: inline-flex;
       align-items: center;
@@ -255,30 +197,24 @@
       padding: 2px 7px;
       border-radius: 99px;
     }
-    .badge-on_track { color: var(--accent-text); background: var(--accent-bg); }
     .badge-est { color: #92400e; background: var(--amber-bg); }
 
-    /* ── Phone frames ── */
-    .phone-row {
-      display: flex;
-      gap: 14px;
-      justify-content: center;
-      align-items: flex-start;
-    }
-    .phone-wrap { flex: 1; max-width: 195px; }
+    /* ── Phone frame ── */
     .phone-frame {
       background: #f8fafc;
       border: 1px solid var(--border);
-      border-radius: 26px;
-      padding: 9px;
-      box-shadow: var(--shadow-md), 0 12px 40px rgba(0,0,0,0.10);
+      border-radius: 28px;
+      padding: 10px;
+      box-shadow: var(--shadow-lg);
+      position: sticky;
+      top: 68px;
     }
     .phone-frame img {
       width: 100%;
-      border-radius: 18px;
+      border-radius: 20px;
       display: block;
     }
-    .phone-caption {
+    .phone-label {
       text-align: center;
       font-size: 11px;
       font-weight: 600;
@@ -288,24 +224,32 @@
       letter-spacing: 0.07em;
     }
 
-    /* ── Inline goal card (matching HomeView style) ── */
-    .goal-card-inner {
-      padding: 12px 14px;
-    }
-    .goal-card-header {
+    /* ── Hint card ── */
+    .hint {
       display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow);
     }
-    .goal-name { font-size: 13px; font-weight: 600; }
-    .goal-dates { font-size: 11px; color: var(--text-3); margin-left: auto; }
+    .hint .icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+    .hint p { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+    .hint p strong { color: var(--text); }
 
-    /* ── Traits row ── */
+    /* ── Traits ── */
     .traits-section {
-      padding: 32px 0 48px;
       border-top: 1px solid var(--border);
+      padding: 36px 0 52px;
+    }
+    .traits-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 20px;
     }
     .traits {
       display: flex;
@@ -324,34 +268,33 @@
       color: var(--text-2);
       box-shadow: var(--shadow);
     }
-    .trait-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--accent);
-      flex-shrink: 0;
-    }
+    .trait-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
 
     /* ── Footer ── */
     footer {
       border-top: 1px solid var(--border);
-      padding: 24px 16px;
-      text-align: center;
       background: var(--card);
+      padding: 24px 20px;
+      text-align: center;
     }
     footer p { font-size: 13px; color: var(--text-3); }
     footer a { color: var(--text-2); transition: color 0.15s; }
     footer a:hover { color: var(--text); }
 
-    @media (max-width: 480px) {
-      .hero { padding: 44px 16px 40px; }
-      .phone-row { gap: 8px; }
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .flow-inner {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+      .phone-frame { position: static; max-width: 260px; margin: 0 auto; }
+      .flow-visual { order: -1; }
+      .hero { padding: 48px 20px 40px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ── Topbar — same structure as dashboard ── -->
   <header class="topbar">
     <div class="topbar-inner">
       <div class="topbar-brand">tracker</div>
@@ -362,191 +305,194 @@
     </div>
   </header>
 
-  <!-- ── Hero ── -->
   <section class="hero">
-    <div class="container" style="padding: 0 16px;">
-      <h1>Log food by<br /><em>talking to Claude.</em></h1>
-      <p class="hero-sub">Open Claude on your phone, say what you bought or what you ate, and Khana handles the rest — catalog, pantry, macros, goals.</p>
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="https://github.com/ayush29feb/khana" target="_blank">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.744 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
-          Get started on GitHub
-        </a>
-        <a class="btn btn-secondary" href="https://github.com/ayush29feb/khana#readme" target="_blank">Read the docs</a>
+    <h1>Log food by<br /><em>talking to Claude.</em></h1>
+    <p class="hero-sub">Open Claude on your phone, say what you bought or ate, and Khana handles the rest — catalog, pantry, macros, goals.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="https://github.com/ayush29feb/khana" target="_blank">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.744 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+        Get started on GitHub
+      </a>
+      <a class="btn btn-secondary" href="https://github.com/ayush29feb/khana#readme" target="_blank">Read the docs</a>
+    </div>
+  </section>
+
+  <!-- ── 1. Catalog ── -->
+  <section class="flow-section">
+    <div class="flow-inner">
+      <div class="flow-content">
+        <div class="flow-eyebrow">Catalog</div>
+        <h2>Snap a label. It's in your catalog forever.</h2>
+        <p class="lead">Send Claude a photo of any nutrition label. It reads the macros, confirms every number with you, and adds the food to your catalog. Every food you've ever bought lives here — once it's in, you never enter its macros again.</p>
+        <div class="hint">
+          <div class="icon">📷</div>
+          <p><strong>Works with any label.</strong> Serving size, protein, carbs, fat, calories — Claude reads them all and waits for your confirmation before saving anything.</p>
+        </div>
+        <div class="chat">
+          <div class="bubble user">just bought these [photo of Trader Joe's pistachios label]</div>
+          <div class="bubble claude">
+            Got it. Here's what I read:<br /><br />
+            <strong>Trader Joe's Pistachios</strong><br />
+            Serving: 30g &nbsp;·&nbsp; 8 servings per bag<br />
+            6g P &nbsp;·&nbsp; 8g C &nbsp;·&nbsp; 14g F &nbsp;·&nbsp; 170 kcal<br /><br />
+            Add to catalog and log 8 servings to pantry? <span class="confirm">Confirm?</span>
+          </div>
+          <div class="bubble user">yes</div>
+          <div class="bubble claude">Done — catalog updated, pantry +8 servings.</div>
+        </div>
+      </div>
+      <div class="flow-visual">
+        <div class="phone-frame">
+          <img src="images/catalog.png" alt="Catalog page" />
+        </div>
+        <div class="phone-label">Catalog</div>
       </div>
     </div>
   </section>
 
-  <!-- ── 1. At the store ── -->
+  <!-- ── 2. Pantry ── -->
   <section class="flow-section">
-    <div class="container">
-      <div class="flow-eyebrow">At the grocery store</div>
-      <h2>Snap a label. It's in your catalog.</h2>
-      <p class="lead">Take a photo of any nutrition label and send it to Claude. It reads the macros, confirms every number, and adds the item to your catalog and pantry — including how many servings are in the package.</p>
-
-      <div class="card hint-card" style="margin-bottom: 16px;">
-        <div class="icon">📷</div>
-        <p><strong>Claude reads the label.</strong> Serving size, protein, carbs, fat, calories — confirmed with you before anything is saved. Once it's in the catalog, you never enter those macros again.</p>
-      </div>
-
-      <div class="chat">
-        <div class="bubble user">just bought these [photo of Trader Joe's pistachios label]</div>
-        <div class="bubble claude">
-          Got it. Here's what I read:<br /><br />
-          <strong>Trader Joe's Pistachios</strong><br />
-          Serving: 30g &nbsp;·&nbsp; 8 servings per bag<br />
-          6g P &nbsp;·&nbsp; 8g C &nbsp;·&nbsp; 14g F &nbsp;·&nbsp; 170 kcal<br /><br />
-          Add to catalog and log 8 servings to pantry? <span class="confirm">Confirm?</span>
+    <div class="flow-inner">
+      <div class="flow-content">
+        <div class="flow-eyebrow">Pantry</div>
+        <h2>A live inventory of everything in your kitchen.</h2>
+        <p class="lead">Every time you buy groceries, Khana adds to your pantry. Every time you cook a home meal, it deducts the servings used. At any point you can ask exactly what's left — and how much total protein that represents.</p>
+        <div class="chat">
+          <div class="bubble user">what do I have left in my pantry and how much total protein is that?</div>
+          <div class="bubble claude">
+            Here's your current pantry:<br /><br />
+            · Trader Joe's Pistachios — 6.5 srv &nbsp;·&nbsp; 39g P<br />
+            · Fage Total 0% — 4.2 srv &nbsp;·&nbsp; 50g P<br />
+            · Chicken Breast — 3.0 srv &nbsp;·&nbsp; 81g P<br />
+            · Whey Protein — 12 srv &nbsp;·&nbsp; 300g P<br />
+            · … and 18 more items<br /><br />
+            <strong>Total available protein: ~1,029g</strong>
+          </div>
         </div>
-        <div class="bubble user">yes</div>
-        <div class="bubble claude">Done — catalog updated, pantry +8 servings.</div>
+      </div>
+      <div class="flow-visual">
+        <div class="phone-frame">
+          <img src="images/pantry.png" alt="Pantry page" />
+        </div>
+        <div class="phone-label">Pantry</div>
       </div>
     </div>
   </section>
 
-  <!-- ── 2. Cooking at home ── -->
+  <!-- ── 3. Meals ── -->
   <section class="flow-section">
-    <div class="container">
-      <div class="flow-eyebrow">Cooking at home</div>
-      <h2>Say what you used. Macros are calculated.</h2>
-      <p class="lead">Name the ingredients and how much of each you used. Claude maps them to your catalog, sums the macros, and deducts from your pantry — so it always reflects what's actually in your kitchen.</p>
-
-      <div class="chat" style="margin-bottom: 20px;">
-        <div class="bubble user">log lunch — yogurt bowl. 280g Fage, one serving granola, 11g chia seeds</div>
-        <div class="bubble claude">
-          <strong>Yogurt Bowl</strong><br />
-          · Fage Total 0% &nbsp;×2.8 srv &nbsp;&rarr;&nbsp; 35g P<br />
-          · Almond Granola &nbsp;×1 srv &nbsp;&rarr;&nbsp; 4g P<br />
-          · Chia Seeds &nbsp;×0.46 srv &nbsp;&rarr;&nbsp; 2g P<br /><br />
-          <strong>41g P &nbsp;·&nbsp; 49g C &nbsp;·&nbsp; 8g F &nbsp;·&nbsp; 434 kcal</strong><br />
-          <span class="subdued">Pantry will deduct all three items.</span><br />
-          <span class="confirm">Confirm?</span>
+    <div class="flow-inner">
+      <div class="flow-content">
+        <div class="flow-eyebrow">Meals</div>
+        <h2>Log what you ate. Macros calculated automatically.</h2>
+        <p class="lead">For home meals, tell Claude the ingredients and servings — it maps them to your catalog, calculates the macros, and deducts from your pantry. For restaurant meals, just give the numbers. Estimates are always fine.</p>
+        <div class="chat">
+          <div class="bubble user">log lunch — yogurt bowl. 280g Fage, one serving granola, 11g chia seeds</div>
+          <div class="bubble claude">
+            <strong>Yogurt Bowl</strong><br />
+            · Fage Total 0% ×2.8 &rarr; 35g P<br />
+            · Almond Granola ×1 &rarr; 4g P<br />
+            · Chia Seeds ×0.46 &rarr; 2g P<br /><br />
+            <strong>41g P &nbsp;·&nbsp; 49g C &nbsp;·&nbsp; 8g F &nbsp;·&nbsp; 434 kcal</strong><br />
+            <span class="subdued">Pantry will deduct all three items.</span><br />
+            <span class="confirm">Confirm?</span>
+          </div>
+          <div class="bubble user">yes</div>
+          <div class="bubble claude">Logged ✓ — pantry updated.</div>
+          <div class="bubble user">chipotle bowl for dinner. ~52g protein, ~720 cal. estimate</div>
+          <div class="bubble claude">
+            <strong>Chipotle Bowl</strong> <span class="badge badge-est">estimated</span><br />
+            52g P &nbsp;·&nbsp; ~720 kcal<br /><br />
+            <span class="confirm">Confirm?</span>
+          </div>
+          <div class="bubble user">yes</div>
+          <div class="bubble claude">Logged ✓</div>
         </div>
-        <div class="bubble user">yes</div>
-        <div class="bubble claude">Logged ✓ — pantry updated.</div>
+      </div>
+      <div class="flow-visual">
+        <div class="phone-frame">
+          <img src="images/meals.png" alt="Meals page" />
+        </div>
+        <div class="phone-label">Meals</div>
       </div>
     </div>
   </section>
 
-  <!-- ── 3. Eating out ── -->
+  <!-- ── 4. Goals / Home ── -->
   <section class="flow-section">
-    <div class="container">
-      <div class="flow-eyebrow">Eating out</div>
-      <h2>Estimates are fine. Just log it.</h2>
-      <p class="lead">You don't always know the exact macros. Give your best guess and Claude marks it as an estimate — still counted toward your goal, still in your history. Nothing stays unlogged because it wasn't measured perfectly.</p>
-
-      <div class="chat">
-        <div class="bubble user">chipotle bowl for dinner. ~52g protein, ~80g carbs, ~720 cal. estimate</div>
-        <div class="bubble claude">
-          <strong>Chipotle Bowl</strong> &nbsp;<span class="badge badge-est">estimated</span><br />
-          52g P &nbsp;·&nbsp; 80g C &nbsp;·&nbsp; ~720 kcal<br /><br />
-          <span class="confirm">Confirm?</span>
+    <div class="flow-inner">
+      <div class="flow-content">
+        <div class="flow-eyebrow">Goals</div>
+        <h2>Set a macro target. See your daily pace.</h2>
+        <p class="lead">Set a goal for any date range — a cut, a bulk, a maintenance phase. The Home page shows how much of your daily target you've hit, whether you're on pace, and a breakdown by day. Multiple goals for different phases.</p>
+        <div class="chat">
+          <div class="bubble user">new goal — "April Cut", April 1–30. 160g protein, 200g carbs, 60g fat, 2200 cal per day</div>
+          <div class="bubble claude">
+            <strong>April Cut</strong> &nbsp;·&nbsp; Apr 1 – Apr 30<br />
+            160g P &nbsp;·&nbsp; 200g C &nbsp;·&nbsp; 60g F &nbsp;·&nbsp; 2,200 kcal / day<br /><br />
+            <span class="confirm">Confirm?</span>
+          </div>
+          <div class="bubble user">yes</div>
+          <div class="bubble claude">Goal set. Dashboard will show daily pace starting today.</div>
+          <div class="bubble user">how much protein have I had today?</div>
+          <div class="bubble claude">
+            You've logged <strong>118g protein</strong> today — 42g short of your 160g daily target.<br />You're roughly on pace for the week.
+          </div>
         </div>
-        <div class="bubble user">yes</div>
-        <div class="bubble claude">Logged ✓</div>
+      </div>
+      <div class="flow-visual">
+        <div class="phone-frame">
+          <img src="images/home.png" alt="Home — goal progress" />
+        </div>
+        <div class="phone-label">Home</div>
       </div>
     </div>
   </section>
 
-  <!-- ── 4. Dashboard ── -->
+  <!-- ── 5. Trends ── -->
   <section class="flow-section">
-    <div class="container">
-      <div class="flow-eyebrow">Checking in</div>
-      <h2>Open the dashboard. See where you stand.</h2>
-      <p class="lead">Not every check-in needs a conversation. Open the Khana dashboard on your phone to see today's goal progress, your meal history, and what's left in your pantry — all visual, no typing required.</p>
-
-      <div class="phone-row">
-        <div class="phone-wrap">
-          <div class="phone-frame">
-            <img src="images/home.png" alt="Khana Home — goal progress" />
+    <div class="flow-inner">
+      <div class="flow-content">
+        <div class="flow-eyebrow">Trends</div>
+        <h2>See how you've been doing over time.</h2>
+        <p class="lead">The Trends page shows your cumulative progress against each goal over the selected date range. See whether you're hitting your targets week over week — without having to ask Claude every time.</p>
+        <div class="chat">
+          <div class="bubble user">how am I doing on my April protein goal overall?</div>
+          <div class="bubble claude">
+            <strong>April Cut — Protein</strong><br />
+            372.9g logged / 4,200g target (5 days in)<br />
+            Daily average: 74.6g vs 160g target<br /><br />
+            You're behind pace. At this rate you'll end the month at ~2,240g.
           </div>
-          <div class="phone-caption">Goals</div>
-        </div>
-        <div class="phone-wrap">
-          <div class="phone-frame">
-            <img src="images/meals.png" alt="Khana Meals — meal history" />
-          </div>
-          <div class="phone-caption">Meals</div>
-        </div>
-        <div class="phone-wrap">
-          <div class="phone-frame">
-            <img src="images/pantry.png" alt="Khana Pantry — inventory" />
-          </div>
-          <div class="phone-caption">Pantry</div>
+          <div class="bubble user">open the trends page to see the daily chart</div>
+          <div class="bubble claude">The Trends page is open in your dashboard — you'll see the daily bar chart for each goal in your selected date range.</div>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- ── 5. Goals ── -->
-  <section class="flow-section">
-    <div class="container">
-      <div class="flow-eyebrow">Goals</div>
-      <h2>Set a target. Track your pace.</h2>
-      <p class="lead">Name a goal, pick a date range, set your macro targets. The dashboard shows daily progress and whether you're on pace — no manual math required.</p>
-
-      <div class="chat" style="margin-bottom: 20px;">
-        <div class="bubble user">new goal — "April Cut", April 1–30. 160g protein, 200g carbs, 60g fat, 2200 cal per day</div>
-        <div class="bubble claude">
-          <strong>April Cut</strong> &nbsp;·&nbsp; Apr 1 – Apr 30<br />
-          160g P &nbsp;·&nbsp; 200g C &nbsp;·&nbsp; 60g F &nbsp;·&nbsp; 2,200 kcal / day<br /><br />
-          <span class="confirm">Confirm?</span>
+      <div class="flow-visual">
+        <div class="phone-frame">
+          <img src="images/trends.png" alt="Trends page" />
         </div>
-        <div class="bubble user">yes</div>
-        <div class="bubble claude">Goal set. Dashboard will show daily pace starting today.</div>
-      </div>
-
-      <!-- Goal card — same layout as HomeView -->
-      <div class="card">
-        <div class="goal-card-inner">
-          <div class="goal-card-header">
-            <span class="goal-name">April Cut</span>
-            <span class="badge badge-on_track">on track</span>
-            <span class="goal-dates">Apr 1 – Apr 30</span>
-          </div>
-          <div class="macro-bar-row">
-            <div class="macro-bar-label">Protein</div>
-            <div class="macro-bar-track"><div class="macro-bar-fill" style="width: 74%;"></div></div>
-            <div class="macro-bar-nums">118 / 160g</div>
-          </div>
-          <div class="macro-bar-row">
-            <div class="macro-bar-label">Carbs</div>
-            <div class="macro-bar-track"><div class="macro-bar-fill carbs" style="width: 71%;"></div></div>
-            <div class="macro-bar-nums">142 / 200g</div>
-          </div>
-          <div class="macro-bar-row">
-            <div class="macro-bar-label">Fat</div>
-            <div class="macro-bar-track"><div class="macro-bar-fill fat" style="width: 57%;"></div></div>
-            <div class="macro-bar-nums">34 / 60g</div>
-          </div>
-          <div class="macro-bar-row" style="margin-bottom:0;">
-            <div class="macro-bar-label">Calories</div>
-            <div class="macro-bar-track"><div class="macro-bar-fill calories" style="width: 68%;"></div></div>
-            <div class="macro-bar-nums">1,490 / 2,200</div>
-          </div>
-        </div>
+        <div class="phone-label">Trends</div>
       </div>
     </div>
   </section>
 
   <!-- ── Traits ── -->
-  <div class="container">
-    <div class="traits-section">
+  <div class="traits-section">
+    <div class="traits-inner">
       <div class="traits">
         <div class="trait"><span class="trait-dot"></span>Fully local — SQLite on your Mac</div>
         <div class="trait"><span class="trait-dot"></span>No account or subscription</div>
         <div class="trait"><span class="trait-dot"></span>Open source</div>
         <div class="trait"><span class="trait-dot"></span>Dashboard on your phone via Tailscale</div>
         <div class="trait"><span class="trait-dot"></span>Photos of labels and meals</div>
-        <div class="trait"><span class="trait-dot"></span>Pantry deducted automatically</div>
+        <div class="trait"><span class="trait-dot"></span>Pantry deducted automatically on home meals</div>
       </div>
     </div>
   </div>
 
   <footer>
-    <div class="container">
-      <p>Built by <a href="https://ayushsaraf.com" target="_blank">Ayush Saraf</a> &nbsp;·&nbsp; <a href="https://github.com/ayush29feb/khana" target="_blank">github.com/ayush29feb/khana</a></p>
-    </div>
+    <p>Built by <a href="https://ayushsaraf.com" target="_blank">Ayush Saraf</a> &nbsp;·&nbsp; <a href="https://github.com/ayush29feb/khana" target="_blank">github.com/ayush29feb/khana</a></p>
   </footer>
 
 </body>
