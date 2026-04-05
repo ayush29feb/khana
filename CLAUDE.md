@@ -433,54 +433,15 @@ kill -9 <PID>
 
 ---
 
-## Updating Landing Page Screenshots
+## Markdown Files
 
-When the dashboard UI changes, regenerate `docs/images/`:
+| File | Purpose |
+|---|---|
+| `README.md` | Project overview and quick-start for new users — keep it short and non-technical |
+| `CONTRIBUTING.md` | Technical reference for developers: architecture, schema, CLI reference, dev setup, testing, screenshot regeneration |
+| `CLAUDE.md` | Instructions for Claude: onboarding flow, workflows, confirmation rules, common fixes — the operating guide for this AI session |
 
-```bash
-mkdir -p /tmp/khana-screenshot && cd /tmp/khana-screenshot
-npm init -y && npm install puppeteer
-node capture.mjs
-```
-
-Script (`/tmp/khana-screenshot/capture.mjs`):
-
-```js
-import puppeteer from 'puppeteer';
-import { mkdir } from 'fs/promises';
-import path from 'path';
-
-const KHANA = process.env.KHANA;
-if (!KHANA) throw new Error('KHANA environment variable is not set');
-const OUT = path.join(KHANA, 'docs/images');
-await mkdir(OUT, { recursive: true });
-
-const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
-const page = await browser.newPage();
-await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 2 });
-
-const routes = [
-  { path: '/goals',   name: 'goals'   },
-  { path: '/meals',   name: 'meals'   },
-  { path: '/pantry',  name: 'pantry'  },
-  { path: '/catalog', name: 'catalog' },
-];
-
-for (const route of routes) {
-  await page.goto(`http://localhost:47320${route.path}`, { waitUntil: 'networkidle0', timeout: 15000 });
-  await new Promise(r => setTimeout(r, 800));
-  await page.screenshot({ path: path.join(OUT, `${route.name}.png`), fullPage: false });
-  console.log(`captured ${route.name}`);
-}
-
-await browser.close();
-```
-
-Then commit:
-
-```bash
-KHANA=$(git rev-parse --show-toplevel)
-cd "$KHANA" && git add docs/images/
-git commit -m "docs: refresh landing page screenshots"
-git push
-```
+When updating docs:
+- User-facing project info → `README.md`
+- Technical/developer details → `CONTRIBUTING.md`
+- Claude behavior and workflows → `CLAUDE.md`
