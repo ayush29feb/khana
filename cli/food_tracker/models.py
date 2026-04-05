@@ -23,6 +23,7 @@ class FoodCatalog(Base):
     fat_per_serving = Column(Float, nullable=False)
     calories_per_serving = Column(Float, nullable=False)
     health_notes = Column(String, nullable=True)
+    label_photo_path = Column(String, nullable=True)
 
 
 class TransactionReason(str, Enum):
@@ -45,6 +46,7 @@ class Meal(Base):
     calories = Column(Float, nullable=True)
     is_estimate = Column(Boolean, nullable=False, default=False)
     notes = Column(String, nullable=True)
+    photo_path = Column(String, nullable=True)
 
     pantry_transactions = relationship(
         "PantryTransaction",

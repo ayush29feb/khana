@@ -20,6 +20,7 @@ export const typeDefs = /* GraphQL */ `
     fatPerServing: Float!
     caloriesPerServing: Float
     healthNotes: String
+    labelPhotoUrl: String
   }
 
   type PantryEntry implements Node {
@@ -55,6 +56,7 @@ export const typeDefs = /* GraphQL */ `
     calories: Float
     isEstimate: Boolean!
     notes: String
+    photoUrl: String
     ingredients: [MealIngredient!]!
   }
 

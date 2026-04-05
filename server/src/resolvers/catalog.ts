@@ -11,6 +11,7 @@ type DBCatalog = {
   fat_per_serving: number;
   calories_per_serving: number | null;
   health_notes: string | null;
+  label_photo_path: string | null;
 };
 
 export function catalogResolvers(prisma: PrismaClient) {
@@ -30,8 +31,8 @@ export function catalogResolvers(prisma: PrismaClient) {
             take,
           });
         }
-        const mapped = items.map((c: any) => ({ ...catalogItemToGql(c), _raw: c }));
-        return buildConnection(mapped, 'FoodCatalogItem');
+        const mapped = items.map((c: any) => ({ ...catalogItemToGql(c), _raw: c, _numericId: Number(c.id) }));
+        return buildConnection(mapped.map(m => ({ ...m, id: m._numericId })), 'FoodCatalogItem');
       },
     },
   };
@@ -48,5 +49,6 @@ export function catalogItemToGql(c: DBCatalog) {
     fatPerServing: c.fat_per_serving,
     caloriesPerServing: c.calories_per_serving,
     healthNotes: c.health_notes,
+    labelPhotoUrl: c.label_photo_path ? `/images/${c.label_photo_path}` : null,
   };
 }

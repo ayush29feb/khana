@@ -35,6 +35,7 @@ export function pantryResolvers(prisma: PrismaClient) {
               fat_per_serving: row.fat_per_serving,
               calories_per_serving: null,
               health_notes: row.health_notes,
+              label_photo_path: null,
             }),
             servingsRemaining: row.servings_remaining,
             proteinAvailable: row.protein_available,

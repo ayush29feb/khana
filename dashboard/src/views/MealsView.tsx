@@ -18,6 +18,7 @@ const query = graphql`
           calories
           isEstimate
           notes
+          photoUrl
           ingredients {
             servingsUsed
             proteinContributed
@@ -39,6 +40,7 @@ type Meal = {
   calories: number | null | undefined;
   isEstimate: boolean;
   notes: string | null | undefined;
+  photoUrl: string | null | undefined;
   ingredients: readonly {
     servingsUsed: number;
     proteinContributed: number;
@@ -54,19 +56,37 @@ function formatDayLabel(dateStr: string): string {
 
 function CompactMealRow({ meal }: { meal: Meal }) {
   const [expanded, setExpanded] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState(meal.photoUrl ?? null);
   const time = new Date(meal.loggedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  const canExpand = meal.ingredients.length > 0;
+  const canExpand = true; // always expandable to show photo upload
+  const showBottom = expanded && !photoUrl;
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const form = new FormData();
+    form.append('file', file);
+    const res = await fetch(`/upload/meal/${meal.id}`, { method: 'POST', body: form });
+    if (res.ok) {
+      const { url } = await res.json();
+      setPhotoUrl(url);
+    }
+    e.target.value = '';
+  }
 
   return (
     <>
       <tr
         onClick={() => canExpand && setExpanded(e => !e)}
-        style={{ cursor: canExpand ? 'pointer' : 'default', borderBottom: expanded ? 'none' : '1px solid var(--border-light)' }}
+        style={{ cursor: canExpand ? 'pointer' : 'default', borderBottom: showBottom ? 'none' : '1px solid var(--border-light)' }}
       >
         <td style={{ padding: '6px 8px', overflow: 'hidden' }}>
-          <span style={{ fontSize: 12, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}>
-            {meal.name}
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span style={{ fontSize: 12, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1, minWidth: 0 }}>
+              {meal.name}
+            </span>
+            {photoUrl && <span style={{ fontSize: 11, flexShrink: 0, lineHeight: 1 }}>📷</span>}
+          </div>
           <span style={{ fontSize: 10, color: 'var(--text-3)' }}>{time}{meal.isEstimate ? ' · est' : ''}</span>
         </td>
         <td style={{ textAlign: 'right', fontSize: 12, fontWeight: 700, color: 'var(--accent)', padding: '6px 4px', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>{meal.proteinG.toFixed(0)}g</td>
@@ -78,8 +98,9 @@ function CompactMealRow({ meal }: { meal: Meal }) {
         const carbs = (ing.catalogItem.carbsPerServing * ing.servingsUsed);
         const fat   = (ing.catalogItem.fatPerServing   * ing.servingsUsed);
         const cals  = ing.catalogItem.caloriesPerServing != null ? ing.catalogItem.caloriesPerServing * ing.servingsUsed : null;
+        const isLast = i === meal.ingredients.length - 1;
         return (
-          <tr key={i} style={{ background: 'var(--bg)', borderBottom: i === meal.ingredients.length - 1 ? '1px solid var(--border-light)' : 'none' }}>
+          <tr key={i} style={{ background: 'var(--bg)', borderBottom: isLast && !meal.photoUrl ? '1px solid var(--border-light)' : 'none' }}>
             <td style={{ padding: '4px 8px 4px 18px', fontSize: 11, color: 'var(--text-3)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               ↳ {ing.catalogItem.name} ×{ing.servingsUsed.toFixed(1)}
             </td>
@@ -90,6 +111,27 @@ function CompactMealRow({ meal }: { meal: Meal }) {
           </tr>
         );
       })}
+      {expanded && (
+        <tr style={{ borderBottom: '1px solid var(--border-light)' }}>
+          <td colSpan={5} style={{ padding: '6px 8px 10px' }}>
+            {photoUrl && (
+              <img
+                src={photoUrl}
+                style={{ width: '100%', maxHeight: 260, objectFit: 'cover', borderRadius: 6, display: 'block', marginBottom: 6 }}
+              />
+            )}
+            <label style={{
+              display: 'inline-flex', alignItems: 'center', gap: 5, cursor: 'pointer',
+              fontSize: 11, color: 'var(--text-3)', padding: '4px 8px',
+              border: '1px dashed var(--border)', borderRadius: 'var(--radius-sm)',
+            }}>
+              <span>📷</span>
+              <span>{photoUrl ? 'Replace photo' : 'Add photo'}</span>
+              <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
+            </label>
+          </td>
+        </tr>
+      )}
     </>
   );
 }
@@ -161,7 +203,7 @@ function MealsContent({ dateFrom, dateTo }: { dateFrom: string; dateTo: string }
       if (!map.has(day)) map.set(day, []);
       map.get(day)!.push(meal);
     }
-    return Array.from(map.entries()).sort(([a], [b]) => a.localeCompare(b));
+    return Array.from(map.entries()).sort(([a], [b]) => b.localeCompare(a));
   }, [meals, search]);
 
   const totals = useMemo(() => ({

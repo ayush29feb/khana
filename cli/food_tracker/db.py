@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker, Session
 
 DB_PATH = os.environ.get(
     "FOOD_DB_PATH",
-    os.path.expanduser("~/.openclaw/workspace/food.db"),
+    os.path.expanduser("~/.openclaw/food-tracker/data/food.db"),
 )
 
 PANTRY_VIEW_SQL = """

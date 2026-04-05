@@ -8,6 +8,8 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/graphql': 'http://localhost:4000',
+      '/images':  'http://localhost:4000',
+      '/upload':  'http://localhost:4000',
     },
   },
 });

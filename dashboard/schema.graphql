@@ -19,6 +19,7 @@ type FoodCatalogItem implements Node {
   fatPerServing: Float!
   caloriesPerServing: Float
   healthNotes: String
+  labelPhotoUrl: String
 }
 
 type PantryEntry implements Node {
@@ -54,6 +55,7 @@ type Meal implements Node {
   calories: Float
   isEstimate: Boolean!
   notes: String
+  photoUrl: String
   ingredients: [MealIngredient!]!
 }
 

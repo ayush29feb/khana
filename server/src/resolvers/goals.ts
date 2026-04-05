@@ -33,6 +33,7 @@ type DBMealRaw = {
   calories: number | null;
   is_estimate: number | boolean;
   notes: string | null;
+  photo_path: string | null;
 };
 
 function goalToGql(g: DBGoal) {

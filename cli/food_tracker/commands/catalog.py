@@ -5,8 +5,9 @@ from typing import Optional
 import typer
 from sqlalchemy.exc import IntegrityError
 
-from food_tracker.db import get_session
+from food_tracker.db import get_session, DB_PATH
 from food_tracker.models import FoodCatalog
+from food_tracker.photo_utils import ingest_photo
 
 catalog_app = typer.Typer(help="Manage the food catalog")
 
@@ -22,6 +23,7 @@ def _entry_to_dict(entry: FoodCatalog) -> dict:
         "fat_per_serving": entry.fat_per_serving,
         "calories_per_serving": entry.calories_per_serving,
         "health_notes": entry.health_notes,
+        "label_photo_path": entry.label_photo_path,
     }
 
 
@@ -35,6 +37,7 @@ def catalog_add(
     fat: float = typer.Option(..., "--fat", help="Fat per serving (g)"),
     calories: Optional[float] = typer.Option(None, "--calories", help="Calories per serving (auto-calculated if omitted)"),
     health_notes: str = typer.Option("", "--health-notes", help="Health notes"),
+    label_photo: Optional[str] = typer.Option(None, "--label-photo", help="Path to nutrition label photo (optional)"),
 ):
     """Add a new food to the catalog."""
     if calories is None:
@@ -55,6 +58,8 @@ def catalog_add(
         with get_session() as session:
             session.add(entry)
             session.flush()
+            if label_photo:
+                entry.label_photo_path = ingest_photo(DB_PATH, label_photo, "catalog", entry.id)
             result = _entry_to_dict(entry)
         typer.echo(json.dumps(result, default=str))
     except IntegrityError:

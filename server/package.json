@@ -12,10 +12,12 @@
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
+    "busboy": "^1.6.0",
     "graphql": "^16.9.0",
     "graphql-yoga": "^5.10.0"
   },
   "devDependencies": {
+    "@types/busboy": "^1.5.4",
     "@types/node": "^20.0.0",
     "prisma": "^5.22.0",
     "tsx": "^4.19.0",

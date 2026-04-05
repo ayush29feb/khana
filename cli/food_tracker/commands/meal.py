@@ -5,8 +5,9 @@ from typing import List, Optional
 
 import typer
 
-from food_tracker.db import get_session
+from food_tracker.db import get_session, DB_PATH
 from food_tracker.models import FoodCatalog, Meal, PantryTransaction, TransactionReason
+from food_tracker.photo_utils import ingest_photo
 
 meal_app = typer.Typer(help="Log and manage meals")
 
@@ -22,6 +23,7 @@ def _meal_to_dict(meal: Meal, ingredients: Optional[list] = None) -> dict:
         "calories": meal.calories,
         "is_estimate": meal.is_estimate,
         "notes": meal.notes,
+        "photo_path": meal.photo_path,
     }
     if ingredients is not None:
         result["ingredients"] = ingredients
@@ -35,6 +37,7 @@ def meal_add_home(
     notes: Optional[str] = typer.Option(None, "--notes", help="Optional notes"),
     is_estimate: bool = typer.Option(False, "--is-estimate", is_flag=True, help="Mark as estimate"),
     logged_at: Optional[str] = typer.Option(None, "--logged-at", help="ISO timestamp (defaults to now)"),
+    photo: Optional[str] = typer.Option(None, "--photo", help="Path to meal photo (optional)"),
 ):
     """Log a home-cooked meal using pantry items."""
     # Parse logged_at
@@ -88,6 +91,10 @@ def meal_add_home(
         session.add(meal)
         session.flush()
 
+        # Ingest photo if provided
+        if photo:
+            meal.photo_path = ingest_photo(DB_PATH, photo, "meals", meal.id)
+
         # Create pantry transactions
         for entry, servings in catalog_entries:
             txn = PantryTransaction(
@@ -120,6 +127,7 @@ def meal_add_restaurant(
     notes: Optional[str] = typer.Option(None, "--notes", help="Optional notes"),
     is_estimate: bool = typer.Option(False, "--is-estimate", is_flag=True, help="Mark as estimate"),
     logged_at: Optional[str] = typer.Option(None, "--logged-at", help="ISO timestamp (defaults to now)"),
+    photo: Optional[str] = typer.Option(None, "--photo", help="Path to meal photo (optional)"),
 ):
     """Log a restaurant meal (no pantry deduction)."""
     if logged_at:
@@ -141,6 +149,8 @@ def meal_add_restaurant(
     with get_session() as session:
         session.add(meal)
         session.flush()
+        if photo:
+            meal.photo_path = ingest_photo(DB_PATH, photo, "meals", meal.id)
         result = _meal_to_dict(meal, ingredients=[])
 
     typer.echo(json.dumps(result, default=str))

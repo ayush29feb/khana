@@ -17,6 +17,7 @@ type DBMeal = {
   calories: number | null;
   is_estimate: number | boolean;
   notes: string | null;
+  photo_path: string | null;
 };
 
 export function mealToGql(meal: DBMeal) {
@@ -30,6 +31,7 @@ export function mealToGql(meal: DBMeal) {
     calories: meal.calories != null ? Number(meal.calories) : null,
     isEstimate: Boolean(meal.is_estimate),
     notes: meal.notes,
+    photoUrl: meal.photo_path ? `/images/${meal.photo_path}` : null,
   };
 }
 
@@ -41,7 +43,7 @@ export function mealResolvers(prisma: PrismaClient) {
         args: { first?: number; after?: string; date?: string; dateFrom?: string; dateTo?: string }
       ) {
         const limit = args.first ?? 200;
-        const cols = `id, name, substr(logged_at,1,23) as logged_at, protein_g, carbs_g, fat_g, calories, is_estimate, notes`;
+        const cols = `id, name, substr(logged_at,1,23) as logged_at, protein_g, carbs_g, fat_g, calories, is_estimate, notes, photo_path`;
         let sql: string;
         if (args.dateFrom && args.dateTo) {
           const start = args.dateFrom + ' 00:00:00';
@@ -85,6 +87,7 @@ export function mealResolvers(prisma: PrismaClient) {
             serving_size_g: t.serving_size_g, protein_per_serving: t.protein_per_serving,
             carbs_per_serving: t.carbs_per_serving, fat_per_serving: t.fat_per_serving,
             calories_per_serving: t.calories_per_serving, health_notes: t.health_notes,
+            label_photo_path: null,
           }),
           servingsUsed: Math.abs(Number(t.delta)),
           proteinContributed: Math.abs(Number(t.delta)) * Number(t.protein_per_serving),

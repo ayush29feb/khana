@@ -17,6 +17,7 @@ const query = graphql`
           fatPerServing
           caloriesPerServing
           healthNotes
+          labelPhotoUrl
         }
       }
     }
@@ -39,6 +40,92 @@ function SortHeader({ label, col, sort, dir, left, onSort }: {
     }}>
       {label}{active ? (dir === 1 ? '↑' : '↓') : ''}
     </th>
+  );
+}
+
+type CatalogNode = { id: string; name: string; brand: string; servingSizeG: number; proteinPerServing: number; carbsPerServing: number; fatPerServing: number; caloriesPerServing?: number | null; healthNotes?: string | null; labelPhotoUrl?: string | null };
+
+function CatalogRow({ node, visibleCols }: { node: CatalogNode; visibleCols: Set<string> }) {
+  const [labelPhotoUrl, setLabelPhotoUrl] = useState(node.labelPhotoUrl ?? null);
+  const [expanded, setExpanded] = useState(false);
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const form = new FormData();
+    form.append('file', file);
+    const res = await fetch(`/upload/catalog/${node.id}`, { method: 'POST', body: form });
+    if (res.ok) {
+      const { url } = await res.json();
+      setLabelPhotoUrl(url);
+    }
+    e.target.value = '';
+  }
+
+  const colSpan = visibleCols.size + 1;
+
+  return (
+    <>
+      <tr
+        onClick={() => setExpanded(e => !e)}
+        style={{ cursor: 'pointer', borderBottom: expanded ? 'none' : undefined }}
+      >
+        <td style={{ overflow: 'hidden' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4, overflow: 'hidden' }}>
+            <span style={{ fontSize: 12, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1, minWidth: 0 }}>
+              {node.name}
+            </span>
+            {labelPhotoUrl && (
+              <span style={{ fontSize: 11, flexShrink: 0, lineHeight: 1 }}>📷</span>
+            )}
+          </div>
+          {node.healthNotes && (
+            <div style={{ fontSize: 10, color: 'var(--text-3)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {node.healthNotes}
+            </div>
+          )}
+        </td>
+        {visibleCols.has('brand') && (
+          <td style={{ fontSize: 11, color: 'var(--text-3)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{node.brand}</td>
+        )}
+        {visibleCols.has('serving') && (
+          <td style={{ textAlign: 'right', fontSize: 12, color: 'var(--text-2)', fontVariantNumeric: 'tabular-nums' }}>{node.servingSizeG}g</td>
+        )}
+        {visibleCols.has('protein') && (
+          <td style={{ textAlign: 'right', fontSize: 12, fontWeight: 600, color: 'var(--accent)', fontVariantNumeric: 'tabular-nums' }}>{node.proteinPerServing}g</td>
+        )}
+        {visibleCols.has('carbs') && (
+          <td style={{ textAlign: 'right', fontSize: 12, color: 'var(--amber)', fontVariantNumeric: 'tabular-nums' }}>{node.carbsPerServing}g</td>
+        )}
+        {visibleCols.has('fat') && (
+          <td style={{ textAlign: 'right', fontSize: 12, color: '#f97316', fontVariantNumeric: 'tabular-nums' }}>{node.fatPerServing}g</td>
+        )}
+        {visibleCols.has('calories') && (
+          <td style={{ textAlign: 'right', fontSize: 12, color: 'var(--text-2)', fontVariantNumeric: 'tabular-nums' }}>{node.caloriesPerServing ?? '—'}</td>
+        )}
+      </tr>
+      {expanded && (
+        <tr style={{ borderBottom: '1px solid var(--border-light)' }}>
+          <td colSpan={colSpan} style={{ padding: '6px 8px 10px' }}>
+            {labelPhotoUrl && (
+              <img
+                src={labelPhotoUrl}
+                style={{ width: '100%', maxHeight: 260, objectFit: 'contain', borderRadius: 6, display: 'block', marginBottom: 6 }}
+              />
+            )}
+            <label style={{
+              display: 'inline-flex', alignItems: 'center', gap: 5, cursor: 'pointer',
+              fontSize: 11, color: 'var(--text-3)', padding: '4px 8px',
+              border: '1px dashed var(--border)', borderRadius: 'var(--radius-sm)',
+            }}>
+              <span>📷</span>
+              <span>{labelPhotoUrl ? 'Replace label photo' : 'Add label photo'}</span>
+              <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
+            </label>
+          </td>
+        </tr>
+      )}
+    </>
   );
 }
 
@@ -143,38 +230,11 @@ export default function CatalogView() {
           </thead>
           <tbody>
             {rows.map(({ node }) => (
-              <tr key={node.id}>
-                <td style={{ overflow: 'hidden' }}>
-                  <div style={{ fontSize: 12, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {node.name}
-                  </div>
-                  {node.healthNotes && (
-                    <div style={{ fontSize: 10, color: 'var(--text-3)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {node.healthNotes}
-                    </div>
-                  )}
-                </td>
-                {visibleCols.has('brand') && (
-                  <td style={{ fontSize: 11, color: 'var(--text-3)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {node.brand}
-                  </td>
-                )}
-                {visibleCols.has('serving') && (
-                  <td style={{ textAlign: 'right', fontSize: 12, color: 'var(--text-2)', fontVariantNumeric: 'tabular-nums' }}>{node.servingSizeG}g</td>
-                )}
-                {visibleCols.has('protein') && (
-                  <td style={{ textAlign: 'right', fontSize: 12, fontWeight: 600, color: 'var(--accent)', fontVariantNumeric: 'tabular-nums' }}>{node.proteinPerServing}g</td>
-                )}
-                {visibleCols.has('carbs') && (
-                  <td style={{ textAlign: 'right', fontSize: 12, color: 'var(--amber)', fontVariantNumeric: 'tabular-nums' }}>{node.carbsPerServing}g</td>
-                )}
-                {visibleCols.has('fat') && (
-                  <td style={{ textAlign: 'right', fontSize: 12, color: '#f97316', fontVariantNumeric: 'tabular-nums' }}>{node.fatPerServing}g</td>
-                )}
-                {visibleCols.has('calories') && (
-                  <td style={{ textAlign: 'right', fontSize: 12, color: 'var(--text-2)', fontVariantNumeric: 'tabular-nums' }}>{node.caloriesPerServing ?? '—'}</td>
-                )}
-              </tr>
+              <CatalogRow
+                key={node.id}
+                node={node}
+                visibleCols={visibleCols}
+              />
             ))}
           </tbody>
         </table>

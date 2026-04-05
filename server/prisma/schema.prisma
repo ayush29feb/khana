@@ -17,6 +17,7 @@ model FoodCatalog {
   fat_per_serving      Float
   calories_per_serving Float?
   health_notes         String?
+  label_photo_path     String?
   transactions         PantryTransaction[]
 
   @@unique([name, brand], name: "uq_catalog_name_brand")
@@ -33,6 +34,7 @@ model Meal {
   calories     Float?
   is_estimate  Boolean             @default(false)
   notes        String?
+  photo_path   String?
   transactions PantryTransaction[]
 
   @@map("meals")

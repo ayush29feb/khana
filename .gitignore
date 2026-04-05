@@ -4,3 +4,4 @@ cli/.venv/
 cli/dist/
 *.pyc
 .env
+data

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fc4aa655aa6c16f184a49b0d57fc98c4>>
+ * @generated SignedSource<<2a7ec79e183a4b83b83913b87ef3ef58>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -36,6 +36,7 @@ export type MealsViewQuery$data = {
         readonly loggedAt: string;
         readonly name: string;
         readonly notes: string | null | undefined;
+        readonly photoUrl: string | null | undefined;
         readonly proteinG: number;
       };
     }>;
@@ -143,38 +144,45 @@ v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "servingsUsed",
+  "name": "photoUrl",
   "storageKey": null
 },
 v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "proteinContributed",
+  "name": "servingsUsed",
   "storageKey": null
 },
 v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "brand",
+  "name": "proteinContributed",
   "storageKey": null
 },
 v14 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "carbsPerServing",
+  "name": "brand",
   "storageKey": null
 },
 v15 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "fatPerServing",
+  "name": "carbsPerServing",
   "storageKey": null
 },
 v16 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "fatPerServing",
+  "storageKey": null
+},
+v17 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -221,6 +229,7 @@ return {
                   (v8/*: any*/),
                   (v9/*: any*/),
                   (v10/*: any*/),
+                  (v11/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -229,8 +238,8 @@ return {
                     "name": "ingredients",
                     "plural": true,
                     "selections": [
-                      (v11/*: any*/),
                       (v12/*: any*/),
+                      (v13/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -240,10 +249,10 @@ return {
                         "plural": false,
                         "selections": [
                           (v3/*: any*/),
-                          (v13/*: any*/),
                           (v14/*: any*/),
                           (v15/*: any*/),
-                          (v16/*: any*/)
+                          (v16/*: any*/),
+                          (v17/*: any*/)
                         ],
                         "storageKey": null
                       }
@@ -302,6 +311,7 @@ return {
                   (v8/*: any*/),
                   (v9/*: any*/),
                   (v10/*: any*/),
+                  (v11/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -310,8 +320,8 @@ return {
                     "name": "ingredients",
                     "plural": true,
                     "selections": [
-                      (v11/*: any*/),
                       (v12/*: any*/),
+                      (v13/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -321,10 +331,10 @@ return {
                         "plural": false,
                         "selections": [
                           (v3/*: any*/),
-                          (v13/*: any*/),
                           (v14/*: any*/),
                           (v15/*: any*/),
                           (v16/*: any*/),
+                          (v17/*: any*/),
                           (v2/*: any*/)
                         ],
                         "storageKey": null
@@ -344,16 +354,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "a51aeed5177d09c2254346a5bb13a623",
+    "cacheID": "2b06c540171a8b6e11781603a6a258e1",
     "id": null,
     "metadata": {},
     "name": "MealsViewQuery",
     "operationKind": "query",
-    "text": "query MealsViewQuery(\n  $dateFrom: String\n  $dateTo: String\n) {\n  meals(first: 200, dateFrom: $dateFrom, dateTo: $dateTo) {\n    edges {\n      node {\n        id\n        name\n        loggedAt\n        proteinG\n        carbsG\n        fatG\n        calories\n        isEstimate\n        notes\n        ingredients {\n          servingsUsed\n          proteinContributed\n          catalogItem {\n            name\n            brand\n            carbsPerServing\n            fatPerServing\n            caloriesPerServing\n            id\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query MealsViewQuery(\n  $dateFrom: String\n  $dateTo: String\n) {\n  meals(first: 200, dateFrom: $dateFrom, dateTo: $dateTo) {\n    edges {\n      node {\n        id\n        name\n        loggedAt\n        proteinG\n        carbsG\n        fatG\n        calories\n        isEstimate\n        notes\n        photoUrl\n        ingredients {\n          servingsUsed\n          proteinContributed\n          catalogItem {\n            name\n            brand\n            carbsPerServing\n            fatPerServing\n            caloriesPerServing\n            id\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "5cf67d3721dc9a22cd4c84d50aaf43e1";
+(node as any).hash = "35a2d01dfb09675cc85f8d27d7852f02";
 
 export default node;
