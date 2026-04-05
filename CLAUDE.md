@@ -1,8 +1,10 @@
-# Food Tracker — Claude Operating Guide
+# Khana — Claude Operating Guide
 
 All CLI commands run from `/Users/ayush29feb/.openclaw/food-tracker/cli/`:
 
 ```bash
+khana <command>
+# or
 python3 -m food_tracker.main <command>
 ```
 

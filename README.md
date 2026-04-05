@@ -1,4 +1,4 @@
-# Food Tracker
+# Khana
 
 A personal nutrition tracking system with a CLI for data entry and a web dashboard for visualization. Built around a SQLite database shared between a Python CLI and a Node.js GraphQL server.
 
@@ -85,7 +85,7 @@ source .venv/bin/activate
 pip install -e ".[dev]"
 ```
 
-After activation, `food` is available as a command. Or run directly with `python3 -m food_tracker.main`.
+After activation, `khana` is available as a command. Or run directly with `python3 -m food_tracker.main`.
 
 ### Server
 
@@ -167,30 +167,30 @@ All commands run from `cli/`:
 ```bash
 python3 -m food_tracker.main <command> [subcommand] [options]
 # or, if installed via pip install -e:
-food <command> [subcommand] [options]
+khana <command> [subcommand] [options]
 ```
 
 ### `catalog`
 
 ```bash
-food catalog add \
+khana catalog add \
   --name "Greek Yogurt" --brand "Fage" \
   --serving-size-g 227 \
   --protein 18 --carbs 9 --fat 0 --calories 110
 
-food catalog list
-food catalog get <ID>
-food catalog update <ID> --protein 20 --calories 120
-food catalog delete <ID>
+khana catalog list
+khana catalog get <ID>
+khana catalog update <ID> --protein 20 --calories 120
+khana catalog delete <ID>
 ```
 
 ### `pantry`
 
 ```bash
-food pantry add --catalog-id <ID> --servings <N>   # log a grocery purchase
-food pantry use --catalog-id <ID> --servings <N>   # manual consumption (not via meal)
-food pantry list                                    # current inventory
-food pantry history                                 # full transaction log
+khana pantry add --catalog-id <ID> --servings <N>   # log a grocery purchase
+khana pantry use --catalog-id <ID> --servings <N>   # manual consumption (not via meal)
+khana pantry list                                    # current inventory
+khana pantry history                                 # full transaction log
 ```
 
 ### `meal`
@@ -198,19 +198,19 @@ food pantry history                                 # full transaction log
 Home-cooked meals deduct from pantry. Use `--ingredient CATALOG_ID:SERVINGS` (repeatable).
 
 ```bash
-food meal add-home \
+khana meal add-home \
   --name "Yogurt Bowl" \
   --ingredient "12:2.8" \
   --ingredient "37:1" \
   --ingredient "22:0.46"
 
-food meal add-restaurant \
+khana meal add-restaurant \
   --name "Chipotle Bowl" \
   --protein 52 --carbs 80 --fat 20 --calories 720 \
   --is-estimate
 
-food meal list
-food meal delete <ID>
+khana meal list
+khana meal delete <ID>
 ```
 
 Servings conversion: `servings = weight_used_g / serving_size_g`  
@@ -219,12 +219,12 @@ Example: 11g of chia seeds with 24g serving → `11/24 ≈ 0.46`
 ### `goal`
 
 ```bash
-food goal add \
+khana goal add \
   --name "April Cut" \
   --start-date 2026-04-01 --end-date 2026-04-30 \
   --protein 160 --carbs 200 --fat 60 --calories 2200
 
-food goal list
+khana goal list
 ```
 
 ---
@@ -238,7 +238,7 @@ Photos are stored in `data/images/` and served by the Node server at `/images/{m
 **Via CLI** (at creation time):
 
 ```bash
-food meal add-home --name "..." --ingredient "..." --photo ~/path/to/photo.jpg
+khana meal add-home --name "..." --ingredient "..." --photo ~/path/to/photo.jpg
 food catalog add --name "..." --label-photo ~/path/to/label.jpg
 ```
 
