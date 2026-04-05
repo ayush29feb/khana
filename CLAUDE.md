@@ -82,7 +82,7 @@ Tell the user:
 > To control Khana from your phone, you need to do two things:
 >
 > **On your Mac (Claude Code):**
-> Run `/remote-control` — this registers the session so it shows up on your phone. Without this step, the session won't appear.
+> Run `/remote-control` — this registers the session so it shows up on your phone. Without this step, the session won't appear. When prompted for a session name, enter **Khana** so you can easily recognize it.
 >
 > **On your phone (Claude app):**
 > 1. Open the Claude app
@@ -122,17 +122,79 @@ Then tell the user: open `http://<that-ip>:47320` in your phone's browser and bo
 
 ---
 
-### Step 6 — Done
+### Step 6 — Learn their preferences
+
+Ask the user:
+
+> Before we set goals and stock your pantry, tell me a bit about yourself:
+> - Any dietary restrictions? (vegetarian, vegan, gluten-free, allergies, etc.)
+> - Any foods you love or hate?
+> - Do you mostly cook at home, eat out, or both?
+
+Save what you learn directly in `MEMORY.md` (under a "User" section) so it's available in future sessions — this shapes every meal suggestion, grocery recommendation, and macro calculation going forward.
+
+---
+
+### Step 7 — Set a goal
+
+Ask the user what nutrition goal they want to hit this week (e.g. protein, calories). Once confirmed, create it with `khana goal add`.
+
+---
+
+### Step 8 — Stock the pantry
 
 Tell the user:
 
-> **Khana is ready.** Here's how to use it going forward:
+> Now let's set up your pantry so I know what you're working with. A few ways to do this:
 >
-> - **Log food**: just tell me what you ate, bought, or cooked — from your phone or here
-> - **Check your dashboard**: open the Tailscale URL in your phone browser
-> - **If servers stop**: say "start the servers" and I'll restart them
+> - **Take photos of what's in your fridge/pantry** and share them here — I'll read the nutrition labels and add everything to your catalog and pantry.
+> - **Share what you buy at the grocery store** — snap a photo of items as you shop, or send me your receipt when you're done. I can read itemized receipts and add everything at once.
 >
-> Want to set up a first goal, or start logging something?
+> The more I know about what you have, the better I can help you log meals and hit your goals.
+
+Wait for the user to share photos, a receipt, or a list. For each item:
+1. Read the nutrition label image (if provided)
+2. Add it to the catalog with `khana catalog add` — confirm all fields with the user before running
+3. Ask: "Do you have this at home right now? If so, how many servings/containers?" — only add to pantry with `khana pantry add` if they confirm they have it
+
+Never add to the pantry without confirming with the user first.
+
+After all items are added, tell the user to check the dashboard to verify everything looks right.
+
+---
+
+### Step 9 — Verify in the dashboard
+
+Tell the user:
+
+> Take a look at your dashboard — do the pantry items and goal look right? Let me know if anything needs fixing.
+
+Wait for confirmation before continuing.
+
+---
+
+### Step 10 — Talk about meals
+
+Tell the user:
+
+> Great — now I know what you have. Going forward, just tell me what you eat and I'll log it.
+>
+> - **Home-cooked meals**: tell me what you made and what ingredients you used — I'll calculate the macros from your pantry.
+> - **Restaurant meals**: tell me where you ate and what you ordered — I'll look up or estimate the macros.
+> - **Not sure what to make?** Ask me — I can suggest meals based on what's in your pantry and your current goals.
+> - **Going grocery shopping?** Ask me what to buy — I'll recommend items that help you hit your targets.
+>
+> What did you eat today?
+
+---
+
+### Step 11 — Done
+
+**Khana is fully set up.** Ongoing reminders:
+
+- **Log food**: just tell me what you ate, bought, or cooked — from your phone or here
+- **Check your dashboard**: open the Tailscale URL in your phone's browser
+- **If servers stop**: say "start the servers" and I'll restart them
 
 ---
 
