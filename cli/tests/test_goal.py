@@ -21,7 +21,6 @@ def isolated_db(monkeypatch):
     tmp.close()
     db_path = tmp.name
 
-    monkeypatch.setenv("FOOD_DB_PATH", db_path)
     monkeypatch.setattr(db_module, "DB_PATH", db_path)
 
     engine = create_engine(f"sqlite:///{db_path}", echo=False)

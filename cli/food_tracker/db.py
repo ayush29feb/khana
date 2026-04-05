@@ -4,10 +4,10 @@ from contextlib import contextmanager
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, Session
 
-DB_PATH = os.environ.get(
-    "FOOD_DB_PATH",
-    os.path.expanduser("~/.openclaw/food-tracker/data/food.db"),
-)
+_khana = os.environ.get("KHANA")
+if not _khana:
+    raise RuntimeError("KHANA environment variable is not set")
+DB_PATH = os.path.join(_khana, "data", "food.db")
 
 PANTRY_VIEW_SQL = """
 DROP VIEW IF EXISTS pantry;

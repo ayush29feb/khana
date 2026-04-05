@@ -75,13 +75,15 @@ Four tables in `data/food.db`:
 ### CLI
 
 ```bash
-cd cli
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -e ".[dev]"
+./setup.sh   # first-time setup (installs uv, syncs deps, inits DB)
 ```
 
-After activation, `khana` is available as a command. Or run directly with `python3 -m food_tracker.main`.
+After setup, run CLI commands with:
+```bash
+cd cli && uv run khana <command>
+```
+
+Or run directly: `cd cli && uv run python -m food_tracker.main`
 
 ### Server
 
@@ -161,9 +163,9 @@ The date range picker (top-right) filters Meals, Home, and Trends simultaneously
 All commands run from `cli/`:
 
 ```bash
-python3 -m food_tracker.main <command> [subcommand] [options]
-# or, if installed via pip install -e:
-khana <command> [subcommand] [options]
+cd cli && uv run khana <command> [subcommand] [options]
+# or:
+cd cli && uv run python -m food_tracker.main <command> [subcommand] [options]
 ```
 
 ### `catalog`
@@ -249,8 +251,9 @@ The dashboard section of `docs/index.html` uses real screenshots captured from t
 Both servers must be running (ports 3000 and 4000). If they're not:
 
 ```bash
-cd /Users/ayush29feb/.openclaw/food-tracker/server && npm start &> /tmp/khana-server.log &
-cd /Users/ayush29feb/.openclaw/food-tracker/dashboard && npm run dev -- --host &> /tmp/khana-dashboard.log &
+KHANA=$(git rev-parse --show-toplevel)
+cd "$KHANA/server" && npm start &> /tmp/khana-server.log &
+cd "$KHANA/dashboard" && npm run dev -- --host &> /tmp/khana-dashboard.log &
 sleep 3 && lsof -i :4000 -i :3000 | grep LISTEN
 ```
 
@@ -278,7 +281,9 @@ import puppeteer from 'puppeteer';
 import { mkdir } from 'fs/promises';
 import path from 'path';
 
-const OUT = '/Users/ayush29feb/.openclaw/food-tracker/docs/images';
+const KHANA = process.env.KHANA;
+if (!KHANA) throw new Error('KHANA environment variable is not set');
+const OUT = path.join(KHANA, 'docs/images');
 await mkdir(OUT, { recursive: true });
 
 const browser = await puppeteer.launch({
@@ -309,7 +314,7 @@ await browser.close();
 ### Commit the updated images
 
 ```bash
-cd /Users/ayush29feb/.openclaw/food-tracker
+cd "$(git rev-parse --show-toplevel)"
 git add docs/images/
 git commit -m "docs: refresh landing page screenshots"
 git push
@@ -321,7 +326,7 @@ git push
 
 ```bash
 # CLI tests
-cd cli && pytest
+cd cli && uv run pytest
 
 # Server tests
 cd server && npm test

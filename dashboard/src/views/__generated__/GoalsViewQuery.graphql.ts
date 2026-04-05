@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f4e0f2de6080ee4cfac839018e687135>>
+ * @generated SignedSource<<376005efae74544c3b855671d2961252>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,8 +9,8 @@
 // @ts-nocheck
 
 import { ConcreteRequest, Query } from 'relay-runtime';
-export type HomeViewQuery$variables = Record<PropertyKey, never>;
-export type HomeViewQuery$data = {
+export type GoalsViewQuery$variables = Record<PropertyKey, never>;
+export type GoalsViewQuery$data = {
   readonly goals: {
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -53,9 +53,9 @@ export type HomeViewQuery$data = {
     }>;
   };
 };
-export type HomeViewQuery = {
-  response: HomeViewQuery$data;
-  variables: HomeViewQuery$variables;
+export type GoalsViewQuery = {
+  response: GoalsViewQuery$data;
+  variables: GoalsViewQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -263,7 +263,7 @@ return {
     "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
-    "name": "HomeViewQuery",
+    "name": "GoalsViewQuery",
     "selections": (v6/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -272,20 +272,20 @@ return {
   "operation": {
     "argumentDefinitions": [],
     "kind": "Operation",
-    "name": "HomeViewQuery",
+    "name": "GoalsViewQuery",
     "selections": (v6/*: any*/)
   },
   "params": {
-    "cacheID": "01e74b1cdf0c8ce152fbc481730a3786",
+    "cacheID": "a1253b64e3bd1043fc14b8c71a7fe532",
     "id": null,
     "metadata": {},
-    "name": "HomeViewQuery",
+    "name": "GoalsViewQuery",
     "operationKind": "query",
-    "text": "query HomeViewQuery {\n  goals(first: 100) {\n    edges {\n      node {\n        id\n        name\n        startDate\n        endDate\n        targets {\n          protein\n          carbs\n          fat\n          calories\n        }\n        progress {\n          protein\n          carbs\n          fat\n          calories\n        }\n        pace {\n          protein {\n            expected\n            actual\n            status\n          }\n          calories {\n            expected\n            actual\n            status\n          }\n        }\n        dailyBreakdown {\n          date\n          protein\n          carbs\n          fat\n          calories\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query GoalsViewQuery {\n  goals(first: 100) {\n    edges {\n      node {\n        id\n        name\n        startDate\n        endDate\n        targets {\n          protein\n          carbs\n          fat\n          calories\n        }\n        progress {\n          protein\n          carbs\n          fat\n          calories\n        }\n        pace {\n          protein {\n            expected\n            actual\n            status\n          }\n          calories {\n            expected\n            actual\n            status\n          }\n        }\n        dailyBreakdown {\n          date\n          protein\n          carbs\n          fat\n          calories\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "573e26dbac55ce2b9fd1ef893b962679";
+(node as any).hash = "394b51a585bfebc35575f4ea903d9b4e";
 
 export default node;

@@ -6,41 +6,13 @@ When a user says "help me set up Khana for the first time" (or similar), walk th
 
 ### Step 1 — Install dependencies
 
-Run these automatically:
+Tell the user to run the setup script from the repo root:
 
 ```bash
-# Python CLI
-cd /Users/ayush29feb/.openclaw/food-tracker/cli
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -e ".[dev]"
-
-# Node server
-cd /Users/ayush29feb/.openclaw/food-tracker/server
-npm install
-
-# Dashboard
-cd /Users/ayush29feb/.openclaw/food-tracker/dashboard
-npm install
+./setup.sh
 ```
 
-Create `server/.env` if it doesn't exist:
-
-```
-DATABASE_URL="file:///Users/ayush29feb/.openclaw/food-tracker/data/food.db"
-```
-
-Build the server:
-
-```bash
-cd /Users/ayush29feb/.openclaw/food-tracker/server && npm run build
-```
-
-Initialize the database:
-
-```bash
-/Users/ayush29feb/.openclaw/food-tracker/cli/.venv/bin/khana catalog list
-```
+This script installs uv (Python package manager), all Python and Node dependencies, builds the server, creates `server/.env` with the correct database path, and initializes the database. It works regardless of where the repo was cloned.
 
 Tell the user: **Dependencies installed and database created.**
 
@@ -49,8 +21,9 @@ Tell the user: **Dependencies installed and database created.**
 ### Step 2 — Start the servers
 
 ```bash
-cd /Users/ayush29feb/.openclaw/food-tracker/server && npm start &> /tmp/khana-server.log &
-cd /Users/ayush29feb/.openclaw/food-tracker/dashboard && npm run dev -- --host &> /tmp/khana-dashboard.log &
+KHANA=$(git rev-parse --show-toplevel)
+cd "$KHANA/server" && npm start &> /tmp/khana-server.log &
+cd "$KHANA/dashboard" && npm run dev -- --host &> /tmp/khana-dashboard.log &
 sleep 3 && lsof -i :4000 -i :3000 | grep LISTEN
 ```
 
@@ -113,14 +86,16 @@ Tell the user:
 
 ## Key Paths
 
-| Resource | Path |
+All paths are relative to the repo root (wherever you cloned it). Run `git rev-parse --show-toplevel` to find it.
+
+| Resource | Relative Path |
 |---|---|
-| Database | `~/.openclaw/food-tracker/data/food.db` |
-| Images | `~/.openclaw/food-tracker/data/images/{meals\|catalog}/{id}.jpg` |
-| CLI | `~/.openclaw/food-tracker/cli/` |
-| Server | `~/.openclaw/food-tracker/server/` |
-| Dashboard | `~/.openclaw/food-tracker/dashboard/` |
-| Server env | `~/.openclaw/food-tracker/server/.env` |
+| Database | `data/food.db` |
+| Images | `data/images/{meals\|catalog}/{id}.jpg` |
+| CLI | `cli/` |
+| Server | `server/` |
+| Dashboard | `dashboard/` |
+| Server env | `server/.env` |
 
 ---
 
@@ -129,8 +104,9 @@ Tell the user:
 ### Start both servers
 
 ```bash
-cd /Users/ayush29feb/.openclaw/food-tracker/server && npm start &> /tmp/khana-server.log &
-cd /Users/ayush29feb/.openclaw/food-tracker/dashboard && npm run dev -- --host &> /tmp/khana-dashboard.log &
+KHANA=$(git rev-parse --show-toplevel)
+cd "$KHANA/server" && npm start &> /tmp/khana-server.log &
+cd "$KHANA/dashboard" && npm run dev -- --host &> /tmp/khana-dashboard.log &
 sleep 2 && lsof -i :4000 -i :3000 | grep LISTEN
 ```
 
@@ -160,8 +136,8 @@ pkill -f "vite"
 They should type in the Claude chat (the `!` prefix runs it directly in the session terminal):
 
 ```
-! cd /Users/ayush29feb/.openclaw/food-tracker/server && npm start &> /tmp/khana-server.log &
-! cd /Users/ayush29feb/.openclaw/food-tracker/dashboard && npm run dev -- --host &> /tmp/khana-dashboard.log &
+! KHANA=$(git rev-parse --show-toplevel) && cd "$KHANA/server" && npm start &> /tmp/khana-server.log &
+! KHANA=$(git rev-parse --show-toplevel) && cd "$KHANA/dashboard" && npm run dev -- --host &> /tmp/khana-dashboard.log &
 ```
 
 ---
@@ -169,11 +145,11 @@ They should type in the Claude chat (the `!` prefix runs it directly in the sess
 ## CLI
 
 ```bash
-# With venv active:
-khana <command>
+# From anywhere in the repo:
+cd cli && uv run khana <command>
 
-# Always works (no venv needed):
-/Users/ayush29feb/.openclaw/food-tracker/cli/.venv/bin/khana <command>
+# Or use the full path pattern:
+KHANA=$(git rev-parse --show-toplevel) && cd "$KHANA/cli" && uv run khana <command>
 ```
 
 ---
@@ -286,10 +262,26 @@ khana catalog update <ID> --protein 6 --carbs 2 --fat 4.5 --calories 70
 
 Check `server/.env` — `DATABASE_URL` must be `file:///absolute/path/to/data/food.db`. A relative path silently creates a new empty DB.
 
-### `khana: command not found`
+### Dashboard blank / `GoalsViewQuery` Unexpected error
+
+The database file exists but has no tables. Fix by re-running the CLI init (which creates tables via SQLAlchemy) then restarting the server:
 
 ```bash
-/Users/ayush29feb/.openclaw/food-tracker/cli/.venv/bin/khana <command>
+KHANA=$(git rev-parse --show-toplevel)
+cd "$KHANA/cli" && KHANA="$KHANA" uv run khana catalog list > /dev/null
+```
+
+Then restart the server.
+
+### `uv: command not found`
+
+Run `./setup.sh` again — it installs uv. Or manually: `brew install uv`
+
+### `khana: command not found`
+
+Run khana via uv from the cli directory:
+```bash
+KHANA=$(git rev-parse --show-toplevel) && cd "$KHANA/cli" && uv run khana <command>
 ```
 
 ### Dashboard blank screen
@@ -303,8 +295,8 @@ Usually a JS error. Check browser console. Common causes:
 If Prisma schema changed:
 
 ```bash
-cd /Users/ayush29feb/.openclaw/food-tracker/server
-npx prisma generate && npm run build
+KHANA=$(git rev-parse --show-toplevel)
+cd "$KHANA/server" && npx prisma generate && npm run build
 ```
 
 ### Port already in use
@@ -333,7 +325,9 @@ import puppeteer from 'puppeteer';
 import { mkdir } from 'fs/promises';
 import path from 'path';
 
-const OUT = '/Users/ayush29feb/.openclaw/food-tracker/docs/images';
+const KHANA = process.env.KHANA;
+if (!KHANA) throw new Error('KHANA environment variable is not set');
+const OUT = path.join(KHANA, 'docs/images');
 await mkdir(OUT, { recursive: true });
 
 const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
@@ -360,8 +354,8 @@ await browser.close();
 Then commit:
 
 ```bash
-cd /Users/ayush29feb/.openclaw/food-tracker
-git add docs/images/
+KHANA=$(git rev-parse --show-toplevel)
+cd "$KHANA" && git add docs/images/
 git commit -m "docs: refresh landing page screenshots"
 git push
 ```
