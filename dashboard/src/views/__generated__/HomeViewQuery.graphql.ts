@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<04477c70ef11805c4920d8800cbd7a2c>>
+ * @generated SignedSource<<f4e0f2de6080ee4cfac839018e687135>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,7 @@
 import { ConcreteRequest, Query } from 'relay-runtime';
 export type HomeViewQuery$variables = Record<PropertyKey, never>;
 export type HomeViewQuery$data = {
-  readonly activeGoals: {
+  readonly goals: {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly dailyBreakdown: ReadonlyArray<{
@@ -119,10 +119,16 @@ v5 = [
 v6 = [
   {
     "alias": null,
-    "args": null,
+    "args": [
+      {
+        "kind": "Literal",
+        "name": "first",
+        "value": 100
+      }
+    ],
     "concreteType": "GoalConnection",
     "kind": "LinkedField",
-    "name": "activeGoals",
+    "name": "goals",
     "plural": false,
     "selections": [
       {
@@ -249,7 +255,7 @@ v6 = [
         "storageKey": null
       }
     ],
-    "storageKey": null
+    "storageKey": "goals(first:100)"
   }
 ];
 return {
@@ -270,16 +276,16 @@ return {
     "selections": (v6/*: any*/)
   },
   "params": {
-    "cacheID": "f20d899e89faa8d3f79bc2bc96dcfeac",
+    "cacheID": "01e74b1cdf0c8ce152fbc481730a3786",
     "id": null,
     "metadata": {},
     "name": "HomeViewQuery",
     "operationKind": "query",
-    "text": "query HomeViewQuery {\n  activeGoals {\n    edges {\n      node {\n        id\n        name\n        startDate\n        endDate\n        targets {\n          protein\n          carbs\n          fat\n          calories\n        }\n        progress {\n          protein\n          carbs\n          fat\n          calories\n        }\n        pace {\n          protein {\n            expected\n            actual\n            status\n          }\n          calories {\n            expected\n            actual\n            status\n          }\n        }\n        dailyBreakdown {\n          date\n          protein\n          carbs\n          fat\n          calories\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query HomeViewQuery {\n  goals(first: 100) {\n    edges {\n      node {\n        id\n        name\n        startDate\n        endDate\n        targets {\n          protein\n          carbs\n          fat\n          calories\n        }\n        progress {\n          protein\n          carbs\n          fat\n          calories\n        }\n        pace {\n          protein {\n            expected\n            actual\n            status\n          }\n          calories {\n            expected\n            actual\n            status\n          }\n        }\n        dailyBreakdown {\n          date\n          protein\n          carbs\n          fat\n          calories\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0151e1e55d4435575e8f512b33962811";
+(node as any).hash = "573e26dbac55ce2b9fd1ef893b962679";
 
 export default node;

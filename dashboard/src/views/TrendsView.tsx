@@ -19,9 +19,13 @@ const query = graphql`
   }
 `;
 
-function hitStatus(actual: number, target: number | null | undefined): string {
-  if (target == null) return '—';
-  return actual >= target * 0.9 ? '✓' : '✗';
+function hitStatus(actual: number, target: number | null | undefined) {
+  if (target == null) return null;
+  return actual >= target * 0.9;
+}
+
+function formatDate(d: string) {
+  return new Date(d + 'T12:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
 
 export default function TrendsView() {
@@ -30,30 +34,52 @@ export default function TrendsView() {
 
   return (
     <div>
-      <h2 style={{ marginTop: 0 }}>Trends</h2>
-      {goals.length === 0 && <p>No goals recorded yet.</p>}
-      {goals.map(({ node: goal }) => (
-        <div key={goal.id} style={{ marginBottom: 24, padding: 16, border: '1px solid #e5e7eb', borderRadius: 8 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-            <strong>{goal.name}</strong>
-            <span style={{ fontSize: 13, color: '#777' }}>{goal.startDate} → {goal.endDate}</span>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 16px' }}>
-            {goal.targets.protein != null && (
-              <MacroBar label={`Protein ${hitStatus(goal.progress.protein, goal.targets.protein)}`} actual={goal.progress.protein} target={goal.targets.protein} />
-            )}
-            {goal.targets.calories != null && (
-              <MacroBar label={`Calories ${hitStatus(goal.progress.calories, goal.targets.calories)}`} actual={goal.progress.calories} target={goal.targets.calories} unit=" kcal" />
-            )}
-            {goal.targets.carbs != null && (
-              <MacroBar label={`Carbs ${hitStatus(goal.progress.carbs, goal.targets.carbs)}`} actual={goal.progress.carbs} target={goal.targets.carbs} />
-            )}
-            {goal.targets.fat != null && (
-              <MacroBar label={`Fat ${hitStatus(goal.progress.fat, goal.targets.fat)}`} actual={goal.progress.fat} target={goal.targets.fat} />
-            )}
-          </div>
+      <h2 className="page-title">Trends</h2>
+      {goals.length === 0 && (
+        <div className="card" style={{ textAlign: 'center', padding: 32, color: 'var(--text-2)' }}>
+          <div style={{ fontSize: 32, marginBottom: 8 }}>📈</div>
+          <p>No goals recorded yet.</p>
         </div>
-      ))}
+      )}
+      {goals.map(({ node: goal }) => {
+        const hit = hitStatus(goal.progress.protein, goal.targets.protein);
+        return (
+          <div key={goal.id} className="card" style={{ marginBottom: 12 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontWeight: 600, fontSize: 15 }}>{goal.name}</span>
+                {hit != null && (
+                  <span style={{
+                    fontSize: 12, fontWeight: 600,
+                    color: hit ? '#065f46' : '#991b1b',
+                    background: hit ? 'var(--accent-bg)' : '#fee2e2',
+                    padding: '1px 7px', borderRadius: 99,
+                  }}>
+                    {hit ? '✓ hit' : '✗ missed'}
+                  </span>
+                )}
+              </div>
+              <span style={{ fontSize: 12, color: 'var(--text-3)' }}>
+                {formatDate(goal.startDate)} – {formatDate(goal.endDate)}
+              </span>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 20px' }}>
+              {goal.targets.protein != null && (
+                <MacroBar label="Protein" actual={goal.progress.protein} target={goal.targets.protein} />
+              )}
+              {goal.targets.calories != null && (
+                <MacroBar label="Calories" actual={goal.progress.calories} target={goal.targets.calories} unit=" kcal" />
+              )}
+              {goal.targets.carbs != null && (
+                <MacroBar label="Carbs" actual={goal.progress.carbs} target={goal.targets.carbs} />
+              )}
+              {goal.targets.fat != null && (
+                <MacroBar label="Fat" actual={goal.progress.fat} target={goal.targets.fat} />
+              )}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

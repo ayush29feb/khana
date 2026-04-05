@@ -1,6 +1,6 @@
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { Suspense, useMemo } from 'react';
-import MealCard from '../components/MealCard.js';
+import { Suspense, useMemo, useState } from 'react';
+import MacroDonut from '../components/MacroDonut.js';
 import { useDateRange } from '../DateRangeContext.js';
 import type { MealsViewQuery } from './__generated__/MealsViewQuery.graphql.js';
 
@@ -21,7 +21,7 @@ const query = graphql`
           ingredients {
             servingsUsed
             proteinContributed
-            catalogItem { name brand }
+            catalogItem { name brand carbsPerServing fatPerServing caloriesPerServing }
           }
         }
       }
@@ -39,44 +39,109 @@ type Meal = {
   calories: number | null | undefined;
   isEstimate: boolean;
   notes: string | null | undefined;
-  ingredients: readonly { servingsUsed: number; proteinContributed: number; catalogItem: { name: string; brand: string } }[];
+  ingredients: readonly {
+    servingsUsed: number;
+    proteinContributed: number;
+    catalogItem: { name: string; brand: string; carbsPerServing: number; fatPerServing: number; caloriesPerServing: number | null | undefined };
+  }[];
 };
+
+function formatDayLabel(dateStr: string): string {
+  return new Date(dateStr + 'T12:00:00').toLocaleDateString(undefined, {
+    weekday: 'short', month: 'short', day: 'numeric',
+  });
+}
+
+function CompactMealRow({ meal }: { meal: Meal }) {
+  const [expanded, setExpanded] = useState(false);
+  const time = new Date(meal.loggedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const canExpand = meal.ingredients.length > 0;
+
+  return (
+    <>
+      <tr
+        onClick={() => canExpand && setExpanded(e => !e)}
+        style={{ cursor: canExpand ? 'pointer' : 'default', borderBottom: expanded ? 'none' : '1px solid var(--border-light)' }}
+      >
+        <td style={{ padding: '6px 8px', overflow: 'hidden' }}>
+          <span style={{ fontSize: 12, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}>
+            {meal.name}
+          </span>
+          <span style={{ fontSize: 10, color: 'var(--text-3)' }}>{time}{meal.isEstimate ? ' · est' : ''}</span>
+        </td>
+        <td style={{ textAlign: 'right', fontSize: 12, fontWeight: 700, color: 'var(--accent)', padding: '6px 4px', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>{meal.proteinG.toFixed(0)}g</td>
+        <td style={{ textAlign: 'right', fontSize: 12, color: 'var(--amber)',  padding: '6px 4px', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>{meal.carbsG.toFixed(0)}g</td>
+        <td style={{ textAlign: 'right', fontSize: 12, color: '#f97316',       padding: '6px 4px', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>{meal.fatG.toFixed(0)}g</td>
+        <td style={{ textAlign: 'right', fontSize: 12, color: 'var(--text-3)', padding: '6px 8px', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>{meal.calories ? meal.calories.toFixed(0) : '—'}</td>
+      </tr>
+      {expanded && meal.ingredients.map((ing, i) => {
+        const carbs = (ing.catalogItem.carbsPerServing * ing.servingsUsed);
+        const fat   = (ing.catalogItem.fatPerServing   * ing.servingsUsed);
+        const cals  = ing.catalogItem.caloriesPerServing != null ? ing.catalogItem.caloriesPerServing * ing.servingsUsed : null;
+        return (
+          <tr key={i} style={{ background: 'var(--bg)', borderBottom: i === meal.ingredients.length - 1 ? '1px solid var(--border-light)' : 'none' }}>
+            <td style={{ padding: '4px 8px 4px 18px', fontSize: 11, color: 'var(--text-3)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              ↳ {ing.catalogItem.name} ×{ing.servingsUsed.toFixed(1)}
+            </td>
+            <td style={{ textAlign: 'right', fontSize: 11, color: 'var(--accent)', padding: '4px 4px', fontVariantNumeric: 'tabular-nums' }}>{ing.proteinContributed.toFixed(0)}g</td>
+            <td style={{ textAlign: 'right', fontSize: 11, color: 'var(--amber)',  padding: '4px 4px', fontVariantNumeric: 'tabular-nums' }}>{carbs.toFixed(0)}g</td>
+            <td style={{ textAlign: 'right', fontSize: 11, color: '#f97316',       padding: '4px 4px', fontVariantNumeric: 'tabular-nums' }}>{fat.toFixed(0)}g</td>
+            <td style={{ textAlign: 'right', fontSize: 11, color: 'var(--text-3)', padding: '4px 8px', fontVariantNumeric: 'tabular-nums' }}>{cals != null ? cals.toFixed(0) : '—'}</td>
+          </tr>
+        );
+      })}
+    </>
+  );
+}
 
 function DaySection({ date, meals }: { date: string; meals: Meal[] }) {
   const totalProtein = meals.reduce((s, m) => s + m.proteinG, 0);
-  const totalCarbs = meals.reduce((s, m) => s + m.carbsG, 0);
-  const totalFat = meals.reduce((s, m) => s + m.fatG, 0);
-  const totalCals = meals.reduce((s, m) => s + (m.calories ?? 0), 0);
-
-  const label = new Date(date + 'T12:00:00').toLocaleDateString(undefined, {
-    weekday: 'short', month: 'short', day: 'numeric', year: 'numeric',
-  });
+  const totalCarbs   = meals.reduce((s, m) => s + m.carbsG, 0);
+  const totalFat     = meals.reduce((s, m) => s + m.fatG, 0);
+  const totalCals    = meals.reduce((s, m) => s + (m.calories ?? 0), 0);
 
   return (
-    <div style={{ marginBottom: 28 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8, borderBottom: '1px solid #e5e7eb', paddingBottom: 4 }}>
-        <strong style={{ fontSize: 14 }}>{label}</strong>
-        <span style={{ fontSize: 12, color: '#777' }}>
-          P: <strong>{totalProtein.toFixed(0)}g</strong>
-          {' · '}C: {totalCarbs.toFixed(0)}g
-          {' · '}F: {totalFat.toFixed(0)}g
-          {totalCals > 0 && <> · {totalCals.toFixed(0)} kcal</>}
+    <div style={{ marginBottom: 24 }}>
+      <div style={{
+        display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
+        marginBottom: 4, paddingBottom: 8,
+        borderBottom: '2px solid var(--border)',
+      }}>
+        <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)' }}>
+          {formatDayLabel(date)}
+        </span>
+        <span style={{ fontSize: 12, color: 'var(--text-2)', display: 'flex', gap: 8 }}>
+          <span><strong style={{ color: 'var(--accent)' }}>{totalProtein.toFixed(0)}g</strong> P</span>
+          <span style={{ color: 'var(--text-3)' }}>·</span>
+          <span>{totalCarbs.toFixed(0)}g C</span>
+          <span style={{ color: 'var(--text-3)' }}>·</span>
+          <span>{totalFat.toFixed(0)}g F</span>
+          {totalCals > 0 && <><span style={{ color: 'var(--text-3)' }}>·</span><span>{totalCals.toFixed(0)} kcal</span></>}
         </span>
       </div>
-      {meals.map(meal => (
-        <MealCard
-          key={meal.id}
-          name={meal.name}
-          loggedAt={meal.loggedAt}
-          proteinG={meal.proteinG}
-          carbsG={meal.carbsG}
-          fatG={meal.fatG}
-          calories={meal.calories ?? null}
-          isEstimate={meal.isEstimate}
-          notes={meal.notes ?? null}
-          ingredients={meal.ingredients}
-        />
-      ))}
+      <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+        <table style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse' }}>
+          <colgroup>
+            <col />
+            <col style={{ width: '11%' }} />
+            <col style={{ width: '11%' }} />
+            <col style={{ width: '10%' }} />
+            <col style={{ width: '14%' }} />
+          </colgroup>
+          <thead>
+            <tr style={{ borderBottom: '1px solid var(--border)' }}>
+              <th style={{ padding: '5px 8px', textAlign: 'left',  fontSize: 10, fontWeight: 600, color: 'var(--text-3)', textTransform: 'uppercase' }}>Meal</th>
+              <th style={{ padding: '5px 4px', textAlign: 'right', fontSize: 10, fontWeight: 600, color: 'var(--accent)',  textTransform: 'uppercase' }}>P</th>
+              <th style={{ padding: '5px 4px', textAlign: 'right', fontSize: 10, fontWeight: 600, color: 'var(--amber)',   textTransform: 'uppercase' }}>C</th>
+              <th style={{ padding: '5px 4px', textAlign: 'right', fontSize: 10, fontWeight: 600, color: '#f97316',        textTransform: 'uppercase' }}>F</th>
+              <th style={{ padding: '5px 8px', textAlign: 'right', fontSize: 10, fontWeight: 600, color: 'var(--text-3)',  textTransform: 'uppercase' }}>kcal</th>
+            </tr>
+          </thead>
+          <tbody>
+            {meals.map(meal => <CompactMealRow key={meal.id} meal={meal} />)}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
@@ -85,22 +150,60 @@ function MealsContent({ dateFrom, dateTo }: { dateFrom: string; dateTo: string }
   const data = useLazyLoadQuery<MealsViewQuery>(query, { dateFrom, dateTo });
   const meals = data.meals.edges.map(e => e.node);
 
+  const [search, setSearch] = useState('');
+
   const byDay = useMemo(() => {
+    const q = search.toLowerCase();
+    const filtered = q ? meals.filter(m => m.name.toLowerCase().includes(q)) : meals;
     const map = new Map<string, Meal[]>();
-    for (const meal of meals) {
+    for (const meal of filtered) {
       const day = new Date(meal.loggedAt).toLocaleDateString('en-CA');
       if (!map.has(day)) map.set(day, []);
       map.get(day)!.push(meal);
     }
     return Array.from(map.entries()).sort(([a], [b]) => a.localeCompare(b));
-  }, [meals]);
+  }, [meals, search]);
+
+  const totals = useMemo(() => ({
+    protein:  meals.reduce((s, m) => s + m.proteinG, 0),
+    carbs:    meals.reduce((s, m) => s + m.carbsG, 0),
+    fat:      meals.reduce((s, m) => s + m.fatG, 0),
+    calories: meals.reduce((s, m) => s + (m.calories ?? 0), 0),
+  }), [meals]);
 
   return (
     <>
-      {byDay.length === 0 && <p style={{ color: '#777' }}>No meals logged in this range.</p>}
-      {byDay.map(([date, dayMeals]) => (
-        <DaySection key={date} date={date} meals={dayMeals} />
-      ))}
+      {/* Title + totals + donut inline */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+        <h2 className="page-title" style={{ margin: 0 }}>Meals</h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ fontSize: 12, display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+            <span style={{ fontWeight: 700, color: 'var(--accent)' }}>{totals.protein.toFixed(0)}g P</span>
+            <span style={{ color: 'var(--amber)' }}>{totals.carbs.toFixed(0)}g C</span>
+            <span style={{ color: '#f97316' }}>{totals.fat.toFixed(0)}g F</span>
+            {totals.calories > 0 && <span style={{ color: 'var(--text-3)' }}>{totals.calories.toFixed(0)} kcal</span>}
+          </div>
+          <MacroDonut protein={totals.protein} carbs={totals.carbs} fat={totals.fat} size={36} />
+        </div>
+      </div>
+
+      {/* Search */}
+      <div className="card" style={{ marginBottom: 14, padding: '8px 12px' }}>
+        <input
+          type="search"
+          placeholder="Search meals…"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          style={{ width: '100%', border: 'none', outline: 'none', fontSize: 14, background: 'transparent', color: 'var(--text-1)' }}
+        />
+      </div>
+
+      {byDay.length === 0
+        ? <p style={{ color: 'var(--text-3)', marginTop: 16 }}>{search ? `No meals matching "${search}".` : 'No meals logged in this range.'}</p>
+        : byDay.map(([date, dayMeals]) => (
+            <DaySection key={date} date={date} meals={dayMeals} />
+          ))
+      }
     </>
   );
 }
@@ -109,8 +212,7 @@ export default function MealsView() {
   const { dateFrom, dateTo } = useDateRange();
   return (
     <div>
-      <h2 style={{ marginTop: 0 }}>Meals</h2>
-      <Suspense fallback={<p style={{ color: '#aaa' }}>Loading…</p>}>
+      <Suspense fallback={<h2 className="page-title">Meals</h2>}>
         <MealsContent key={`${dateFrom}|${dateTo}`} dateFrom={dateFrom} dateTo={dateTo} />
       </Suspense>
     </div>

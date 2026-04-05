@@ -1,10 +1,13 @@
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import MacroBar from '../components/MacroBar.js';
+import MacroDonut from '../components/MacroDonut.js';
+import DailyMacroChart from '../components/DailyMacroChart.js';
+import { useDateRange } from '../DateRangeContext.js';
 import type { HomeViewQuery } from './__generated__/HomeViewQuery.graphql.js';
 
 const query = graphql`
   query HomeViewQuery {
-    activeGoals {
+    goals(first: 100) {
       edges {
         node {
           id
@@ -22,68 +25,67 @@ const query = graphql`
 `;
 
 function PaceChip({ status }: { status: string }) {
-  const color = status === 'ahead' || status === 'on_track' ? '#22c55e' : '#ef4444';
   return (
-    <span style={{ fontSize: 11, color, background: color + '20', padding: '1px 6px', borderRadius: 4, marginLeft: 8 }}>
+    <span className={`badge badge-${status}`}>
       {status.replace('_', ' ')}
     </span>
   );
 }
 
+function formatDate(d: string) {
+  return new Date(d + 'T12:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+}
+
 export default function HomeView() {
+  const { dateFrom, dateTo } = useDateRange();
   const data = useLazyLoadQuery<HomeViewQuery>(query, {});
-  const goals = data.activeGoals.edges;
+
+  const goals = data.goals.edges.filter(({ node: g }) =>
+    g.startDate <= dateTo && g.endDate >= dateFrom
+  );
 
   if (goals.length === 0) {
     return (
       <div>
-        <h2 style={{ marginTop: 0 }}>Home</h2>
-        <p>No active goals. Use <code>food goal add</code> to create one.</p>
+        <h2 className="page-title">Home</h2>
+        <div className="card" style={{ color: 'var(--text-2)', textAlign: 'center', padding: 32 }}>
+          <div style={{ fontSize: 32, marginBottom: 8 }}>🎯</div>
+          <p>No goals in this date range.</p>
+          <p style={{ fontSize: 13, color: 'var(--text-3)', marginTop: 4 }}>Use <code>food goal add</code> to create one.</p>
+        </div>
       </div>
     );
   }
 
   return (
     <div>
-      <h2 style={{ marginTop: 0 }}>Home</h2>
+      <h2 className="page-title">Home</h2>
       {goals.map(({ node: goal }) => (
-        <div key={goal.id} style={{ marginBottom: 32, padding: 16, border: '1px solid #e5e7eb', borderRadius: 8 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-            <h3 style={{ margin: 0 }}>
-              {goal.name}
-              {goal.pace.protein && <PaceChip status={goal.pace.protein.status} />}
-            </h3>
-            <span style={{ fontSize: 13, color: '#777' }}>{goal.startDate} → {goal.endDate}</span>
+        <div key={goal.id} className="card" style={{ marginBottom: 10, padding: '10px 14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8, flexWrap: 'wrap' }}>
+            <span style={{ fontSize: 13, fontWeight: 600 }}>{goal.name}</span>
+            {goal.pace.protein && <PaceChip status={goal.pace.protein.status} />}
+            <span style={{ fontSize: 11, color: 'var(--text-3)', marginLeft: 'auto' }}>
+              {formatDate(goal.startDate)} – {formatDate(goal.endDate)}
+            </span>
           </div>
-          <MacroBar label="Protein" actual={goal.progress.protein} target={goal.targets.protein} />
-          <MacroBar label="Carbs" actual={goal.progress.carbs} target={goal.targets.carbs} />
-          <MacroBar label="Fat" actual={goal.progress.fat} target={goal.targets.fat} />
-          <MacroBar label="Calories" actual={goal.progress.calories} target={goal.targets.calories} unit=" kcal" />
+
+          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+            <MacroDonut protein={goal.progress.protein} carbs={goal.progress.carbs} fat={goal.progress.fat} size={56} />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <MacroBar label="Protein"  actual={goal.progress.protein}  target={goal.targets.protein} />
+              <MacroBar label="Carbs"    actual={goal.progress.carbs}    target={goal.targets.carbs} />
+              <MacroBar label="Fat"      actual={goal.progress.fat}      target={goal.targets.fat} />
+              <MacroBar label="Calories" actual={goal.progress.calories} target={goal.targets.calories} unit=" kcal" />
+            </div>
+          </div>
+
           {goal.dailyBreakdown.length > 0 && (
-            <details style={{ marginTop: 12 }}>
-              <summary style={{ fontSize: 13, cursor: 'pointer', color: '#555' }}>Daily breakdown</summary>
-              <table style={{ marginTop: 8, fontSize: 12, width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr style={{ borderBottom: '1px solid #e5e7eb', textAlign: 'left' }}>
-                    <th style={{ padding: '4px 6px' }}>Date</th>
-                    <th style={{ padding: '4px 6px', textAlign: 'right' }}>Protein</th>
-                    <th style={{ padding: '4px 6px', textAlign: 'right' }}>Carbs</th>
-                    <th style={{ padding: '4px 6px', textAlign: 'right' }}>Fat</th>
-                    <th style={{ padding: '4px 6px', textAlign: 'right' }}>Calories</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {goal.dailyBreakdown.map((day) => (
-                    <tr key={day.date} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                      <td style={{ padding: '4px 6px' }}>{day.date}</td>
-                      <td style={{ padding: '4px 6px', textAlign: 'right' }}>{day.protein.toFixed(1)}g</td>
-                      <td style={{ padding: '4px 6px', textAlign: 'right' }}>{day.carbs.toFixed(1)}g</td>
-                      <td style={{ padding: '4px 6px', textAlign: 'right' }}>{day.fat.toFixed(1)}g</td>
-                      <td style={{ padding: '4px 6px', textAlign: 'right' }}>{day.calories.toFixed(0)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <details style={{ marginTop: 8 }}>
+              <summary style={{ fontSize: 12, cursor: 'pointer', color: 'var(--text-3)', fontWeight: 500 }}>
+                Daily breakdown
+              </summary>
+              <DailyMacroChart days={goal.dailyBreakdown} />
             </details>
           )}
         </div>

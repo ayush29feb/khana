@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<502680d1d2bf5743bc07edf5709de291>>
+ * @generated SignedSource<<f607bf114a2228201555a37ba5428740>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,8 +16,12 @@ export type PantryViewQuery$data = {
       readonly node: {
         readonly catalogItem: {
           readonly brand: string;
+          readonly caloriesPerServing: number | null | undefined;
+          readonly carbsPerServing: number;
+          readonly fatPerServing: number;
           readonly healthNotes: string | null | undefined;
           readonly name: string;
+          readonly proteinPerServing: number;
         };
         readonly id: string;
         readonly proteinAvailable: number;
@@ -79,6 +83,34 @@ v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
+  "name": "proteinPerServing",
+  "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "carbsPerServing",
+  "storageKey": null
+},
+v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "fatPerServing",
+  "storageKey": null
+},
+v9 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "caloriesPerServing",
+  "storageKey": null
+},
+v10 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
   "name": "pantryProteinTotal",
   "storageKey": null
 };
@@ -126,7 +158,11 @@ return {
                     "selections": [
                       (v3/*: any*/),
                       (v4/*: any*/),
-                      (v5/*: any*/)
+                      (v5/*: any*/),
+                      (v6/*: any*/),
+                      (v7/*: any*/),
+                      (v8/*: any*/),
+                      (v9/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -139,7 +175,7 @@ return {
         ],
         "storageKey": null
       },
-      (v6/*: any*/)
+      (v10/*: any*/)
     ],
     "type": "Query",
     "abstractKey": null
@@ -188,6 +224,10 @@ return {
                       (v3/*: any*/),
                       (v4/*: any*/),
                       (v5/*: any*/),
+                      (v6/*: any*/),
+                      (v7/*: any*/),
+                      (v8/*: any*/),
+                      (v9/*: any*/),
                       (v0/*: any*/)
                     ],
                     "storageKey": null
@@ -201,20 +241,20 @@ return {
         ],
         "storageKey": null
       },
-      (v6/*: any*/)
+      (v10/*: any*/)
     ]
   },
   "params": {
-    "cacheID": "cd8a573d6fb0e908b42a8cf6e7cbec21",
+    "cacheID": "663f96b3d8772a8d11b214d4595e0b60",
     "id": null,
     "metadata": {},
     "name": "PantryViewQuery",
     "operationKind": "query",
-    "text": "query PantryViewQuery {\n  pantry {\n    edges {\n      node {\n        id\n        servingsRemaining\n        proteinAvailable\n        catalogItem {\n          name\n          brand\n          healthNotes\n          id\n        }\n      }\n    }\n  }\n  pantryProteinTotal\n}\n"
+    "text": "query PantryViewQuery {\n  pantry {\n    edges {\n      node {\n        id\n        servingsRemaining\n        proteinAvailable\n        catalogItem {\n          name\n          brand\n          healthNotes\n          proteinPerServing\n          carbsPerServing\n          fatPerServing\n          caloriesPerServing\n          id\n        }\n      }\n    }\n  }\n  pantryProteinTotal\n}\n"
   }
 };
 })();
 
-(node as any).hash = "965ad7c2b699bef5e80de277c6d23dbc";
+(node as any).hash = "f6a8675e3cd26f63acc26efede4ba6d6";
 
 export default node;
