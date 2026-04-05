@@ -20,7 +20,29 @@ Tell the user: **Dependencies installed and database created.**
 
 ---
 
-### Step 2 — Start the servers
+### Step 2 — Restore backup data (optional)
+
+Ask the user: "Do you have a backup `data/` directory you'd like to restore? If so, where is it?"
+
+- If **no**: continue to the next step.
+- If **yes**: ask for the path, then ask permission to copy it:
+
+```bash
+KHANA=$(git rev-parse --show-toplevel)
+cp -r /path/to/backup/data/. "$KHANA/data/"
+```
+
+Replace `/path/to/backup/data/` with the path the user provided. After copying, confirm:
+
+```bash
+ls "$KHANA/data/"
+```
+
+Tell the user: **Backup data restored.** Then continue.
+
+---
+
+### Step 3 — Start the servers
 
 **Before starting**, check if anything is already running on the Khana ports by running:
 
@@ -49,7 +71,7 @@ Tell the user: **Both servers are running.**
 
 ---
 
-### Step 3 — Set up remote access on your phone
+### Step 4 — Set up remote access on your phone
 
 Tell the user:
 
@@ -69,7 +91,7 @@ Wait for them to confirm before continuing.
 
 ---
 
-### Step 4 — Set up Tailscale (dashboard on phone)
+### Step 5 — Set up Tailscale (dashboard on phone)
 
 Tell the user:
 
@@ -96,7 +118,7 @@ Then tell the user: open `http://<that-ip>:47320` in your phone's browser and bo
 
 ---
 
-### Step 5 — Done
+### Step 6 — Done
 
 Tell the user:
 
@@ -131,7 +153,7 @@ All paths are relative to the repo root (wherever you cloned it). Run `git rev-p
 
 **Never ask the user to run commands — always ask for permission and run them yourself.**
 
-**First, check for and kill any existing processes on Khana's ports** (ask user for confirmation if any are found — see Step 2 in First-Time Setup for the exact wording):
+**First, check for and kill any existing processes on Khana's ports** (ask user for confirmation if any are found — see Step 3 in First-Time Setup for the exact wording):
 
 ```bash
 lsof -ti :47321 -ti :47320 | xargs kill -9 2>/dev/null || true
