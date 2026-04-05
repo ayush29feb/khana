@@ -1,52 +1,97 @@
 # Khana
 
-A personal nutrition tracking system with a CLI for data entry and a web dashboard for visualization. Built around a SQLite database shared between a Python CLI and a Node.js GraphQL server.
+A personal nutrition tracking system designed to be used from your phone via Claude Code. Log meals, track macros, manage your pantry, and view your nutrition data — all through natural conversation.
 
 For architecture, setup, CLI reference, and technical details see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ---
 
-## Getting Started with Claude Code
+## How it works
 
-The fastest way to get Khana running is to open this repo in Claude Code and just ask. Claude has full context via `CLAUDE.md` and can handle setup, running the servers, logging meals, and updating the catalog from photos.
+Khana runs on your Mac and you interact with it remotely from your phone using two tools:
 
-### 1. Open the project
+- **Claude Code** (remote) — you talk to Claude on your phone to log meals, add foods, and query your data. Claude runs the CLI commands on your Mac.
+- **Tailscale** — exposes the dashboard running on your Mac to your phone over a private network, so you can open it in your phone's browser.
+
+```
+Your phone
+  ├── Claude.ai (mobile) ──remote──► Claude Code (Mac) ──► khana CLI ──► food.db
+  └── Safari / Chrome ───Tailscale──► Dashboard (localhost:3000)
+```
+
+---
+
+## Prerequisites
+
+On your Mac:
+- Python 3.11+
+- Node.js 20+
+- [Claude Code](https://claude.ai/code) installed and logged in
+- [Tailscale](https://tailscale.com) installed and connected
+
+On your phone:
+- Claude app (iOS or Android) with Claude Code remote access enabled
+- Tailscale app installed and connected to the same network
+
+---
+
+## First-time setup
+
+### 1. Set up the project
+
+Open the repo in Claude Code on your Mac:
 
 ```bash
 cd food-tracker
 claude
 ```
 
-### 2. First-time setup
-
-Ask Claude:
+Then ask Claude:
 
 > "Set up Khana for the first time — install dependencies, create the database, and start the servers."
 
-Claude will:
-- Install Python dependencies in `cli/.venv`
-- Install Node dependencies in `server/` and `dashboard/`
-- Create `server/.env` pointing to `data/food.db`
-- Initialize the SQLite database
-- Start the GraphQL server in the background (port 4000)
-- Start the dashboard (port 3000)
+Claude will install all dependencies, create `server/.env`, initialize the database, and start both servers.
 
-### 3. Daily use
+### 2. Connect Claude Code to your phone
 
-Once set up, just ask Claude naturally:
+In the Claude app on your phone, enable **Remote Claude Code access** (Settings → Claude Code). This lets you send messages from your phone that run Claude Code on your Mac — including all the `khana` CLI commands.
 
-- **"Start the servers"** — Claude starts both in the background
-- **"Log my breakfast: 2 eggs and toast"** — Claude looks up catalog IDs, confirms the entry, and logs it
-- **"I bought a bag of almonds, add it to the catalog and pantry"** — share a photo of the label and Claude reads it, confirms values, then adds everything
-- **"What did I eat this week?"** — Claude queries the database and summarizes
-- **"Update the protein on Greek Yogurt to 18g"** — Claude confirms and runs the update
+### 3. Expose the dashboard via Tailscale
 
-### 4. Dashboard
+On your Mac, start the dashboard bound to all interfaces:
 
-Open `http://localhost:3000` to see your data visualized. The dashboard is read-only — all data entry goes through Claude + the CLI.
+```bash
+cd dashboard
+npm run dev -- --host
+```
 
-### Tips
+Vite will print your machine's Tailscale IP, e.g.:
 
-- Share a photo of a nutrition label and Claude will read all values from it before adding to the catalog
-- Claude always confirms the full entry before writing anything to the database
-- If you have multiple updates (e.g. correcting several catalog entries), tell Claude upfront — it will collect all changes and confirm once before executing
+```
+  ➜  Local:   http://localhost:3000/
+  ➜  Network: http://100.x.x.x:3000/
+```
+
+On your phone (with Tailscale connected), open `http://100.x.x.x:3000` in your browser. Bookmark it for quick access.
+
+---
+
+## Daily use
+
+With both servers running and Claude Code connected, just open the Claude app on your phone and talk to it:
+
+- **"Log my lunch — grilled chicken bowl with rice and salsa"** — Claude finds the catalog items, calculates macros, confirms, and logs it
+- **"I just bought a bag of pistachios"** — share a photo of the label, Claude reads the macros and servings, confirms, then adds to catalog and pantry
+- **"How much protein have I had today?"** — Claude queries the database and tells you
+- **"Start the servers"** — if they're not running, Claude starts them on your Mac
+
+Then open the dashboard on your phone browser via Tailscale to see your meals, trends, and goal progress visually.
+
+---
+
+## Tips
+
+- Share a photo of a nutrition label directly in the Claude chat — Claude will read all values before adding anything
+- Claude always confirms the full entry before writing to the database
+- If you have multiple catalog updates, list them all first — Claude will confirm everything at once before executing
+- The dashboard date range picker (top-right) filters all views simultaneously
