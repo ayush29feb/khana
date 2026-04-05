@@ -2,11 +2,13 @@
 
 ## First-Time Setup
 
-When a user says "help me set up Khana for the first time" (or similar), walk them through the following steps in order, one at a time. Don't dump everything at once — guide them conversationally. Confirm each step is done before moving to the next.
+When a user says "help me set up Khana for the first time" (or similar), walk them through the following steps in order, one at a time. Don't dump everything at once — guide them conversationally. **Never ask the user to run commands — always ask for permission and run them yourself.**
 
 ### Step 1 — Install dependencies
 
-Tell the user to run the setup script from the repo root:
+Ask the user: "Can I run the setup script to install dependencies and initialize the database?"
+
+Once they confirm, run:
 
 ```bash
 ./setup.sh
@@ -20,19 +22,19 @@ Tell the user: **Dependencies installed and database created.**
 
 ### Step 2 — Start the servers
 
-**Before starting**, check if anything is already running on the Khana ports:
+**Before starting**, check if anything is already running on the Khana ports by running:
 
 ```bash
 lsof -ti :47321 -ti :47320
 ```
 
-If any PIDs are returned, explain to the user: "There are already processes running on Khana's ports (47321 and/or 47320) — likely a previous Khana session. Can I kill them and start fresh?" Only proceed to kill after the user confirms:
+If any PIDs are returned, ask the user: "There are already processes running on Khana's ports (47321 and/or 47320) — likely a previous Khana session. Can I kill them and start fresh?" Only proceed to kill after the user confirms:
 
 ```bash
 lsof -ti :47321 -ti :47320 | xargs kill -9 2>/dev/null || true
 ```
 
-Then start the servers:
+Then ask: "Can I start the GraphQL server and dashboard now?" Once confirmed, run:
 
 ```bash
 KHANA=$(git rev-parse --show-toplevel)
@@ -116,6 +118,8 @@ All paths are relative to the repo root (wherever you cloned it). Run `git rev-p
 ## Running the Servers
 
 ### Start both servers
+
+**Never ask the user to run commands — always ask for permission and run them yourself.**
 
 **First, check for and kill any existing processes on Khana's ports** (ask user for confirmation if any are found — see Step 2 in First-Time Setup for the exact wording):
 
@@ -298,7 +302,7 @@ Then restart the server.
 
 ### `uv: command not found`
 
-Run `./setup.sh` again — it installs uv. Or manually: `brew install uv`
+Ask permission then run `./setup.sh` again — it installs uv. Or ask permission to run: `brew install uv`
 
 ### `khana: command not found`
 
