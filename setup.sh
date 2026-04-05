@@ -57,6 +57,26 @@ for TABLE in food_catalog meals goals pantry_transactions; do
   fi
 done
 
+# ── Shell profile ────────────────────────────────────────────────────
+SHELL_RC=""
+if [ -f "$HOME/.zshrc" ]; then
+  SHELL_RC="$HOME/.zshrc"
+elif [ -f "$HOME/.bashrc" ]; then
+  SHELL_RC="$HOME/.bashrc"
+elif [ -f "$HOME/.bash_profile" ]; then
+  SHELL_RC="$HOME/.bash_profile"
+fi
+
+if [ -n "$SHELL_RC" ]; then
+  if grep -q 'export KHANA=' "$SHELL_RC"; then
+    # Update existing entry
+    sed -i '' "s|export KHANA=.*|export KHANA=\"$KHANA\"|" "$SHELL_RC"
+  else
+    echo "export KHANA=\"$KHANA\"" >> "$SHELL_RC"
+  fi
+  echo "Added KHANA=$KHANA to $SHELL_RC"
+fi
+
 echo ""
 echo "✓ Khana is ready."
 echo ""
