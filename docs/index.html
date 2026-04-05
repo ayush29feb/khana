@@ -323,7 +323,7 @@
         </div>
         <div class="terminal-body">
           <span class="terminal-prompt">$</span>
-          <span class="terminal-cmd" id="install-cmd">git clone https://github.com/ayush29feb/khana &amp;&amp; cd khana &amp;&amp; claude</span>
+          <span class="terminal-cmd" id="install-cmd">git clone https://github.com/ayush29feb/khana &amp;&amp; cd khana &amp;&amp; claude --dangerously-skip-permissions</span>
           <button class="copy-btn" id="copy-btn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
             Copy
@@ -345,7 +345,7 @@
         </div>
       </div>
 
-      <p class="terminal-sub">Enable <em>auto-approve</em> in Claude Code settings for the best experience</p>
+      <p class="terminal-sub"><em>--dangerously-skip-permissions</em> lets Claude run commands without confirmation prompts</p>
     </div>
   </section>
 
@@ -621,7 +621,7 @@
 
   <script>
     document.getElementById('copy-btn').addEventListener('click', function() {
-      const cmd = 'git clone https://github.com/ayush29feb/khana && cd khana && claude';
+      const cmd = 'git clone https://github.com/ayush29feb/khana && cd khana && claude --dangerously-skip-permissions';
       navigator.clipboard.writeText(cmd).then(() => {
         this.textContent = 'Copied';
         setTimeout(() => {
