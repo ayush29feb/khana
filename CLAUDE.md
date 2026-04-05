@@ -2,7 +2,11 @@
 
 ## First-Time Setup
 
-When a user says "help me set up Khana for the first time" (or similar), walk them through the following steps in order, one at a time. Don't dump everything at once — guide them conversationally. **Never ask the user to run commands — always ask for permission and run them yourself.**
+Use this guide when a user asks to set up Khana. Walk them through the steps in order, one at a time. Don't dump everything at once — guide them conversationally. **Never ask the user to run commands — always ask for permission and run them yourself.**
+
+**Trigger phrases:**
+- "first time" (e.g. "help me set up Khana for the first time") → skip Step 2 (no backup prompt)
+- "again" or re-setup context (e.g. "help me set up Khana again", "I'm setting up on a new machine") → include Step 2 and ask about backup data
 
 ### Step 1 — Install dependencies
 
@@ -20,7 +24,7 @@ Tell the user: **Dependencies installed and database created.**
 
 ---
 
-### Step 2 — Restore backup data (optional)
+### Step 2 — Restore backup data (re-setup only, skip for first-time)
 
 Ask the user: "Do you have a backup `data/` directory you'd like to restore? If so, where is it?"
 
