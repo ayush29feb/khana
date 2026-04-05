@@ -5,3 +5,10 @@ cli/dist/
 *.pyc
 .env
 data
+
+# Generated files
+dashboard/src/**/__generated__/
+server/dist/
+server/node_modules/
+dashboard/node_modules/
+.DS_Store
