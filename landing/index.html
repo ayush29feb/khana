@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Khana — Personal Nutrition Tracking</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f0f0f;
+      --bg-card: #1a1a1a;
+      --border: #2a2a2a;
+      --text: #f0f0f0;
+      --text-2: #a0a0a0;
+      --text-3: #606060;
+      --accent: #4ade80;
+      --accent-dim: rgba(74, 222, 128, 0.12);
+      --amber: #fbbf24;
+      --orange: #f97316;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── Nav ── */
+    nav {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-link {
+      font-size: 13px;
+      color: var(--text-2);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.15s;
+    }
+    .nav-link:hover { color: var(--text); }
+    .nav-link svg { width: 16px; height: 16px; }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 80px 0 64px;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-dim);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 99px;
+      border: 1px solid rgba(74, 222, 128, 0.2);
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .hero h1 {
+      font-size: clamp(40px, 8vw, 64px);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      margin-bottom: 20px;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero p {
+      font-size: 18px;
+      color: var(--text-2);
+      max-width: 480px;
+      margin: 0 auto 36px;
+      line-height: 1.6;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .btn:hover { opacity: 0.85; transform: translateY(-1px); }
+    .btn-primary { background: var(--accent); color: #0f0f0f; }
+    .btn-secondary { background: var(--bg-card); color: var(--text); border: 1px solid var(--border); }
+
+    /* ── How it works ── */
+    .section { padding: 64px 0; border-top: 1px solid var(--border); }
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 12px;
+    }
+    .section h2 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+    .section > .container > p {
+      color: var(--text-2);
+      font-size: 16px;
+      margin-bottom: 40px;
+    }
+
+    .flow {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .flow-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+    .flow-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .flow-item h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .flow-item p { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+
+    /* ── Features ── */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .feature {
+      padding: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+    .feature-icon {
+      font-size: 22px;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .feature h3 { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+    .feature p { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+
+    /* ── Macro strip ── */
+    .macro-strip {
+      display: flex;
+      gap: 8px;
+      padding: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+    .macro {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+      min-width: 60px;
+    }
+    .macro-val { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .macro-label { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; }
+    .macro-val.protein { color: var(--accent); }
+    .macro-val.carbs { color: var(--amber); }
+    .macro-val.fat { color: var(--orange); }
+    .macro-val.calories { color: var(--text-2); }
+
+    /* ── Chat demo ── */
+    .chat {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .bubble {
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .bubble.user {
+      align-self: flex-end;
+      background: var(--accent);
+      color: #0f0f0f;
+      font-weight: 500;
+      border-bottom-right-radius: 4px;
+    }
+    .bubble.claude {
+      align-self: flex-start;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-bottom-left-radius: 4px;
+    }
+    .bubble.claude code {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 12px;
+      background: rgba(255,255,255,0.06);
+      padding: 2px 5px;
+      border-radius: 4px;
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+    }
+    footer p { font-size: 13px; color: var(--text-3); }
+    footer a { color: var(--text-2); }
+    footer a:hover { color: var(--text); }
+
+    @media (max-width: 480px) {
+      .hero { padding: 48px 0 40px; }
+      .features { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <div class="nav-logo">kha<span>na</span></div>
+      <a class="nav-link" href="https://github.com/ayush29feb/khana" target="_blank">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.744 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+        View on GitHub
+      </a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge">Open Source</div>
+      <h1>Track what you eat.<br /><span>Talk to it.</span></h1>
+      <p>Khana is a personal nutrition tracker you control from your phone by chatting with Claude. No manual data entry — just conversation.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://github.com/ayush29feb/khana" target="_blank">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.744 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+          Get started on GitHub
+        </a>
+        <a class="btn btn-secondary" href="https://github.com/ayush29feb/khana#readme" target="_blank">Read the docs</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-label">How it works</div>
+      <h2>Your phone. Your voice. Your data.</h2>
+      <p>Khana runs on your Mac and you interact with it from your phone via Claude Code — no app to install, no account to create.</p>
+      <div class="flow">
+        <div class="flow-item">
+          <div class="flow-num">1</div>
+          <div>
+            <h3>Open Claude on your phone</h3>
+            <p>Connect to Claude Code running on your Mac via remote access. Claude has full context about your catalog, pantry, and goals.</p>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="flow-num">2</div>
+          <div>
+            <h3>Just talk</h3>
+            <p>Tell Claude what you ate, share a photo of a nutrition label, or ask how you're tracking against your goals. Claude handles the rest.</p>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="flow-num">3</div>
+          <div>
+            <h3>View your data on the dashboard</h3>
+            <p>Open the web dashboard on your phone browser via Tailscale. See meals, trends, pantry inventory, and goal progress — all visualized.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-label">Example</div>
+      <h2>Logging a meal is a conversation.</h2>
+      <p>No forms. No dropdowns. Just say what you had.</p>
+      <div class="chat">
+        <div class="bubble user">Log my lunch — yogurt bowl with 280g Nancy's yogurt, a serving of granola, and 11g chia seeds</div>
+        <div class="bubble claude">
+          Here's what I'll log:<br /><br />
+          <strong>Yogurt Bowl</strong><br />
+          · Nancy's Whole Milk Yogurt ×2.8 srv → 34g P<br />
+          · Almond Granola ×1 srv → 4g P<br />
+          · Chia Seeds ×0.46 srv → 2g P<br /><br />
+          <strong>Total: 40g P · 58g C · 18g F · 560 kcal</strong><br /><br />
+          Confirm?
+        </div>
+        <div class="bubble user">Yes</div>
+        <div class="bubble claude">Logged ✓ — <code>meal #31</code> saved, pantry updated.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-label">Features</div>
+      <h2>Everything you need. Nothing you don't.</h2>
+      <p>Built for daily use — fast to log, easy to review, yours to own.</p>
+      <div class="features">
+        <div class="feature">
+          <span class="feature-icon">📷</span>
+          <h3>Photo label reading</h3>
+          <p>Share a photo of any nutrition label. Claude reads the macros and confirms before adding.</p>
+        </div>
+        <div class="feature">
+          <span class="feature-icon">🥫</span>
+          <h3>Pantry tracking</h3>
+          <p>Log groceries and Khana tracks what you have. Home meals automatically deduct from inventory.</p>
+        </div>
+        <div class="feature">
+          <span class="feature-icon">🎯</span>
+          <h3>Goal pacing</h3>
+          <p>Set macro targets for a date range. See daily progress and whether you're on pace.</p>
+        </div>
+        <div class="feature">
+          <span class="feature-icon">📊</span>
+          <h3>Trends</h3>
+          <p>Daily macro breakdown charts over any date range. Spot patterns in your eating habits.</p>
+        </div>
+        <div class="feature">
+          <span class="feature-icon">🔒</span>
+          <h3>Fully local</h3>
+          <p>SQLite database on your Mac. No cloud, no subscription, no data leaving your machine.</p>
+        </div>
+        <div class="feature">
+          <span class="feature-icon">📱</span>
+          <h3>Mobile-first</h3>
+          <p>Dashboard accessible on your phone via Tailscale. Log from anywhere with the Claude app.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-label">Stack</div>
+      <h2>Simple and open.</h2>
+      <p>Three components, one SQLite file, no external services required.</p>
+      <div class="flow">
+        <div class="flow-item">
+          <div class="flow-num" style="background: rgba(251,191,36,0.12); color: var(--amber);">⌘</div>
+          <div>
+            <h3>CLI — Python + Typer</h3>
+            <p>All data entry. Runs locally, driven by Claude Code. The <code style="font-size:12px;background:rgba(255,255,255,0.06);padding:2px 5px;border-radius:4px;">khana</code> command handles catalog, pantry, meals, and goals.</p>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="flow-num" style="background: rgba(249,115,22,0.12); color: var(--orange);">⬡</div>
+          <div>
+            <h3>Server — Node.js + GraphQL</h3>
+            <p>Reads the SQLite database, serves the dashboard API, and handles image uploads and static file serving.</p>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="flow-num" style="background: rgba(74,222,128,0.12); color: var(--accent);">◈</div>
+          <div>
+            <h3>Dashboard — React + Relay + Vite</h3>
+            <p>Data visualization. Accessible on your phone via Tailscale. Read-only — all writes go through Claude.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>Built by <a href="https://ayushsaraf.com">Ayush Saraf</a> · <a href="https://github.com/ayush29feb/khana">github.com/ayush29feb/khana</a></p>
+    </div>
+  </footer>
+
+</body>
+</html>
