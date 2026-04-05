@@ -15,31 +15,48 @@
 
 ## Running the Servers
 
-### GraphQL server (port 4000)
+### Starting from inside a Claude Code session
+
+The user can ask Claude to start the servers directly. Use the Bash tool to launch both in the background:
 
 ```bash
-cd /Users/ayush29feb/.openclaw/food-tracker/server
-npm start   # production build (dist/index.js)
-# or
-npm run dev # tsx watch — auto-restarts on file changes
+# Start GraphQL server
+cd /Users/ayush29feb/.openclaw/food-tracker/server && npm start &> /tmp/khana-server.log &
+
+# Start dashboard (--host exposes via Tailscale)
+cd /Users/ayush29feb/.openclaw/food-tracker/dashboard && npm run dev -- --host &> /tmp/khana-dashboard.log &
 ```
 
-Run in background: append `&> /tmp/khana-server.log &`
-
-### Dashboard (port 3000)
+Then verify both came up:
 
 ```bash
-cd /Users/ayush29feb/.openclaw/food-tracker/dashboard
-npm run dev -- --host   # --host binds to all interfaces for Tailscale access
+sleep 2 && lsof -i :4000 -i :3000 | grep LISTEN
 ```
 
-Run in background: append `&> /tmp/khana-dashboard.log &`
+Once running, tell the user:
+- GraphQL server: `http://localhost:4000/graphql`
+- Dashboard: open `http://<tailscale-ip>:3000` on your phone (find the IP in Tailscale or from the dashboard log: `cat /tmp/khana-dashboard.log`)
+
+### If the user asks to start servers from their phone
+
+They should type this in the Claude chat (the `!` prefix runs it directly in the Claude Code session terminal):
+
+```
+! cd /Users/ayush29feb/.openclaw/food-tracker/server && npm start &> /tmp/khana-server.log &
+! cd /Users/ayush29feb/.openclaw/food-tracker/dashboard && npm run dev -- --host &> /tmp/khana-dashboard.log &
+```
 
 ### Check if servers are running
 
 ```bash
-lsof -i :4000   # GraphQL server
-lsof -i :3000   # Dashboard
+lsof -i :4000 -i :3000 | grep LISTEN
+```
+
+### View server logs
+
+```bash
+tail -f /tmp/khana-server.log       # GraphQL server logs
+tail -f /tmp/khana-dashboard.log    # Dashboard logs (shows Tailscale IP)
 ```
 
 ### Kill servers
