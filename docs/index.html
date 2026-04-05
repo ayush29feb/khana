@@ -300,6 +300,36 @@
     .pantry-row .amt { font-weight: 600; font-variant-numeric: tabular-nums; }
     .pantry-row .protein { font-size: 12px; color: var(--text-3); margin-left: 8px; }
 
+    /* ── Phone frames ── */
+    .phone-row {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .phone-frame {
+      flex: 1;
+      max-width: 200px;
+      background: #1a1a1a;
+      border: 1px solid #2e2e2e;
+      border-radius: 28px;
+      padding: 10px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+    }
+    .phone-frame img {
+      width: 100%;
+      border-radius: 20px;
+      display: block;
+    }
+    .phone-caption {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-3);
+      margin-top: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
     /* ── Traits ── */
     .traits {
       display: flex;
@@ -452,76 +482,26 @@
       <div class="flow-step">Checking in</div>
       <h2>Open the dashboard. See where you stand.</h2>
       <p class="lead">
-        Not every check-in needs a conversation. Open the Khana dashboard on your phone and see today's progress, how your macros compare to your goal, and what's left in your pantry.
+        Not every check-in needs a conversation. Open the Khana dashboard on your phone and see today's goal progress, your meal history, and what's left in your pantry — all visual, no typing required.
       </p>
-
-      <div class="dash-card" style="margin-bottom: 20px;">
-        <div class="dash-header">
-          <div class="title">Today &nbsp;·&nbsp; April Cut</div>
-          <div class="date">Apr 5, 2026</div>
-        </div>
-        <div class="dash-body">
-          <div class="dash-goal-label">Macros logged today</div>
-          <div class="dash-macros">
-            <div class="dash-macro dm-protein">
-              <div class="dm-val">118</div>
-              <div class="dm-label">Protein</div>
-              <div class="dm-sub">of 160g</div>
-            </div>
-            <div class="dash-macro dm-carbs">
-              <div class="dm-val">142</div>
-              <div class="dm-label">Carbs</div>
-              <div class="dm-sub">of 200g</div>
-            </div>
-            <div class="dash-macro dm-fat">
-              <div class="dm-val">34</div>
-              <div class="dm-label">Fat</div>
-              <div class="dm-sub">of 60g</div>
-            </div>
-            <div class="dash-macro dm-kcal">
-              <div class="dm-val">1,490</div>
-              <div class="dm-label">kcal</div>
-              <div class="dm-sub">of 2,200</div>
-            </div>
+      <div class="phone-row">
+        <div>
+          <div class="phone-frame">
+            <img src="images/home.png" alt="Khana Home — goal progress" />
           </div>
-          <div class="dash-bar-row">
-            <div class="dash-bar-label" style="color:var(--accent);font-size:11px;">Protein</div>
-            <div class="dash-bar-track"><div class="dash-bar-fill" style="width:74%;background:var(--accent);"></div></div>
-            <div class="dash-bar-pct">74%</div>
+          <div class="phone-caption">Goals</div>
+        </div>
+        <div>
+          <div class="phone-frame">
+            <img src="images/meals.png" alt="Khana Meals — meal history" />
           </div>
-          <div class="dash-bar-row">
-            <div class="dash-bar-label" style="color:var(--amber);font-size:11px;">Carbs</div>
-            <div class="dash-bar-track"><div class="dash-bar-fill" style="width:71%;background:var(--amber);"></div></div>
-            <div class="dash-bar-pct">71%</div>
+          <div class="phone-caption">Meals</div>
+        </div>
+        <div>
+          <div class="phone-frame">
+            <img src="images/pantry.png" alt="Khana Pantry — inventory" />
           </div>
-          <div class="dash-bar-row">
-            <div class="dash-bar-label" style="color:var(--orange);font-size:11px;">Fat</div>
-            <div class="dash-bar-track"><div class="dash-bar-fill" style="width:57%;background:var(--orange);"></div></div>
-            <div class="dash-bar-pct">57%</div>
-          </div>
-        </div>
-        <div class="dash-footer"><span class="on-pace">On pace</span> &nbsp;·&nbsp; 3 meals logged &nbsp;·&nbsp; 42g protein to go</div>
-      </div>
-
-      <div class="pantry-card">
-        <div class="pantry-row" style="border-bottom: 1px solid var(--border); padding: 10px 18px; font-size:11px; color: var(--text-3); text-transform:uppercase; letter-spacing:0.08em;">
-          <span>Pantry</span><span>Remaining</span>
-        </div>
-        <div class="pantry-row">
-          <span class="name">Trader Joe's Pistachios</span>
-          <span><span class="amt">6.5</span><span class="protein"> srv &nbsp;·&nbsp; 39g P</span></span>
-        </div>
-        <div class="pantry-row">
-          <span class="name">Fage Total 0%</span>
-          <span><span class="amt">4.2</span><span class="protein"> srv &nbsp;·&nbsp; 50g P</span></span>
-        </div>
-        <div class="pantry-row">
-          <span class="name">Chicken Breast</span>
-          <span><span class="amt">3.0</span><span class="protein"> srv &nbsp;·&nbsp; 81g P</span></span>
-        </div>
-        <div class="pantry-row">
-          <span class="name">Whey Protein</span>
-          <span><span class="amt">12</span><span class="protein"> srv &nbsp;·&nbsp; 300g P</span></span>
+          <div class="phone-caption">Pantry</div>
         </div>
       </div>
     </div>
