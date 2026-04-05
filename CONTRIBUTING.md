@@ -281,7 +281,9 @@ import puppeteer from 'puppeteer';
 import { mkdir } from 'fs/promises';
 import path from 'path';
 
-const OUT = '/Users/ayush29feb/.openclaw/food-tracker/docs/images';
+const KHANA = process.env.KHANA;
+if (!KHANA) throw new Error('KHANA environment variable is not set');
+const OUT = path.join(KHANA, 'docs/images');
 await mkdir(OUT, { recursive: true });
 
 const browser = await puppeteer.launch({
@@ -312,7 +314,7 @@ await browser.close();
 ### Commit the updated images
 
 ```bash
-cd /Users/ayush29feb/.openclaw/food-tracker
+cd "$(git rev-parse --show-toplevel)"
 git add docs/images/
 git commit -m "docs: refresh landing page screenshots"
 git push

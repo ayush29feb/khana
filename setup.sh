@@ -29,9 +29,9 @@ cd "$KHANA/dashboard" && npm install
 
 # ── server/.env ──────────────────────────────────────────────────────
 ENV_FILE="$KHANA/server/.env"
+mkdir -p "$KHANA/data"
 if [ ! -f "$ENV_FILE" ]; then
   echo "Creating server/.env..."
-  mkdir -p "$KHANA/data"
   echo "DATABASE_URL=\"file://$KHANA/data/food.db\"" > "$ENV_FILE"
 fi
 
@@ -41,7 +41,21 @@ cd "$KHANA/dashboard" && npm run relay
 
 # ── Init DB ──────────────────────────────────────────────────────────
 echo "Initializing database..."
-cd "$KHANA/cli" && uv run khana catalog list > /dev/null
+cd "$KHANA/cli" && KHANA="$KHANA" uv run khana catalog list > /dev/null
+
+# ── Verify DB ────────────────────────────────────────────────────────
+DB_FILE="$KHANA/data/food.db"
+if [ ! -f "$DB_FILE" ]; then
+  echo "✗ Database file was not created at $DB_FILE"
+  exit 1
+fi
+TABLES=$(sqlite3 "$DB_FILE" ".tables" 2>/dev/null || true)
+for TABLE in food_catalog meals goals pantry_transactions; do
+  if ! echo "$TABLES" | grep -qw "$TABLE"; then
+    echo "✗ Missing table '$TABLE' in $DB_FILE"
+    exit 1
+  fi
+done
 
 echo ""
 echo "✓ Khana is ready."

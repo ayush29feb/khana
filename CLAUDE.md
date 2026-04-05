@@ -262,6 +262,17 @@ khana catalog update <ID> --protein 6 --carbs 2 --fat 4.5 --calories 70
 
 Check `server/.env` — `DATABASE_URL` must be `file:///absolute/path/to/data/food.db`. A relative path silently creates a new empty DB.
 
+### Dashboard blank / `GoalsViewQuery` Unexpected error
+
+The database file exists but has no tables. Fix by re-running the CLI init (which creates tables via SQLAlchemy) then restarting the server:
+
+```bash
+KHANA=$(git rev-parse --show-toplevel)
+cd "$KHANA/cli" && KHANA="$KHANA" uv run khana catalog list > /dev/null
+```
+
+Then restart the server.
+
 ### `uv: command not found`
 
 Run `./setup.sh` again — it installs uv. Or manually: `brew install uv`
@@ -314,7 +325,8 @@ import puppeteer from 'puppeteer';
 import { mkdir } from 'fs/promises';
 import path from 'path';
 
-const KHANA = process.env.KHANA || (await import('child_process')).execSync('git rev-parse --show-toplevel').toString().trim();
+const KHANA = process.env.KHANA;
+if (!KHANA) throw new Error('KHANA environment variable is not set');
 const OUT = path.join(KHANA, 'docs/images');
 await mkdir(OUT, { recursive: true });
 
