@@ -172,22 +172,18 @@
       max-width: 960px; margin: 0 auto; padding: 0 20px;
     }
     /* ── Terminal block ── */
-    .terminal-wrap {
-      margin-top: 32px; max-width: 560px; margin-left: auto; margin-right: auto;
-    }
+    .terminal-wrap { margin-top: 32px; }
     .terminal {
       background: #0d1117; border-radius: 10px;
       overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,.18);
     }
     .terminal-header {
       display: flex; align-items: center; gap: 10px;
-      padding: 11px 14px; background: #161b22;
+      padding: 10px 14px; background: #161b22;
       border-bottom: 1px solid #21262d;
     }
     .tl { display: flex; gap: 6px; }
-    .tl span {
-      width: 12px; height: 12px; border-radius: 50%;
-    }
+    .tl span { width: 12px; height: 12px; border-radius: 50%; }
     .tl .r { background: #ff5f57; }
     .tl .y { background: #febc2e; }
     .tl .g { background: #28c840; }
@@ -197,23 +193,58 @@
     }
     .terminal-body {
       display: flex; align-items: center; gap: 10px;
-      padding: 16px 18px;
+      padding: 14px 18px;
     }
-    .terminal-prompt { color: #3fb950; font-family: 'SF Mono','Fira Code',monospace; font-size: 14px; font-weight: 600; flex-shrink: 0; }
-    .terminal-cmd { color: #e6edf3; font-family: 'SF Mono','Fira Code',monospace; font-size: 14px; flex: 1; word-break: break-all; }
+    .terminal-prompt { color: #3fb950; font-family: 'SF Mono','Fira Code',monospace; font-size: 13px; font-weight: 600; flex-shrink: 0; }
+    .terminal-cmd { color: #e6edf3; font-family: 'SF Mono','Fira Code',monospace; font-size: 13px; flex: 1; }
     .copy-btn {
       display: inline-flex; align-items: center; gap: 5px;
       background: none; border: 1px solid #30363d; border-radius: 6px;
       color: #8b949e; font-size: 12px; font-weight: 500;
       padding: 4px 10px; cursor: pointer; flex-shrink: 0;
-      transition: color 0.15s, border-color 0.15s;
-      font-family: inherit;
+      transition: color 0.15s, border-color 0.15s; font-family: inherit;
     }
     .copy-btn:hover { color: #e6edf3; border-color: #8b949e; }
     .copy-btn svg { width: 13px; height: 13px; }
+
+    /* ── Claude Code fake session ── */
+    .cc-session {
+      margin-top: 12px;
+      background: #13110a; border-radius: 10px; overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,.22);
+      font-family: 'SF Mono','Fira Code',monospace; font-size: 12px;
+    }
+    .cc-titlebar {
+      padding: 7px 14px; border-bottom: 1px solid #2a2510;
+      color: #d97706; font-size: 11px; letter-spacing: 0.02em;
+    }
+    .cc-body { padding: 14px 18px; display: flex; flex-direction: column; gap: 10px; }
+    .cc-user {
+      display: flex; align-items: flex-start; gap: 8px;
+    }
+    .cc-prompt-sym { color: #d97706; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .cc-user-text { color: #fde68a; }
+    .cc-response { color: #a3a380; line-height: 1.65; padding-left: 18px; }
+    .cc-response strong { color: #d4d4aa; font-weight: 600; }
+    .cc-response .cc-step {
+      display: flex; gap: 8px; margin-top: 5px;
+    }
+    .cc-step-num { color: #d97706; flex-shrink: 0; }
+    .cc-footer {
+      padding: 7px 14px; border-top: 1px solid #2a2510;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .cc-footer-left { color: #d97706; font-size: 11px; }
+    .cc-footer-right { color: #4a4a3a; font-size: 11px; }
+    .cc-cursor {
+      display: inline-block; width: 8px; height: 13px;
+      background: #d97706; vertical-align: middle; margin-left: 2px;
+      animation: blink 1.1s step-end infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
     .terminal-sub {
-      text-align: center; margin-top: 14px;
-      font-size: 13px; color: var(--text-3);
+      margin-top: 10px; font-size: 12px; color: var(--text-3);
     }
     .terminal-sub em { font-style: normal; color: var(--text-2); }
 
@@ -276,6 +307,7 @@
     <h1>Log food by<br /><em>talking to Claude.</em></h1>
     <p class="hero-sub">Open Claude on your phone, say what you bought or ate, and Khana handles the rest — catalog, pantry, macros, goals.</p>
     <div class="terminal-wrap">
+
       <div class="terminal">
         <div class="terminal-header">
           <div class="tl"><span class="r"></span><span class="y"></span><span class="g"></span></div>
@@ -284,13 +316,37 @@
         <div class="terminal-body">
           <span class="terminal-prompt">$</span>
           <span class="terminal-cmd" id="install-cmd">git clone https://github.com/ayush29feb/khana && cd khana && claude</span>
-          <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('install-cmd').textContent).then(()=>{this.textContent='Copied';setTimeout(()=>{this.innerHTML='<svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><rect x=\'9\' y=\'9\' width=\'13\' height=\'13\' rx=\'2\'/><path d=\'M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1\'/></svg>Copy'},1500)})">
+          <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('install-cmd').textContent).then(()=>{this.innerHTML='Copied';setTimeout(()=>{this.innerHTML='<svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><rect x=\'9\' y=\'9\' width=\'13\' height=\'13\' rx=\'2\'/><path d=\'M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1\'/></svg> Copy'},1500)})">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
             Copy
           </button>
         </div>
       </div>
-      <p class="terminal-sub">Then tell Claude: <em>"help me set this up"</em> &nbsp;·&nbsp; Enable auto-approve for the best experience</p>
+
+      <div class="cc-session">
+        <div class="cc-titlebar">── Claude Code v2.x ──</div>
+        <div class="cc-body">
+          <div class="cc-user">
+            <span class="cc-prompt-sym">&gt;</span>
+            <span class="cc-user-text">help me set up Khana for the first time</span>
+          </div>
+          <div class="cc-response">
+            <strong>Sure — I'll walk you through everything.</strong><br /><br />
+            <div class="cc-step"><span class="cc-step-num">1/4</span><span>Installing dependencies (Python, Node, dashboard)…</span></div>
+            <div class="cc-step"><span class="cc-step-num">2/4</span><span>Creating the database and starting both servers…</span></div>
+            <div class="cc-step"><span class="cc-step-num">3/4</span><span>Servers are up. Enable remote access in Claude app → Settings → Claude Code, then come back.</span></div>
+            <div class="cc-step"><span class="cc-step-num">4/4</span><span>Install Tailscale on your Mac and phone, sign in with the same account — I'll give you the dashboard URL.</span></div>
+            <br />
+            <strong>You're all set.</strong> Open Claude on your phone and start logging.<span class="cc-cursor"></span>
+          </div>
+        </div>
+        <div class="cc-footer">
+          <span class="cc-footer-left">▶▶ auto-approve on</span>
+          <span class="cc-footer-right">khana/</span>
+        </div>
+      </div>
+
+      <p class="terminal-sub">Enable <em>auto-approve</em> in Claude Code settings for the best experience</p>
     </div>
   </section>
 
