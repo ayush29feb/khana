@@ -87,6 +87,58 @@ python3 -m food_tracker.main <command>
 
 ---
 
+## Tailscale Setup (Access Dashboard on Phone)
+
+Tailscale creates a private network between your Mac and phone so you can open the dashboard in your phone's browser without exposing it to the internet.
+
+### Install Tailscale
+
+**Mac:**
+1. Download from [tailscale.com/download](https://tailscale.com/download) or: `brew install --cask tailscale`
+2. Open Tailscale from the menu bar and sign in (create a free account if needed)
+3. Your Mac will get a Tailscale IP like `100.x.x.x`
+
+**iPhone/Android:**
+1. Install the Tailscale app from the App Store / Play Store
+2. Sign in with the same account
+3. Toggle Tailscale on
+
+Once both devices show as connected in the Tailscale dashboard, they can reach each other.
+
+### Find your Mac's Tailscale IP
+
+```bash
+tailscale ip -4
+```
+
+Or check the Tailscale menu bar icon on your Mac — it shows your IP.
+
+### Start the dashboard with Tailscale access
+
+The `--host` flag is required — without it Vite only binds to `localhost` and your phone can't reach it:
+
+```bash
+cd /Users/ayush29feb/.openclaw/food-tracker/dashboard
+npm run dev -- --host
+```
+
+Vite will print something like:
+
+```
+  ➜  Local:   http://localhost:3000/
+  ➜  Network: http://100.x.x.x:3000/
+```
+
+Open the Network URL on your phone browser. Bookmark it.
+
+### Troubleshooting Tailscale
+
+- **Phone can't reach the dashboard**: make sure Tailscale is toggled ON on both devices and both show as connected at [login.tailscale.com](https://login.tailscale.com)
+- **Dashboard loads but GraphQL fails**: the GraphQL server (port 4000) is not proxied to the phone — it only needs to run on the Mac. The dashboard talks to it via the Vite proxy on the same machine.
+- **IP changed**: Tailscale IPs are stable but can change. Re-run `tailscale ip -4` and update your bookmark.
+
+---
+
 ## First-Time Setup
 
 If running Khana on a fresh machine:
