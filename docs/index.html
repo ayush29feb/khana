@@ -171,33 +171,50 @@
     .flow-inner-wide {
       max-width: 960px; margin: 0 auto; padding: 0 20px;
     }
-    .malleable-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 20px;
-    }
-    .mod-card {
+    /* ── Setup steps ── */
+    .setup-block {
       background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 16px;
-      box-shadow: var(--shadow);
+      border-radius: var(--radius); box-shadow: var(--shadow);
+      overflow: hidden; margin-top: 32px; max-width: 520px; margin-left: auto; margin-right: auto;
     }
-    .mod-card .mod-eyebrow {
-      font-size: 10px; font-weight: 700; color: var(--text-3);
-      text-transform: uppercase; letter-spacing: 0.08em;
-      margin-bottom: 6px;
+    .setup-step {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 14px 18px; border-bottom: 1px solid var(--border-light);
     }
-    .mod-card .mod-prompt {
-      font-size: 13px; color: var(--text);
-      font-style: italic; margin-bottom: 8px;
-      padding: 8px 10px;
-      background: var(--accent-bg);
-      border-radius: var(--radius-sm);
-      line-height: 1.5;
+    .setup-step:last-child { border-bottom: none; }
+    .setup-num {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--accent-bg); color: var(--accent-text);
+      font-size: 11px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
     }
-    .mod-card .mod-result {
-      font-size: 12px; color: var(--text-2); line-height: 1.6;
+    .setup-step p { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+    .setup-step p strong { color: var(--text); }
+    .setup-step code {
+      font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px;
+      background: var(--bg); padding: 2px 6px; border-radius: 4px;
+      border: 1px solid var(--border); display: inline-block; margin-top: 4px;
+      color: var(--text);
     }
+    .setup-note {
+      padding: 10px 18px;
+      background: var(--amber-bg); border-top: 1px solid #fde68a;
+      font-size: 12px; color: #92400e; line-height: 1.5;
+    }
+
+    /* ── Two-col inside wide section ── */
+    .grow-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 32px; margin-top: 24px; align-items: start;
+    }
+    .grow-col h3 {
+      font-size: 15px; font-weight: 700; margin-bottom: 4px; letter-spacing: -0.01em;
+    }
+    .grow-col .grow-desc {
+      font-size: 13px; color: var(--text-2); line-height: 1.6; margin-bottom: 16px;
+    }
+
     /* ── Traits ── */
     .traits-section { border-top: 1px solid var(--border); padding: 36px 0 52px; }
     .traits-inner { max-width: 960px; margin: 0 auto; padding: 0 20px; }
@@ -223,7 +240,7 @@
       .flow-inner { grid-template-columns: 1fr; gap: 24px; }
       .phone-frame { position: static; max-width: 260px; margin: 0 auto; }
       .flow-visual { order: -1; }
-      .malleable-grid { grid-template-columns: 1fr; }
+      .grow-grid { grid-template-columns: 1fr; }
       .hero { padding: 48px 20px 40px; }
     }
   </style>
@@ -244,12 +261,30 @@
   <section class="hero">
     <h1>Log food by<br /><em>talking to Claude.</em></h1>
     <p class="hero-sub">Open Claude on your phone, say what you bought or ate, and Khana handles the rest — catalog, pantry, macros, goals.</p>
-    <div class="hero-actions">
-      <a class="btn btn-primary" href="https://github.com/ayush29feb/khana" target="_blank">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.744 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
-        Get started on GitHub
+    <div class="setup-block">
+      <div class="setup-step">
+        <div class="setup-num">1</div>
+        <p>
+          <strong>Clone the repo and open it in Claude Code</strong><br />
+          <code>git clone https://github.com/ayush29feb/khana && cd khana && claude</code>
+        </p>
+      </div>
+      <div class="setup-step">
+        <div class="setup-num">2</div>
+        <p><strong>Enable remote access on your phone</strong><br />Open the Claude app → Settings → Claude Code → enable remote access. This lets you control Claude on your Mac from your phone.</p>
+      </div>
+      <div class="setup-step">
+        <div class="setup-num">3</div>
+        <p><strong>Ask Claude to set everything up</strong><br />Open Claude on your phone and say: <em>"help me set up Khana for the first time."</em> Claude installs everything, creates the database, and starts the servers.</p>
+      </div>
+      <div class="setup-note">
+        💡 For the best experience, enable <strong>auto-approve</strong> in Claude Code settings — so Claude can make changes without asking each time.
+      </div>
+    </div>
+    <div style="text-align:center; margin-top: 16px;">
+      <a href="https://github.com/ayush29feb/khana" target="_blank" style="font-size: 13px; color: var(--text-3); text-decoration: underline; text-underline-offset: 3px;">
+        View on GitHub
       </a>
-      <a class="btn btn-secondary" href="https://github.com/ayush29feb/khana#readme" target="_blank">Read the docs</a>
     </div>
   </section>
 
@@ -438,29 +473,34 @@
     <div class="flow-inner-wide">
       <div class="flow-eyebrow">It grows with you</div>
       <h2>This isn't an app. It's Claude with your data.</h2>
-      <p class="lead" style="max-width: 640px;">Because Khana runs inside a Claude session, Claude isn't just a front-end for a food log — it's a thinking partner that knows your history. It remembers what you tell it, learns how you like to work, and can change how the whole thing behaves when you ask. Not everything has to be perfectly structured. Claude handles the fuzzy stuff too.</p>
+      <p class="lead" style="max-width: 640px;">Because Khana runs inside a Claude session, Claude isn't just a front-end for a food log — it's a thinking partner that knows everything about your eating. You can teach it how you like to work, and you can ask it to change anything about the dashboard. It's your tool to shape.</p>
 
-      <div class="malleable-grid">
-        <div class="mod-card">
-          <div class="mod-eyebrow">It remembers your preferences</div>
-          <div class="mod-prompt">"I'm vegetarian and I don't like mushrooms. Always keep that in mind when suggesting meals."</div>
-          <div class="mod-result">From that point on, every meal suggestion, every recipe idea, every shopping recommendation filters around this. You never have to say it again.</div>
+      <div class="grow-grid">
+
+        <div class="grow-col">
+          <h3>Teach it how you work</h3>
+          <p class="grow-desc">Tell Claude your preferences and habits once. It carries them forward into every future conversation — meal suggestions, shopping lists, everything.</p>
+          <div class="chat">
+            <div class="bubble user">I'm vegetarian. When suggesting meals, always lead with whatever gets me closest to my protein goal using what's in my pantry.</div>
+            <div class="bubble claude">Got it — I'll filter out meat and always sort suggestions by how much they help with your current protein gap. I'll keep this in mind going forward.</div>
+            <div class="bubble user">Also — I had that chana masala at my friend's place on Saturday. I'm not sure of the exact macros but it felt pretty filling, probably high protein.</div>
+            <div class="bubble claude">Logged Saturday dinner as "Chana Masala (estimate)" — ~18g P, ~45g C, ~8g F. Flagged as estimated. Want to adjust anything?</div>
+          </div>
         </div>
-        <div class="mod-card">
-          <div class="mod-eyebrow">Fuzzy memory works too</div>
-          <div class="mod-prompt">"I think I had that dal at my friend's place last Tuesday — can you log it as an estimate? I remember it was pretty high protein."</div>
-          <div class="mod-result">Claude logs it with your best guess, flags it as an estimate, and moves on. Not everything needs to be exact to be useful.</div>
+
+        <div class="grow-col">
+          <h3>Change the dashboard however you want</h3>
+          <p class="grow-desc">The dashboard is yours to reshape. Ask Claude to change how it looks or works and it'll update it on the spot — no separate tools needed.</p>
+          <div class="chat">
+            <div class="bubble user">Can you make the dashboard dark mode?</div>
+            <div class="bubble claude">Done — switched to a dark theme. Refresh to see it.</div>
+            <div class="bubble user">Add a tab that shows my weekly macro averages</div>
+            <div class="bubble claude">Added a "Weekly" tab to the bottom nav. It shows your 7-day rolling averages for protein, carbs, fat, and calories.</div>
+            <div class="bubble user">In the pantry, show protein per 100 calories instead of total protein</div>
+            <div class="bubble claude">Updated the pantry table — the protein column now shows g per 100 kcal so you can compare efficiency across foods.</div>
+          </div>
         </div>
-        <div class="mod-card">
-          <div class="mod-eyebrow">Teach it your workflow</div>
-          <div class="mod-prompt">"From now on, when I ask what to cook, always lead with whatever uses the most of what's about to expire in my pantry."</div>
-          <div class="mod-result">Claude learns this preference. Next time you ask, it checks your pantry dates first and leads with the most urgent ingredients.</div>
-        </div>
-        <div class="mod-card">
-          <div class="mod-eyebrow">Ask it to change itself</div>
-          <div class="mod-prompt">"Can you add a way to log how I'm feeling after meals? I want to see if certain foods are affecting my energy."</div>
-          <div class="mod-result">Claude adds a mood/energy field to meal logging and builds a view for it in the dashboard. Your idea, working the same day.</div>
-        </div>
+
       </div>
     </div>
   </section>
