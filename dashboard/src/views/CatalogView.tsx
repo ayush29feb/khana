@@ -54,7 +54,8 @@ function CatalogRow({ node, visibleCols }: { node: CatalogNode; visibleCols: Set
     if (!file) return;
     const form = new FormData();
     form.append('file', file);
-    const res = await fetch(`/upload/catalog/${node.id}`, { method: 'POST', body: form });
+    const numericId = atob(node.id).split(':')[1];
+    const res = await fetch(`/upload/catalog/${numericId}`, { method: 'POST', body: form });
     if (res.ok) {
       const { url } = await res.json();
       setLabelPhotoUrl(url);

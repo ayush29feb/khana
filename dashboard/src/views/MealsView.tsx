@@ -66,7 +66,8 @@ function CompactMealRow({ meal }: { meal: Meal }) {
     if (!file) return;
     const form = new FormData();
     form.append('file', file);
-    const res = await fetch(`/upload/meal/${meal.id}`, { method: 'POST', body: form });
+    const numericId = atob(meal.id).split(':')[1];
+    const res = await fetch(`/upload/meal/${numericId}`, { method: 'POST', body: form });
     if (res.ok) {
       const { url } = await res.json();
       setPhotoUrl(url);
