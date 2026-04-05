@@ -1,9 +1,8 @@
 import { Routes, Route, NavLink, Navigate } from 'react-router-dom';
 import { Suspense, useState } from 'react';
-import HomeView from './views/HomeView.js';
+import GoalsView from './views/GoalsView.js';
 import MealsView from './views/MealsView.js';
 import PantryView from './views/PantryView.js';
-import TrendsView from './views/TrendsView.js';
 import CatalogView from './views/CatalogView.js';
 import { DateRangeProvider, useDateRange } from './DateRangeContext.js';
 
@@ -146,10 +145,9 @@ function DateRangePicker() {
 
 
 const NAV = [
-  { to: '/home',    icon: '⌂',  label: 'Home'    },
+  { to: '/goals',   icon: '🎯',  label: 'Goals'   },
   { to: '/meals',   icon: '🍽',  label: 'Meals'   },
   { to: '/pantry',  icon: '🥫',  label: 'Pantry'  },
-  { to: '/trends',  icon: '📈',  label: 'Trends'  },
   { to: '/catalog', icon: '📋',  label: 'Catalog' },
 ];
 
@@ -166,11 +164,10 @@ function AppShell() {
       <main className="shell">
         <Suspense fallback={<p style={{ color: 'var(--text-3)', marginTop: 32, textAlign: 'center' }}>Loading…</p>}>
           <Routes>
-            <Route path="/" element={<Navigate to="/home" replace />} />
-            <Route path="/home"    element={<HomeView />} />
+            <Route path="/" element={<Navigate to="/goals" replace />} />
+            <Route path="/goals"   element={<GoalsView />} />
             <Route path="/meals"   element={<MealsView />} />
             <Route path="/pantry"  element={<PantryView />} />
-            <Route path="/trends"  element={<TrendsView />} />
             <Route path="/catalog" element={<CatalogView />} />
           </Routes>
         </Suspense>

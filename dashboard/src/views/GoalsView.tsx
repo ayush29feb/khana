@@ -3,10 +3,10 @@ import MacroBar from '../components/MacroBar.js';
 import MacroDonut from '../components/MacroDonut.js';
 import DailyMacroChart from '../components/DailyMacroChart.js';
 import { useDateRange } from '../DateRangeContext.js';
-import type { HomeViewQuery } from './__generated__/HomeViewQuery.graphql.js';
+import type { GoalsViewQuery } from './__generated__/GoalsViewQuery.graphql.js';
 
 const query = graphql`
-  query HomeViewQuery {
+  query GoalsViewQuery {
     goals(first: 100) {
       edges {
         node {
@@ -36,9 +36,9 @@ function formatDate(d: string) {
   return new Date(d + 'T12:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
 
-export default function HomeView() {
+export default function GoalsView() {
   const { dateFrom, dateTo } = useDateRange();
-  const data = useLazyLoadQuery<HomeViewQuery>(query, {});
+  const data = useLazyLoadQuery<GoalsViewQuery>(query, {});
 
   const goals = data.goals.edges.filter(({ node: g }) =>
     g.startDate <= dateTo && g.endDate >= dateFrom
@@ -47,7 +47,7 @@ export default function HomeView() {
   if (goals.length === 0) {
     return (
       <div>
-        <h2 className="page-title">Home</h2>
+        <h2 className="page-title">Goals</h2>
         <div className="card" style={{ color: 'var(--text-2)', textAlign: 'center', padding: 32 }}>
           <div style={{ fontSize: 32, marginBottom: 8 }}>🎯</div>
           <p>No goals in this date range.</p>
@@ -59,7 +59,7 @@ export default function HomeView() {
 
   return (
     <div>
-      <h2 className="page-title">Home</h2>
+      <h2 className="page-title">Goals</h2>
       {goals.map(({ node: goal }) => (
         <div key={goal.id} className="card" style={{ marginBottom: 10, padding: '10px 14px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8, flexWrap: 'wrap' }}>
