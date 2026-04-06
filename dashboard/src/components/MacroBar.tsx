@@ -20,6 +20,7 @@ export default function MacroBar({ label, actual, target, unit = 'g' }: MacroBar
         <span style={{ fontWeight: 600, color }}>
           {actual.toFixed(1)}{unit}
           {target != null && <span style={{ fontWeight: 400, color: 'var(--text-3)' }}> / {target.toFixed(0)}{unit}</span>}
+          {pct != null && <span style={{ fontWeight: 400, color: 'var(--text-3)', marginLeft: 6 }}>({pct.toFixed(0)}%)</span>}
         </span>
       </div>
       {pct != null && (
