@@ -44,7 +44,7 @@ def meal_add_home(
     if logged_at:
         meal_time = datetime.fromisoformat(logged_at)
     else:
-        meal_time = datetime.utcnow()
+        meal_time = datetime.now()
 
     # Parse ingredients
     parsed_ingredients = []
@@ -133,7 +133,7 @@ def meal_add_restaurant(
     if logged_at:
         meal_time = datetime.fromisoformat(logged_at)
     else:
-        meal_time = datetime.utcnow()
+        meal_time = datetime.now()
 
     meal = Meal(
         name=name,
