@@ -7,26 +7,22 @@ interface DateRange {
   setDateTo: (d: string) => void;
 }
 
-function currentWeek(): { dateFrom: string; dateTo: string } {
+function lastSevenDays(): { dateFrom: string; dateTo: string } {
   const today = new Date();
-  const day = today.getDay(); // 0=Sun, 1=Mon...
-  const diff = (day === 0 ? -6 : 1 - day); // offset to Monday
-  const mon = new Date(today);
-  mon.setDate(today.getDate() + diff);
-  const sun = new Date(mon);
-  sun.setDate(mon.getDate() + 6);
+  const week = new Date(today);
+  week.setDate(today.getDate() - 6);
   const fmt = (d: Date) => d.toISOString().slice(0, 10);
-  return { dateFrom: fmt(mon), dateTo: fmt(sun) };
+  return { dateFrom: fmt(week), dateTo: fmt(today) };
 }
 
 const DateRangeContext = createContext<DateRange>({
-  ...currentWeek(),
+  ...lastSevenDays(),
   setDateFrom: () => {},
   setDateTo: () => {},
 });
 
 export function DateRangeProvider({ children }: { children: React.ReactNode }) {
-  const { dateFrom: initFrom, dateTo: initTo } = currentWeek();
+  const { dateFrom: initFrom, dateTo: initTo } = lastSevenDays();
   const [dateFrom, setDateFrom] = useState(initFrom);
   const [dateTo, setDateTo] = useState(initTo);
   return (
