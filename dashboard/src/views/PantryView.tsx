@@ -96,8 +96,9 @@ export default function PantryView() {
   const rows = useMemo(() => {
     const q = search.toLowerCase();
     const filtered = entries.filter(({ node }) =>
-      node.catalogItem.name.toLowerCase().includes(q) ||
-      node.catalogItem.brand?.toLowerCase().includes(q)
+      node.servingsRemaining > 0 &&
+      (node.catalogItem.name.toLowerCase().includes(q) ||
+      node.catalogItem.brand?.toLowerCase().includes(q))
     );
     return filtered.slice().sort((a, b) => {
       const na = a.node.catalogItem, nb = b.node.catalogItem;
