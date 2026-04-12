@@ -1,5 +1,5 @@
-import { Routes, Route, NavLink, Navigate } from 'react-router-dom';
-import { Suspense, useState } from 'react';
+import { Routes, Route, NavLink, Navigate, useLocation } from 'react-router-dom';
+import { Suspense, useState, useEffect } from 'react';
 import GoalsView from './views/GoalsView.js';
 import MealsView from './views/MealsView.js';
 import PantryView from './views/PantryView.js';
@@ -80,6 +80,7 @@ function DateRangePicker() {
     setDateFrom(tmpFrom);
     setDateTo(tmpTo);
     setPopoverOpen(false);
+    setPreset('custom');
   }
 
   const LABELS: Record<PresetKey, string> = {
@@ -88,20 +89,12 @@ function DateRangePicker() {
     this_week: 'This week', last_week: 'Last week',
     last_30: 'Last 30 days',
     this_month: 'This month', last_month: 'Last month',
-    custom: 'Custom range',
+    custom: 'Custom…',
   };
 
   return (
     <div style={{ position: 'relative' }}>
-      <select
-        value={preset}
-        onChange={e => handlePreset(e.target.value as PresetKey)}
-        style={{
-          fontSize: 13, fontWeight: 500, padding: '5px 10px',
-          borderRadius: 'var(--radius)', border: '1.5px solid var(--border)',
-          background: 'var(--card)', color: 'var(--text-1)', cursor: 'pointer',
-        }}
-      >
+      <select value={preset} onChange={e => handlePreset(e.target.value as PresetKey)}>
         {(Object.keys(LABELS) as PresetKey[]).map(k => (
           <option key={k} value={k}>{LABELS[k]}</option>
         ))}
@@ -113,11 +106,9 @@ function DateRangePicker() {
             onClick={() => setPopoverOpen(false)}
             style={{ position: 'fixed', inset: 0, zIndex: 99 }}
           />
-          <div style={{
-            position: 'fixed', top: 58, right: 16, zIndex: 100,
-            background: 'var(--card)', border: '1px solid var(--border)',
-            borderRadius: 'var(--radius)', padding: 16,
-            boxShadow: 'var(--shadow-md)', display: 'flex', flexDirection: 'column', gap: 12,
+          <div className="popover" style={{
+            position: 'fixed', top: 60, right: 16, zIndex: 100,
+            padding: 16, display: 'flex', flexDirection: 'column', gap: 12,
             minWidth: 240,
           }}>
             <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-2)' }}>Custom range</div>
@@ -129,9 +120,10 @@ function DateRangePicker() {
             <button
               onClick={applyCustom}
               style={{
-                background: 'var(--accent)', color: '#fff', border: 'none',
-                borderRadius: 'var(--radius-sm)', padding: '8px 0',
-                fontWeight: 600, fontSize: 13, cursor: 'pointer',
+                background: 'var(--accent)', color: '#000', border: 'none',
+                borderRadius: 'var(--radius-sm)', padding: '9px 0',
+                fontWeight: 700, fontSize: 13, cursor: 'pointer',
+                transition: 'opacity 0.15s',
               }}
             >
               Apply
@@ -143,7 +135,6 @@ function DateRangePicker() {
   );
 }
 
-
 const NAV = [
   { to: '/goals',   icon: '🎯',  label: 'Goals'   },
   { to: '/meals',   icon: '🍽',  label: 'Meals'   },
@@ -151,24 +142,78 @@ const NAV = [
   { to: '/catalog', icon: '📋',  label: 'Catalog' },
 ];
 
+type Theme = 'light' | 'dark';
+
+function getInitialTheme(): Theme {
+  const stored = localStorage.getItem('theme') as Theme | null;
+  if (stored === 'light' || stored === 'dark') return stored;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function useTheme() {
+  const [theme, setTheme] = useState<Theme>(getInitialTheme);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  function toggle() {
+    setTheme(t => t === 'dark' ? 'light' : 'dark');
+  }
+
+  return { theme, toggle };
+}
+
+// Wrap each view with a page-enter animation keyed on route
+function AnimatedPage({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
+  return (
+    <div key={location.pathname} className="page-enter">
+      {children}
+    </div>
+  );
+}
+
 function AppShell() {
+  const { theme, toggle } = useTheme();
+
   return (
     <>
       <header className="topbar">
         <div className="topbar-inner">
           <span className="topbar-brand">🥗 Khana</span>
-          <DateRangePicker />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <DateRangePicker />
+            <button
+              onClick={toggle}
+              title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              style={{
+                background: 'none', border: 'none', cursor: 'pointer',
+                fontSize: 18, lineHeight: 1, padding: '4px',
+                borderRadius: 8, color: 'var(--text-2)',
+                transition: 'opacity 0.15s, transform 0.2s',
+                flexShrink: 0,
+              }}
+            >
+              {theme === 'dark' ? '☀️' : '🌙'}
+            </button>
+          </div>
         </div>
       </header>
 
       <main className="shell">
-        <Suspense fallback={<p style={{ color: 'var(--text-3)', marginTop: 32, textAlign: 'center' }}>Loading…</p>}>
+        <Suspense fallback={
+          <div style={{ textAlign: 'center', marginTop: 60, color: 'var(--text-3)', fontSize: 15 }}>
+            Loading…
+          </div>
+        }>
           <Routes>
             <Route path="/" element={<Navigate to="/goals" replace />} />
-            <Route path="/goals"   element={<GoalsView />} />
-            <Route path="/meals"   element={<MealsView />} />
-            <Route path="/pantry"  element={<PantryView />} />
-            <Route path="/catalog" element={<CatalogView />} />
+            <Route path="/goals"   element={<AnimatedPage><GoalsView /></AnimatedPage>} />
+            <Route path="/meals"   element={<AnimatedPage><MealsView /></AnimatedPage>} />
+            <Route path="/pantry"  element={<AnimatedPage><PantryView /></AnimatedPage>} />
+            <Route path="/catalog" element={<AnimatedPage><CatalogView /></AnimatedPage>} />
           </Routes>
         </Suspense>
       </main>
@@ -177,7 +222,7 @@ function AppShell() {
         {NAV.map(({ to, icon, label }) => (
           <NavLink key={to} to={to} className={({ isActive }) => isActive ? 'active' : ''}>
             <span className="nav-icon">{icon}</span>
-            {label}
+            <span className="nav-label">{label}</span>
           </NavLink>
         ))}
       </nav>

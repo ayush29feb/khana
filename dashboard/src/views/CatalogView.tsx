@@ -294,25 +294,13 @@ export default function CatalogView() {
           const isCollapsed = collapsed.has(cat);
           return (
             <div key={cat} style={{ marginBottom: 10 }}>
-              <button
-                onClick={() => toggleCollapsed(cat)}
-                style={{
-                  width: '100%', textAlign: 'left', background: 'none', border: 'none',
-                  cursor: 'pointer', padding: '0 2px 4px',
-                  display: 'flex', alignItems: 'center', gap: 6,
-                }}
-              >
-                <span style={{
-                  fontSize: 9, fontWeight: 700, textTransform: 'uppercase',
-                  letterSpacing: '0.08em', color: 'var(--text-3)',
-                }}>{cat}</span>
-                <span style={{ fontSize: 9, color: 'var(--text-3)', opacity: 0.6 }}>{nodes.length}</span>
-                <span style={{ marginLeft: 'auto', fontSize: 10, color: 'var(--text-3)', opacity: 0.5 }}>
-                  {isCollapsed ? '▸' : '▾'}
-                </span>
+              <button className="section-header" onClick={() => toggleCollapsed(cat)}>
+                <span className="section-header-label">{cat}</span>
+                <span className="section-header-count">{nodes.length}</span>
+                <span className={`section-header-chevron${isCollapsed ? '' : ' open'}`}>›</span>
               </button>
               {!isCollapsed && (
-                <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+                <div className="card section-body" style={{ padding: 0, overflow: 'hidden' }}>
                   <CatalogTable nodes={nodes} sort={sort} dir={dir} visibleCols={visibleCols} onSort={handleSort} />
                 </div>
               )}
