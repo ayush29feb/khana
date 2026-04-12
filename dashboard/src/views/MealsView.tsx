@@ -92,7 +92,7 @@ function CompactMealRow({ meal }: { meal: Meal }) {
         </td>
         <td style={{ textAlign: 'right', fontSize: 12, fontWeight: 700, color: 'var(--accent)', padding: '6px 4px', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>{meal.proteinG.toFixed(0)}g</td>
         <td style={{ textAlign: 'right', fontSize: 12, color: 'var(--amber)',  padding: '6px 4px', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>{meal.carbsG.toFixed(0)}g</td>
-        <td style={{ textAlign: 'right', fontSize: 12, color: '#f97316',       padding: '6px 4px', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>{meal.fatG.toFixed(0)}g</td>
+        <td style={{ textAlign: 'right', fontSize: 12, color: 'var(--orange)',       padding: '6px 4px', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>{meal.fatG.toFixed(0)}g</td>
         <td style={{ textAlign: 'right', fontSize: 12, color: 'var(--text-3)', padding: '6px 8px', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>{meal.calories ? meal.calories.toFixed(0) : '—'}</td>
       </tr>
       {expanded && meal.ingredients.map((ing, i) => {
@@ -107,7 +107,7 @@ function CompactMealRow({ meal }: { meal: Meal }) {
             </td>
             <td style={{ textAlign: 'right', fontSize: 11, color: 'var(--accent)', padding: '4px 4px', fontVariantNumeric: 'tabular-nums' }}>{ing.proteinContributed.toFixed(0)}g</td>
             <td style={{ textAlign: 'right', fontSize: 11, color: 'var(--amber)',  padding: '4px 4px', fontVariantNumeric: 'tabular-nums' }}>{carbs.toFixed(0)}g</td>
-            <td style={{ textAlign: 'right', fontSize: 11, color: '#f97316',       padding: '4px 4px', fontVariantNumeric: 'tabular-nums' }}>{fat.toFixed(0)}g</td>
+            <td style={{ textAlign: 'right', fontSize: 11, color: 'var(--orange)',       padding: '4px 4px', fontVariantNumeric: 'tabular-nums' }}>{fat.toFixed(0)}g</td>
             <td style={{ textAlign: 'right', fontSize: 11, color: 'var(--text-3)', padding: '4px 8px', fontVariantNumeric: 'tabular-nums' }}>{cals != null ? cals.toFixed(0) : '—'}</td>
           </tr>
         );
@@ -144,22 +144,19 @@ function DaySection({ date, meals }: { date: string; meals: Meal[] }) {
   const totalCals    = meals.reduce((s, m) => s + (m.calories ?? 0), 0);
 
   return (
-    <div style={{ marginBottom: 24 }}>
+    <div style={{ marginBottom: 20 }}>
       <div style={{
-        display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
-        marginBottom: 4, paddingBottom: 8,
-        borderBottom: '2px solid var(--border)',
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        marginBottom: 6, padding: '2px 4px',
       }}>
-        <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)' }}>
+        <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-1)', letterSpacing: '-0.2px' }}>
           {formatDayLabel(date)}
         </span>
-        <span style={{ fontSize: 12, color: 'var(--text-2)', display: 'flex', gap: 8 }}>
-          <span><strong style={{ color: 'var(--accent)' }}>{totalProtein.toFixed(0)}g</strong> P</span>
-          <span style={{ color: 'var(--text-3)' }}>·</span>
-          <span>{totalCarbs.toFixed(0)}g C</span>
-          <span style={{ color: 'var(--text-3)' }}>·</span>
-          <span>{totalFat.toFixed(0)}g F</span>
-          {totalCals > 0 && <><span style={{ color: 'var(--text-3)' }}>·</span><span>{totalCals.toFixed(0)} kcal</span></>}
+        <span style={{ fontSize: 12, color: 'var(--text-2)', display: 'flex', gap: 6, fontVariantNumeric: 'tabular-nums' }}>
+          <span style={{ color: 'var(--accent)', fontWeight: 600 }}>{totalProtein.toFixed(0)}P</span>
+          <span style={{ color: 'var(--amber)' }}>{totalCarbs.toFixed(0)}C</span>
+          <span style={{ color: 'var(--orange)' }}>{totalFat.toFixed(0)}F</span>
+          {totalCals > 0 && <span style={{ color: 'var(--text-3)' }}>{totalCals.toFixed(0)}</span>}
         </span>
       </div>
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
@@ -176,7 +173,7 @@ function DaySection({ date, meals }: { date: string; meals: Meal[] }) {
               <th style={{ padding: '5px 8px', textAlign: 'left',  fontSize: 10, fontWeight: 600, color: 'var(--text-3)', textTransform: 'uppercase' }}>Meal</th>
               <th style={{ padding: '5px 4px', textAlign: 'right', fontSize: 10, fontWeight: 600, color: 'var(--accent)',  textTransform: 'uppercase' }}>P</th>
               <th style={{ padding: '5px 4px', textAlign: 'right', fontSize: 10, fontWeight: 600, color: 'var(--amber)',   textTransform: 'uppercase' }}>C</th>
-              <th style={{ padding: '5px 4px', textAlign: 'right', fontSize: 10, fontWeight: 600, color: '#f97316',        textTransform: 'uppercase' }}>F</th>
+              <th style={{ padding: '5px 4px', textAlign: 'right', fontSize: 10, fontWeight: 600, color: 'var(--orange)',        textTransform: 'uppercase' }}>F</th>
               <th style={{ padding: '5px 8px', textAlign: 'right', fontSize: 10, fontWeight: 600, color: 'var(--text-3)',  textTransform: 'uppercase' }}>kcal</th>
             </tr>
           </thead>
@@ -223,7 +220,7 @@ function MealsContent({ dateFrom, dateTo }: { dateFrom: string; dateTo: string }
           <div style={{ fontSize: 12, display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
             <span style={{ fontWeight: 700, color: 'var(--accent)' }}>{totals.protein.toFixed(0)}g P</span>
             <span style={{ color: 'var(--amber)' }}>{totals.carbs.toFixed(0)}g C</span>
-            <span style={{ color: '#f97316' }}>{totals.fat.toFixed(0)}g F</span>
+            <span style={{ color: 'var(--orange)' }}>{totals.fat.toFixed(0)}g F</span>
             {totals.calories > 0 && <span style={{ color: 'var(--text-3)' }}>{totals.calories.toFixed(0)} kcal</span>}
           </div>
           <MacroDonut protein={totals.protein} carbs={totals.carbs} fat={totals.fat} size={36} />

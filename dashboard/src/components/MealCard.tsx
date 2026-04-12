@@ -50,7 +50,7 @@ export default function MealCard({
           <div style={{ fontSize: 12, flexShrink: 0, display: 'flex', gap: 6, fontVariantNumeric: 'tabular-nums' }}>
             <span style={{ fontWeight: 700, color: 'var(--accent)' }}>{proteinG.toFixed(0)}P</span>
             <span style={{ color: 'var(--amber)' }}>{carbsG.toFixed(0)}C</span>
-            <span style={{ color: '#f97316' }}>{fatG.toFixed(0)}F</span>
+            <span style={{ color: 'var(--orange)' }}>{fatG.toFixed(0)}F</span>
             {calories != null && <span style={{ color: 'var(--text-3)' }}>{calories.toFixed(0)}</span>}
           </div>
         </div>

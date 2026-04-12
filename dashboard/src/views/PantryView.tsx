@@ -141,7 +141,7 @@ function PantryTable({ nodes, sort, dir, visibleCols, onSort }: {
                 </td>
               )}
               {visibleCols.has('fat') && (
-                <td style={{ textAlign: 'right', fontSize: 12, color: '#f97316', fontVariantNumeric: 'tabular-nums' }}>
+                <td style={{ textAlign: 'right', fontSize: 12, color: 'var(--orange)', fontVariantNumeric: 'tabular-nums' }}>
                   {(ci.fatPerServing ?? 0).toFixed(0)}g
                 </td>
               )}
@@ -218,7 +218,7 @@ export default function PantryView() {
 
   const activeNodes = useMemo(() =>
     entries
-      .filter(({ node }) => node.servingsRemaining > 0)
+      .filter(({ node }) => node.servingsRemaining >= 0.05)
       .map(({ node }) => node),
     [entries]
   );
@@ -260,7 +260,7 @@ export default function PantryView() {
           <div style={{ fontSize: 12, display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
             <span style={{ fontWeight: 700, color: 'var(--accent)' }}>{data.pantryProteinTotal.toFixed(0)}g P</span>
             <span style={{ color: 'var(--amber)' }}>{totalCarbs.toFixed(0)}g C</span>
-            <span style={{ color: '#f97316' }}>{totalFat.toFixed(0)}g F</span>
+            <span style={{ color: 'var(--orange)' }}>{totalFat.toFixed(0)}g F</span>
             {totalCalories > 0 && <span style={{ color: 'var(--text-3)' }}>{totalCalories.toFixed(0)} kcal</span>}
           </div>
           <MacroDonut protein={data.pantryProteinTotal} carbs={totalCarbs} fat={totalFat} size={36} />
@@ -290,25 +290,13 @@ export default function PantryView() {
           const isCollapsed = collapsed.has(cat);
           return (
             <div key={cat} style={{ marginBottom: 10 }}>
-              <button
-                onClick={() => toggleCollapsed(cat)}
-                style={{
-                  width: '100%', textAlign: 'left', background: 'none', border: 'none',
-                  cursor: 'pointer', padding: '0 2px 4px',
-                  display: 'flex', alignItems: 'center', gap: 6,
-                }}
-              >
-                <span style={{
-                  fontSize: 9, fontWeight: 700, textTransform: 'uppercase',
-                  letterSpacing: '0.08em', color: 'var(--text-3)',
-                }}>{cat}</span>
-                <span style={{ fontSize: 9, color: 'var(--text-3)', opacity: 0.6 }}>{nodes.length}</span>
-                <span style={{ marginLeft: 'auto', fontSize: 10, color: 'var(--text-3)', opacity: 0.5 }}>
-                  {isCollapsed ? '▸' : '▾'}
-                </span>
+              <button className="section-header" onClick={() => toggleCollapsed(cat)}>
+                <span className="section-header-label">{cat}</span>
+                <span className="section-header-count">{nodes.length}</span>
+                <span className={`section-header-chevron${isCollapsed ? '' : ' open'}`}>›</span>
               </button>
               {!isCollapsed && (
-                <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+                <div className="card section-body" style={{ padding: 0, overflow: 'hidden' }}>
                   <PantryTable nodes={nodes} sort={sort} dir={dir} visibleCols={visibleCols} onSort={handleSort} />
                 </div>
               )}

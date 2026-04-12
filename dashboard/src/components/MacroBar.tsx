@@ -11,24 +11,32 @@ export default function MacroBar({ label, actual, target, unit = 'g' }: MacroBar
     : pct >= 100 ? 'var(--accent)'
     : pct >= 70  ? 'var(--amber)'
     : 'var(--red)';
-  const trackColor = pct == null ? 'var(--border)' : color + '22';
 
   return (
-    <div style={{ marginBottom: 6 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 3 }}>
+    <div style={{ marginBottom: 8 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, marginBottom: 5 }}>
         <span style={{ color: 'var(--text-2)', fontWeight: 500 }}>{label}</span>
-        <span style={{ fontWeight: 600, color }}>
+        <span style={{ fontWeight: 600, color, fontVariantNumeric: 'tabular-nums' }}>
           {actual.toFixed(1)}{unit}
-          {target != null && <span style={{ fontWeight: 400, color: 'var(--text-3)' }}> / {target.toFixed(0)}{unit}</span>}
-          {pct != null && <span style={{ fontWeight: 400, color: 'var(--text-3)', marginLeft: 6 }}>({pct.toFixed(0)}%)</span>}
+          {target != null && (
+            <span style={{ fontWeight: 400, color: 'var(--text-3)' }}> / {target.toFixed(0)}{unit}</span>
+          )}
+          {pct != null && (
+            <span style={{ fontWeight: 400, color: 'var(--text-3)', marginLeft: 6 }}>
+              {pct.toFixed(0)}%
+            </span>
+          )}
         </span>
       </div>
       {pct != null && (
-        <div style={{ height: 5, background: 'var(--border)', borderRadius: 99 }}>
+        <div style={{
+          height: 6, background: 'var(--card-3)',
+          borderRadius: 99, overflow: 'hidden',
+        }}>
           <div style={{
             width: `${pct}%`, height: '100%',
             background: color, borderRadius: 99,
-            transition: 'width 0.4s ease',
+            transition: 'width 0.5s cubic-bezier(0.22,1,0.36,1)',
           }} />
         </div>
       )}
