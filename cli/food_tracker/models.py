@@ -24,6 +24,7 @@ class FoodCatalog(Base):
     calories_per_serving = Column(Float, nullable=False)
     health_notes = Column(String, nullable=True)
     label_photo_path = Column(String, nullable=True)
+    category = Column(String, nullable=True)
 
 
 class TransactionReason(str, Enum):

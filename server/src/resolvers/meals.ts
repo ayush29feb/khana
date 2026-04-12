@@ -71,12 +71,13 @@ export function mealResolvers(prisma: PrismaClient) {
           protein_per_serving: number; carbs_per_serving: number;
           fat_per_serving: number; calories_per_serving: number | null;
           health_notes: string | null;
+          category: string | null;
         };
         const txns = await prisma.$queryRawUnsafe<TxnRow[]>(`
           SELECT pt.id, pt.catalog_id, pt.delta,
                  fc.name, fc.brand, fc.serving_size_g,
                  fc.protein_per_serving, fc.carbs_per_serving,
-                 fc.fat_per_serving, fc.calories_per_serving, fc.health_notes
+                 fc.fat_per_serving, fc.calories_per_serving, fc.health_notes, fc.category
           FROM pantry_transactions pt
           JOIN food_catalog fc ON fc.id = pt.catalog_id
           WHERE pt.meal_id = ${meal.id} AND pt.reason = 'meal'
@@ -87,7 +88,7 @@ export function mealResolvers(prisma: PrismaClient) {
             serving_size_g: t.serving_size_g, protein_per_serving: t.protein_per_serving,
             carbs_per_serving: t.carbs_per_serving, fat_per_serving: t.fat_per_serving,
             calories_per_serving: t.calories_per_serving, health_notes: t.health_notes,
-            label_photo_path: null,
+            label_photo_path: null, category: t.category,
           }),
           servingsUsed: Math.abs(Number(t.delta)),
           proteinContributed: Math.abs(Number(t.delta)) * Number(t.protein_per_serving),

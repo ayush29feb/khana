@@ -18,6 +18,7 @@ const query = graphql`
           caloriesPerServing
           healthNotes
           labelPhotoUrl
+          category
         }
       }
     }
@@ -43,7 +44,12 @@ function SortHeader({ label, col, sort, dir, left, onSort }: {
   );
 }
 
-type CatalogNode = { id: string; name: string; brand: string; servingSizeG: number; proteinPerServing: number; carbsPerServing: number; fatPerServing: number; caloriesPerServing?: number | null; healthNotes?: string | null; labelPhotoUrl?: string | null };
+type CatalogNode = {
+  id: string; name: string; brand: string; servingSizeG: number;
+  proteinPerServing: number; carbsPerServing: number; fatPerServing: number;
+  caloriesPerServing?: number | null; healthNotes?: string | null;
+  labelPhotoUrl?: string | null; category?: string | null;
+};
 
 function CatalogRow({ node, visibleCols }: { node: CatalogNode; visibleCols: Set<string> }) {
   const [labelPhotoUrl, setLabelPhotoUrl] = useState(node.labelPhotoUrl ?? null);
@@ -130,6 +136,46 @@ function CatalogRow({ node, visibleCols }: { node: CatalogNode; visibleCols: Set
   );
 }
 
+const CATEGORY_ORDER = ['dairy & eggs', 'protein', 'produce', 'grains', 'snacks', 'condiments', 'frozen', 'beverages', 'other'];
+
+function CatalogTable({ nodes, sort, dir, visibleCols, onSort }: {
+  nodes: CatalogNode[];
+  sort: SortKey;
+  dir: 1 | -1;
+  visibleCols: Set<string>;
+  onSort: (c: SortKey) => void;
+}) {
+  return (
+    <table className="pantry-table" style={{ width: '100%', tableLayout: 'fixed' }}>
+      <colgroup>
+        <col />
+        {visibleCols.has('brand')    && <col style={{ width: '22%' }} />}
+        {visibleCols.has('serving')  && <col style={{ width: '12%' }} />}
+        {visibleCols.has('protein')  && <col style={{ width: '11%' }} />}
+        {visibleCols.has('carbs')    && <col style={{ width: '11%' }} />}
+        {visibleCols.has('fat')      && <col style={{ width: '10%' }} />}
+        {visibleCols.has('calories') && <col style={{ width: '13%' }} />}
+      </colgroup>
+      <thead>
+        <tr>
+          <SortHeader label="Name"  col="name"     sort={sort} dir={dir} left onSort={onSort} />
+          {visibleCols.has('brand')    && <SortHeader label="Brand"  col="brand"    sort={sort} dir={dir} left onSort={onSort} />}
+          {visibleCols.has('serving')  && <SortHeader label="Srv"    col="serving"  sort={sort} dir={dir}      onSort={onSort} />}
+          {visibleCols.has('protein')  && <SortHeader label="P"      col="protein"  sort={sort} dir={dir}      onSort={onSort} />}
+          {visibleCols.has('carbs')    && <SortHeader label="C"      col="carbs"    sort={sort} dir={dir}      onSort={onSort} />}
+          {visibleCols.has('fat')      && <SortHeader label="F"      col="fat"      sort={sort} dir={dir}      onSort={onSort} />}
+          {visibleCols.has('calories') && <SortHeader label="kcal"   col="calories" sort={sort} dir={dir}      onSort={onSort} />}
+        </tr>
+      </thead>
+      <tbody>
+        {nodes.map(node => (
+          <CatalogRow key={node.id} node={node} visibleCols={visibleCols} />
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
 export default function CatalogView() {
   const data = useLazyLoadQuery<CatalogViewQuery>(query, {});
   const items = data.catalog.edges;
@@ -137,6 +183,7 @@ export default function CatalogView() {
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState<SortKey>('name');
   const [dir, setDir] = useState<1 | -1>(1);
+  const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const [visibleCols, setVisibleCols] = useState<Set<string>>(
     () => new Set(['protein', 'carbs', 'fat', 'calories'])
   );
@@ -159,29 +206,60 @@ export default function CatalogView() {
     else { setSort(col); setDir(col === 'name' || col === 'brand' ? 1 : -1); }
   }
 
-  const rows = useMemo(() => {
-    const q = search.toLowerCase();
-    const filtered = items.filter(({ node }) =>
-      node.name.toLowerCase().includes(q) ||
-      node.brand?.toLowerCase().includes(q)
-    );
-    return filtered.slice().sort((a, b) => {
-      const na = a.node, nb = b.node;
+  function toggleCollapsed(cat: string) {
+    setCollapsed(prev => {
+      const s = new Set(prev);
+      s.has(cat) ? s.delete(cat) : s.add(cat);
+      return s;
+    });
+  }
+
+  const allNodes = items.map(({ node }) => node);
+
+  const sortNodes = (nodes: CatalogNode[]) =>
+    nodes.slice().sort((a, b) => {
       let va: number | string, vb: number | string;
       switch (sort) {
-        case 'name':     va = na.name;                    vb = nb.name; break;
-        case 'brand':    va = na.brand ?? '';              vb = nb.brand ?? ''; break;
-        case 'serving':  va = na.servingSizeG;             vb = nb.servingSizeG; break;
-        case 'protein':  va = na.proteinPerServing;        vb = nb.proteinPerServing; break;
-        case 'carbs':    va = na.carbsPerServing;          vb = nb.carbsPerServing; break;
-        case 'fat':      va = na.fatPerServing;            vb = nb.fatPerServing; break;
-        case 'calories': va = na.caloriesPerServing ?? 0;  vb = nb.caloriesPerServing ?? 0; break;
+        case 'name':     va = a.name;                    vb = b.name; break;
+        case 'brand':    va = a.brand ?? '';              vb = b.brand ?? ''; break;
+        case 'serving':  va = a.servingSizeG;             vb = b.servingSizeG; break;
+        case 'protein':  va = a.proteinPerServing;        vb = b.proteinPerServing; break;
+        case 'carbs':    va = a.carbsPerServing;          vb = b.carbsPerServing; break;
+        case 'fat':      va = a.fatPerServing;            vb = b.fatPerServing; break;
+        case 'calories': va = a.caloriesPerServing ?? 0;  vb = b.caloriesPerServing ?? 0; break;
       }
       if (va < vb) return -dir;
       if (va > vb) return dir;
       return 0;
     });
-  }, [items, search, sort, dir]);
+
+  const searchResults = useMemo(() => {
+    if (!search) return [];
+    const q = search.toLowerCase();
+    return sortNodes(allNodes.filter(node =>
+      node.name.toLowerCase().includes(q) ||
+      node.brand?.toLowerCase().includes(q)
+    ));
+  }, [allNodes, search, sort, dir]);
+
+  const sections = useMemo(() => {
+    const groups = new Map<string, CatalogNode[]>();
+    for (const node of allNodes) {
+      const cat = node.category ?? 'other';
+      if (!groups.has(cat)) groups.set(cat, []);
+      groups.get(cat)!.push(node);
+    }
+    return CATEGORY_ORDER
+      .filter(cat => groups.has(cat))
+      .map(cat => ({ cat, nodes: sortNodes(groups.get(cat)!) }))
+      .concat(
+        [...groups.keys()]
+          .filter(cat => !CATEGORY_ORDER.includes(cat))
+          .map(cat => ({ cat, nodes: sortNodes(groups.get(cat)!) }))
+      );
+  }, [allNodes, sort, dir]);
+
+  const totalShown = search ? searchResults.length : allNodes.length;
 
   return (
     <div>
@@ -198,7 +276,7 @@ export default function CatalogView() {
       </div>
 
       <div style={{ fontSize: 11, color: 'var(--text-3)', marginBottom: 6 }}>
-        {rows.length} of {items.length} items
+        {search ? `${totalShown} of ${allNodes.length} items` : `${allNodes.length} items`}
       </div>
 
       {items.length === 0 && (
@@ -207,39 +285,41 @@ export default function CatalogView() {
 
       <ColumnSelector cols={CATALOG_COLS} visible={visibleCols} onChange={toggleCol} />
 
-      <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-        <table className="pantry-table" style={{ width: '100%', tableLayout: 'fixed' }}>
-          <colgroup>
-            <col />
-            {visibleCols.has('brand')    && <col style={{ width: '22%' }} />}
-            {visibleCols.has('serving')  && <col style={{ width: '12%' }} />}
-            {visibleCols.has('protein')  && <col style={{ width: '11%' }} />}
-            {visibleCols.has('carbs')    && <col style={{ width: '11%' }} />}
-            {visibleCols.has('fat')      && <col style={{ width: '10%' }} />}
-            {visibleCols.has('calories') && <col style={{ width: '13%' }} />}
-          </colgroup>
-          <thead>
-            <tr>
-              <SortHeader label="Name"  col="name"     sort={sort} dir={dir} left onSort={handleSort} />
-              {visibleCols.has('brand')    && <SortHeader label="Brand"  col="brand"    sort={sort} dir={dir} left onSort={handleSort} />}
-              {visibleCols.has('serving')  && <SortHeader label="Srv"    col="serving"  sort={sort} dir={dir}      onSort={handleSort} />}
-              {visibleCols.has('protein')  && <SortHeader label="P"      col="protein"  sort={sort} dir={dir}      onSort={handleSort} />}
-              {visibleCols.has('carbs')    && <SortHeader label="C"      col="carbs"    sort={sort} dir={dir}      onSort={handleSort} />}
-              {visibleCols.has('fat')      && <SortHeader label="F"      col="fat"      sort={sort} dir={dir}      onSort={handleSort} />}
-              {visibleCols.has('calories') && <SortHeader label="kcal"   col="calories" sort={sort} dir={dir}      onSort={handleSort} />}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map(({ node }) => (
-              <CatalogRow
-                key={node.id}
-                node={node}
-                visibleCols={visibleCols}
-              />
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {search ? (
+        <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+          <CatalogTable nodes={searchResults} sort={sort} dir={dir} visibleCols={visibleCols} onSort={handleSort} />
+        </div>
+      ) : (
+        sections.map(({ cat, nodes }) => {
+          const isCollapsed = collapsed.has(cat);
+          return (
+            <div key={cat} style={{ marginBottom: 10 }}>
+              <button
+                onClick={() => toggleCollapsed(cat)}
+                style={{
+                  width: '100%', textAlign: 'left', background: 'none', border: 'none',
+                  cursor: 'pointer', padding: '0 2px 4px',
+                  display: 'flex', alignItems: 'center', gap: 6,
+                }}
+              >
+                <span style={{
+                  fontSize: 9, fontWeight: 700, textTransform: 'uppercase',
+                  letterSpacing: '0.08em', color: 'var(--text-3)',
+                }}>{cat}</span>
+                <span style={{ fontSize: 9, color: 'var(--text-3)', opacity: 0.6 }}>{nodes.length}</span>
+                <span style={{ marginLeft: 'auto', fontSize: 10, color: 'var(--text-3)', opacity: 0.5 }}>
+                  {isCollapsed ? '▸' : '▾'}
+                </span>
+              </button>
+              {!isCollapsed && (
+                <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+                  <CatalogTable nodes={nodes} sort={sort} dir={dir} visibleCols={visibleCols} onSort={handleSort} />
+                </div>
+              )}
+            </div>
+          );
+        })
+      )}
     </div>
   );
 }

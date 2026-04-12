@@ -11,6 +11,7 @@ type DBCatalog = {
   fat_per_serving: number;
   calories_per_serving: number | null;
   health_notes: string | null;
+  category: string | null;
   label_photo_path: string | null;
 };
 
@@ -50,5 +51,6 @@ export function catalogItemToGql(c: DBCatalog) {
     caloriesPerServing: c.calories_per_serving,
     healthNotes: c.health_notes,
     labelPhotoUrl: c.label_photo_path ? `/images/${c.label_photo_path}` : null,
+    category: c.category,
   };
 }

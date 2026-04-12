@@ -18,6 +18,7 @@ model FoodCatalog {
   calories_per_serving Float?
   health_notes         String?
   label_photo_path     String?
+  category             String?
   transactions         PantryTransaction[]
 
   @@unique([name, brand], name: "uq_catalog_name_brand")

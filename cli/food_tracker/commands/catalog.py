@@ -24,6 +24,7 @@ def _entry_to_dict(entry: FoodCatalog) -> dict:
         "calories_per_serving": entry.calories_per_serving,
         "health_notes": entry.health_notes,
         "label_photo_path": entry.label_photo_path,
+        "category": entry.category,
     }
 
 
@@ -38,6 +39,7 @@ def catalog_add(
     calories: Optional[float] = typer.Option(None, "--calories", help="Calories per serving (auto-calculated if omitted)"),
     health_notes: str = typer.Option("", "--health-notes", help="Health notes"),
     label_photo: Optional[str] = typer.Option(None, "--label-photo", help="Path to nutrition label photo (optional)"),
+    category: Optional[str] = typer.Option(None, "--category", help="Category (e.g. produce, protein, dairy & eggs, grains, snacks, condiments, frozen, beverages)"),
 ):
     """Add a new food to the catalog."""
     if calories is None:
@@ -52,6 +54,7 @@ def catalog_add(
         fat_per_serving=fat,
         calories_per_serving=calories,
         health_notes=health_notes,
+        category=category,
     )
 
     try:
@@ -101,6 +104,7 @@ def catalog_update(
     fat: Optional[float] = typer.Option(None, "--fat", help="Fat per serving (g)"),
     calories: Optional[float] = typer.Option(None, "--calories", help="Calories per serving"),
     health_notes: Optional[str] = typer.Option(None, "--health-notes", help="Health notes"),
+    category: Optional[str] = typer.Option(None, "--category", help="Category"),
 ):
     """Update fields on an existing catalog entry."""
     with get_session() as session:
@@ -124,6 +128,8 @@ def catalog_update(
             entry.calories_per_serving = calories
         if health_notes is not None:
             entry.health_notes = health_notes
+        if category is not None:
+            entry.category = category
         session.flush()
         result = _entry_to_dict(entry)
     typer.echo(json.dumps(result, default=str))

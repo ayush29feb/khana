@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1217fa663f9b1f5b605dcc731e293a64>>
+ * @generated SignedSource<<a98037e9ebf3384b1332fbde9981784e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,6 +17,7 @@ export type CatalogViewQuery$data = {
         readonly brand: string;
         readonly caloriesPerServing: number | null | undefined;
         readonly carbsPerServing: number;
+        readonly category: string | null | undefined;
         readonly fatPerServing: number;
         readonly healthNotes: string | null | undefined;
         readonly id: string;
@@ -134,6 +135,13 @@ var v0 = [
                 "kind": "ScalarField",
                 "name": "labelPhotoUrl",
                 "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "category",
+                "storageKey": null
               }
             ],
             "storageKey": null
@@ -163,16 +171,16 @@ return {
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "633e22d508e5ced1b79cac4da034c940",
+    "cacheID": "9f3e294cae1e24d7029b1a871f3d67f1",
     "id": null,
     "metadata": {},
     "name": "CatalogViewQuery",
     "operationKind": "query",
-    "text": "query CatalogViewQuery {\n  catalog(first: 100) {\n    edges {\n      node {\n        id\n        name\n        brand\n        servingSizeG\n        proteinPerServing\n        carbsPerServing\n        fatPerServing\n        caloriesPerServing\n        healthNotes\n        labelPhotoUrl\n      }\n    }\n  }\n}\n"
+    "text": "query CatalogViewQuery {\n  catalog(first: 100) {\n    edges {\n      node {\n        id\n        name\n        brand\n        servingSizeG\n        proteinPerServing\n        carbsPerServing\n        fatPerServing\n        caloriesPerServing\n        healthNotes\n        labelPhotoUrl\n        category\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "cc0d7a0111779b942ec92083281793cd";
+(node as any).hash = "8d1c47cf03a127981a8c9740533654d5";
 
 export default node;

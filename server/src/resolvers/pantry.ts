@@ -10,6 +10,7 @@ type PantryRow = {
   carbs_per_serving: number;
   fat_per_serving: number;
   health_notes: string | null;
+  category: string | null;
   servings_remaining: number;
   protein_available: number;
 };
@@ -36,6 +37,7 @@ export function pantryResolvers(prisma: PrismaClient) {
               calories_per_serving: null,
               health_notes: row.health_notes,
               label_photo_path: null,
+              category: row.category,
             }),
             servingsRemaining: row.servings_remaining,
             proteinAvailable: row.protein_available,

@@ -21,6 +21,7 @@ export const typeDefs = /* GraphQL */ `
     caloriesPerServing: Float
     healthNotes: String
     labelPhotoUrl: String
+    category: String
   }
 
   type PantryEntry implements Node {
