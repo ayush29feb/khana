@@ -1,5 +1,4 @@
-import { Routes, Route, NavLink, Navigate, useLocation } from 'react-router-dom';
-import { Suspense, useState, useEffect } from 'react';
+import { Suspense, useState, useRef, useEffect } from 'react';
 import GoalsView from './views/GoalsView.js';
 import MealsView from './views/MealsView.js';
 import PantryView from './views/PantryView.js';
@@ -102,14 +101,10 @@ function DateRangePicker() {
 
       {popoverOpen && (
         <>
-          <div
-            onClick={() => setPopoverOpen(false)}
-            style={{ position: 'fixed', inset: 0, zIndex: 99 }}
-          />
+          <div onClick={() => setPopoverOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 99 }} />
           <div className="popover" style={{
             position: 'fixed', top: 60, right: 16, zIndex: 100,
-            padding: 16, display: 'flex', flexDirection: 'column', gap: 12,
-            minWidth: 240,
+            padding: 16, display: 'flex', flexDirection: 'column', gap: 12, minWidth: 240,
           }}>
             <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-2)' }}>Custom range</div>
             <div className="date-picker-row" style={{ justifyContent: 'space-between' }}>
@@ -117,30 +112,17 @@ function DateRangePicker() {
               <span style={{ color: 'var(--text-3)' }}>–</span>
               <input type="date" value={tmpTo} onChange={e => setTmpTo(e.target.value)} style={{ flex: 1 }} />
             </div>
-            <button
-              onClick={applyCustom}
-              style={{
-                background: 'var(--accent)', color: '#000', border: 'none',
-                borderRadius: 'var(--radius-sm)', padding: '9px 0',
-                fontWeight: 700, fontSize: 13, cursor: 'pointer',
-                transition: 'opacity 0.15s',
-              }}
-            >
-              Apply
-            </button>
+            <button onClick={applyCustom} style={{
+              background: 'var(--accent)', color: '#000', border: 'none',
+              borderRadius: 'var(--radius-sm)', padding: '9px 0',
+              fontWeight: 700, fontSize: 13, cursor: 'pointer',
+            }}>Apply</button>
           </div>
         </>
       )}
     </div>
   );
 }
-
-const NAV = [
-  { to: '/goals',   icon: '🎯',  label: 'Goals'   },
-  { to: '/meals',   icon: '🍽',  label: 'Meals'   },
-  { to: '/pantry',  icon: '🥫',  label: 'Pantry'  },
-  { to: '/catalog', icon: '📋',  label: 'Catalog' },
-];
 
 type Theme = 'light' | 'dark';
 
@@ -158,25 +140,88 @@ function useTheme() {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
-  function toggle() {
-    setTheme(t => t === 'dark' ? 'light' : 'dark');
-  }
-
-  return { theme, toggle };
+  return { theme, toggle: () => setTheme(t => t === 'dark' ? 'light' : 'dark') };
 }
 
-// Wrap each view with a page-enter animation keyed on route
-function AnimatedPage({ children }: { children: React.ReactNode }) {
-  const location = useLocation();
-  return (
-    <div key={location.pathname} className="page-enter">
-      {children}
-    </div>
-  );
-}
+const TABS = [
+  { icon: '🎯', label: 'Goals',   Component: GoalsView   },
+  { icon: '🍽', label: 'Meals',   Component: MealsView   },
+  { icon: '🥫', label: 'Pantry',  Component: PantryView  },
+  { icon: '📋', label: 'Catalog', Component: CatalogView },
+];
+
+const TOPBAR_H = 52;
 
 function AppShell() {
   const { theme, toggle } = useTheme();
+  const [activeTab, setActiveTab] = useState(0);
+  const [dragDelta, setDragDelta] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
+  const isHorizontalSwipe = useRef<boolean | null>(null);
+  const activeTabRef = useRef(activeTab);
+  const dragDeltaRef = useRef(dragDelta);
+  activeTabRef.current = activeTab;
+  dragDeltaRef.current = dragDelta;
+
+  useEffect(() => {
+    const el = carouselRef.current;
+    if (!el) return;
+
+    const onTouchStart = (e: TouchEvent) => {
+      touchStartX.current = e.touches[0].clientX;
+      touchStartY.current = e.touches[0].clientY;
+      isHorizontalSwipe.current = null;
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      const dx = e.touches[0].clientX - touchStartX.current;
+      const dy = e.touches[0].clientY - touchStartY.current;
+
+      if (isHorizontalSwipe.current === null) {
+        if (Math.abs(dx) > 8 || Math.abs(dy) > 8) {
+          isHorizontalSwipe.current = Math.abs(dx) > Math.abs(dy);
+        }
+        return;
+      }
+
+      if (!isHorizontalSwipe.current) return;
+      e.preventDefault();
+
+      const tab = activeTabRef.current;
+      let delta = dx;
+      // Rubber band at edges
+      if ((tab === 0 && dx > 0) || (tab === TABS.length - 1 && dx < 0)) {
+        delta = dx * 0.2;
+      }
+      setIsDragging(true);
+      setDragDelta(delta);
+    };
+
+    const onTouchEnd = () => {
+      if (!isHorizontalSwipe.current) return;
+      const delta = dragDeltaRef.current;
+      const tab = activeTabRef.current;
+      if (delta < -60 && tab < TABS.length - 1) setActiveTab(tab + 1);
+      else if (delta > 60 && tab > 0) setActiveTab(tab - 1);
+      setIsDragging(false);
+      setDragDelta(0);
+    };
+
+    el.addEventListener('touchstart', onTouchStart, { passive: true });
+    el.addEventListener('touchmove', onTouchMove, { passive: false });
+    el.addEventListener('touchend', onTouchEnd, { passive: true });
+    return () => {
+      el.removeEventListener('touchstart', onTouchStart);
+      el.removeEventListener('touchmove', onTouchMove);
+      el.removeEventListener('touchend', onTouchEnd);
+    };
+  }, []);
+
+  const translateX = -activeTab * 100 + (dragDelta / window.innerWidth * 100);
 
   return (
     <>
@@ -191,9 +236,7 @@ function AppShell() {
               style={{
                 background: 'none', border: 'none', cursor: 'pointer',
                 fontSize: 18, lineHeight: 1, padding: '4px',
-                borderRadius: 8, color: 'var(--text-2)',
-                transition: 'opacity 0.15s, transform 0.2s',
-                flexShrink: 0,
+                borderRadius: 8, color: 'var(--text-2)', flexShrink: 0,
               }}
             >
               {theme === 'dark' ? '☀️' : '🌙'}
@@ -202,28 +245,60 @@ function AppShell() {
         </div>
       </header>
 
-      <main className="shell">
-        <Suspense fallback={
-          <div style={{ textAlign: 'center', marginTop: 60, color: 'var(--text-3)', fontSize: 15 }}>
-            Loading…
-          </div>
-        }>
-          <Routes>
-            <Route path="/" element={<Navigate to="/goals" replace />} />
-            <Route path="/goals"   element={<AnimatedPage><GoalsView /></AnimatedPage>} />
-            <Route path="/meals"   element={<AnimatedPage><MealsView /></AnimatedPage>} />
-            <Route path="/pantry"  element={<AnimatedPage><PantryView /></AnimatedPage>} />
-            <Route path="/catalog" element={<AnimatedPage><CatalogView /></AnimatedPage>} />
-          </Routes>
-        </Suspense>
-      </main>
+      {/* Swipe carousel */}
+      <div
+        ref={carouselRef}
+        style={{
+          position: 'fixed',
+          top: TOPBAR_H,
+          left: 0, right: 0, bottom: 0,
+          overflow: 'hidden',
+        }}
+      >
+        <div style={{
+          display: 'flex',
+          height: '100%',
+          transform: `translateX(${translateX}%)`,
+          transition: isDragging ? 'none' : 'transform 0.38s cubic-bezier(0.25,1,0.5,1)',
+          willChange: 'transform',
+        }}>
+          {TABS.map(({ Component }, i) => (
+            <div
+              key={i}
+              style={{
+                width: '100vw',
+                flexShrink: 0,
+                height: '100%',
+                overflowY: 'auto',
+                overflowX: 'hidden',
+                WebkitOverflowScrolling: 'touch' as never,
+              }}
+            >
+              <div style={{ maxWidth: 720, margin: '0 auto', padding: '0 16px 120px' }}>
+                <Suspense fallback={
+                  <div style={{ textAlign: 'center', marginTop: 60, color: 'var(--text-3)', fontSize: 15 }}>
+                    Loading…
+                  </div>
+                }>
+                  <Component />
+                </Suspense>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
 
+      {/* Tab bar */}
       <nav className="bottom-nav">
-        {NAV.map(({ to, icon, label }) => (
-          <NavLink key={to} to={to} className={({ isActive }) => isActive ? 'active' : ''}>
+        {TABS.map(({ icon, label }, i) => (
+          <button
+            key={i}
+            className={activeTab === i ? 'active' : ''}
+            onClick={() => setActiveTab(i)}
+          >
             <span className="nav-icon">{icon}</span>
             <span className="nav-label">{label}</span>
-          </NavLink>
+          </button>
         ))}
       </nav>
     </>

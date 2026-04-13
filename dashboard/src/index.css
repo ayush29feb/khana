@@ -195,7 +195,8 @@ h1, h2, h3 { font-weight: 700; line-height: 1.2; letter-spacing: -0.3px; }
   transition: background 0.3s ease;
 }
 
-.bottom-nav a {
+.bottom-nav a,
+.bottom-nav button {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -208,20 +209,27 @@ h1, h2, h3 { font-weight: 700; line-height: 1.2; letter-spacing: -0.3px; }
   text-decoration: none;
   gap: 3px;
   border-radius: 999px;
+  border: none;
+  background: none;
+  cursor: pointer;
   transition: color 0.2s ease;
   -webkit-tap-highlight-color: transparent;
+  font-family: inherit;
 }
 
-.bottom-nav a:active { opacity: 0.6; transform: scale(0.95); }
+.bottom-nav a:active,
+.bottom-nav button:active { opacity: 0.6; transform: scale(0.95); }
 
-.bottom-nav a.active {
+.bottom-nav a.active,
+.bottom-nav button.active {
   color: var(--accent);
   background: var(--card);
   box-shadow: 0 2px 8px rgba(0,0,0,0.12);
   animation: pillPop 0.28s cubic-bezier(0.22,1,0.36,1) both;
 }
 
-[data-theme="dark"] .bottom-nav a.active {
+[data-theme="dark"] .bottom-nav a.active,
+[data-theme="dark"] .bottom-nav button.active {
   box-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
 
