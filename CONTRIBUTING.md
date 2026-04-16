@@ -294,6 +294,7 @@ const browser = await puppeteer.launch({
 
 const page = await browser.newPage();
 await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 2 });
+await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'light' }]);
 
 // App uses a swipe carousel (no URL routing) — click tab buttons to navigate
 await page.goto('http://localhost:47320', { waitUntil: 'networkidle2', timeout: 20000 });
