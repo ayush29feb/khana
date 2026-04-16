@@ -54,7 +54,7 @@
     }
     [data-theme="dark"] .topbar { background: rgba(13,17,23,0.9); }
     [data-theme="dark"] .badge-est { color: #d29922; }
-    [data-theme="dark"] .phone-frame { background: #161b22; }
+
 
     body, .topbar, .card, .feat-card, .hint, .bubble, footer {
       transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
@@ -197,12 +197,11 @@
 
     /* ── Phone frame ── */
     .phone-frame {
-      background: #f8fafc; border: 1px solid var(--border);
-      border-radius: 28px; padding: 10px;
-      box-shadow: var(--shadow-lg);
       position: sticky; top: 68px;
+      border-radius: 16px; overflow: hidden;
+      box-shadow: var(--shadow-lg);
     }
-    .phone-frame img { width: 100%; border-radius: 20px; display: block; }
+    .phone-frame img { width: 100%; display: block; }
     .phone-label {
       text-align: center; font-size: 11px; font-weight: 600;
       color: var(--text-3); margin-top: 8px;
@@ -332,7 +331,7 @@
 
     @media (max-width: 640px) {
       .flow-inner { grid-template-columns: 1fr; gap: 24px; }
-      .phone-frame { position: static; max-width: 260px; margin: 0 auto; }
+      .phone-frame { position: static; max-width: 260px; margin: 0 auto; border-radius: 12px; }
       .flow-visual { order: -1; }
       .grow-grid { grid-template-columns: 1fr; }
       .features-grid { grid-template-columns: 1fr 1fr; }
