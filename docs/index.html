@@ -195,11 +195,9 @@
     .hint p { font-size: 13px; color: var(--text-2); line-height: 1.6; }
     .hint p strong { color: var(--text); }
 
-    /* ── Phone frame ── */
+    /* ── Screenshot ── */
     .phone-frame {
       position: sticky; top: 68px;
-      border-radius: 16px; overflow: hidden;
-      box-shadow: var(--shadow-lg);
     }
     .phone-frame img { width: 100%; display: block; }
     .phone-label {
@@ -331,7 +329,7 @@
 
     @media (max-width: 640px) {
       .flow-inner { grid-template-columns: 1fr; gap: 24px; }
-      .phone-frame { position: static; max-width: 260px; margin: 0 auto; border-radius: 12px; }
+      .phone-frame { position: static; max-width: 260px; margin: 0 auto; }
       .flow-visual { order: -1; }
       .grow-grid { grid-template-columns: 1fr; }
       .features-grid { grid-template-columns: 1fr 1fr; }
