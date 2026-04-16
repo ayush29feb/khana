@@ -35,27 +35,29 @@
       --radius-sm: 6px;
     }
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #0d1117;
-        --card: #161b22;
-        --border: #30363d;
-        --border-light: #21262d;
-        --text: #e6edf3;
-        --text-2: #8b949e;
-        --text-3: #484f58;
-        --accent: #3fb950;
-        --accent-bg: rgba(63,185,80,0.15);
-        --accent-text: #3fb950;
-        --amber: #d29922;
-        --amber-bg: rgba(210,153,34,0.15);
-        --shadow: 0 1px 3px rgba(0,0,0,.3), 0 1px 2px rgba(0,0,0,.2);
-        --shadow-md: 0 4px 6px rgba(0,0,0,.3), 0 2px 4px rgba(0,0,0,.2);
-        --shadow-lg: 0 10px 25px rgba(0,0,0,.5), 0 4px 10px rgba(0,0,0,.3);
-      }
-      .topbar { background: rgba(13,17,23,0.9); }
-      .badge-est { color: #d29922; }
-      .phone-frame { background: #161b22; }
+    [data-theme="dark"] {
+      --bg: #0d1117;
+      --card: #161b22;
+      --border: #30363d;
+      --border-light: #21262d;
+      --text: #e6edf3;
+      --text-2: #8b949e;
+      --text-3: #484f58;
+      --accent: #3fb950;
+      --accent-bg: rgba(63,185,80,0.15);
+      --accent-text: #3fb950;
+      --amber: #d29922;
+      --amber-bg: rgba(210,153,34,0.15);
+      --shadow: 0 1px 3px rgba(0,0,0,.3), 0 1px 2px rgba(0,0,0,.2);
+      --shadow-md: 0 4px 6px rgba(0,0,0,.3), 0 2px 4px rgba(0,0,0,.2);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,.5), 0 4px 10px rgba(0,0,0,.3);
+    }
+    [data-theme="dark"] .topbar { background: rgba(13,17,23,0.9); }
+    [data-theme="dark"] .badge-est { color: #d29922; }
+    [data-theme="dark"] .phone-frame { background: #161b22; }
+
+    body, .topbar, .card, .feat-card, .hint, .bubble, footer {
+      transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
     }
 
     body {
@@ -72,10 +74,19 @@
     /* ── Topbar ── */
     .topbar {
       position: sticky; top: 0; z-index: 50;
-      background: rgba(255,255,255,0.9);
+      background: rgba(241,245,249,0.9);
       backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--border);
     }
+    [data-theme="dark"] .topbar { background: rgba(13,17,23,0.9); }
+    .theme-toggle {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; border-radius: 6px;
+      border: 1px solid var(--border); background: var(--bg);
+      color: var(--text-2); font-size: 15px; cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .theme-toggle:hover { color: var(--text); background: var(--border); }
     .topbar-inner {
       max-width: 960px; margin: 0 auto;
       display: flex; align-items: center; justify-content: space-between;
@@ -334,10 +345,13 @@
   <header class="topbar">
     <div class="topbar-inner">
       <div class="topbar-brand">Khana</div>
-      <a class="gh-link" href="https://github.com/ayush29feb/khana" target="_blank">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button class="theme-toggle" id="theme-toggle" title="Toggle dark mode">🌙</button>
+        <a class="gh-link" href="https://github.com/ayush29feb/khana" target="_blank">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.744 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
         GitHub
       </a>
+      </div>
     </div>
   </header>
 
@@ -405,7 +419,7 @@
         </div>
       </div>
       <div class="flow-visual">
-        <div class="phone-frame"><img src="images/catalog.png" alt="Catalog" /></div>
+        <div class="phone-frame"><img class="theme-screenshot" data-light="images/catalog-light.png" data-dark="images/catalog-dark.png" src="images/catalog-light.png" alt="Catalog" /></div>
         <div class="phone-label">Catalog</div>
       </div>
     </div>
@@ -452,7 +466,7 @@
         </div>
       </div>
       <div class="flow-visual">
-        <div class="phone-frame"><img src="images/pantry.png" alt="Pantry" /></div>
+        <div class="phone-frame"><img class="theme-screenshot" data-light="images/pantry-light.png" data-dark="images/pantry-dark.png" src="images/pantry-light.png" alt="Pantry" /></div>
         <div class="phone-label">Pantry</div>
       </div>
     </div>
@@ -481,7 +495,7 @@
         </div>
       </div>
       <div class="flow-visual">
-        <div class="phone-frame"><img src="images/meals.png" alt="Meals" /></div>
+        <div class="phone-frame"><img class="theme-screenshot" data-light="images/meals-light.png" data-dark="images/meals-dark.png" src="images/meals-light.png" alt="Meals" /></div>
         <div class="phone-label">Meals</div>
       </div>
     </div>
@@ -511,7 +525,7 @@
         </div>
       </div>
       <div class="flow-visual">
-        <div class="phone-frame"><img src="images/goals.png" alt="Goals" /></div>
+        <div class="phone-frame"><img class="theme-screenshot" data-light="images/goals-light.png" data-dark="images/goals-dark.png" src="images/goals-light.png" alt="Goals" /></div>
         <div class="phone-label">Goals</div>
       </div>
     </div>
@@ -554,7 +568,7 @@
         </div>
       </div>
       <div class="flow-visual">
-        <div class="phone-frame"><img src="images/pantry.png" alt="Pantry" /></div>
+        <div class="phone-frame"><img class="theme-screenshot" data-light="images/pantry-light.png" data-dark="images/pantry-dark.png" src="images/pantry-light.png" alt="Pantry" /></div>
         <div class="phone-label">Pantry</div>
       </div>
     </div>
@@ -651,6 +665,28 @@
   </footer>
 
   <script>
+    // ── Theme ──────────────────────────────────────────────
+    const stored = localStorage.getItem('theme');
+    const sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    let theme = stored === 'light' || stored === 'dark' ? stored : (sysDark ? 'dark' : 'light');
+
+    function applyTheme(t) {
+      theme = t;
+      document.documentElement.dataset.theme = t;
+      localStorage.setItem('theme', t);
+      document.getElementById('theme-toggle').textContent = t === 'dark' ? '☀️' : '🌙';
+      document.querySelectorAll('.theme-screenshot').forEach(img => {
+        img.src = img.dataset[t];
+      });
+    }
+
+    applyTheme(theme);
+
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      applyTheme(theme === 'dark' ? 'light' : 'dark');
+    });
+
+    // ── Copy button ─────────────────────────────────────────
     document.getElementById('copy-btn').addEventListener('click', function() {
       const cmd = 'git clone https://github.com/ayush29feb/khana && cd khana && claude --dangerously-skip-permissions';
       navigator.clipboard.writeText(cmd).then(() => {

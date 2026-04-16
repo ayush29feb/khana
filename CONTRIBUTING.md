@@ -286,20 +286,6 @@ if (!KHANA) throw new Error('KHANA environment variable is not set');
 const OUT = path.join(KHANA, 'docs/images');
 await mkdir(OUT, { recursive: true });
 
-const browser = await puppeteer.launch({
-  executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-  headless: true,
-  args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
-});
-
-const page = await browser.newPage();
-await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 2 });
-await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'light' }]);
-
-// App uses a swipe carousel (no URL routing) — click tab buttons to navigate
-await page.goto('http://localhost:47320', { waitUntil: 'networkidle2', timeout: 20000 });
-await new Promise(r => setTimeout(r, 1500));
-
 const tabs = [
   { index: 0, name: 'goals'   },
   { index: 1, name: 'meals'   },
@@ -307,17 +293,34 @@ const tabs = [
   { index: 3, name: 'catalog' },
 ];
 
-for (const tab of tabs) {
-  await page.evaluate((i) => {
-    const btns = document.querySelectorAll('.bottom-nav button');
-    if (btns[i]) btns[i].click();
-  }, tab.index);
-  await new Promise(r => setTimeout(r, 1200));
-  await page.screenshot({ path: path.join(OUT, `${tab.name}.png`), fullPage: false });
-  console.log(`captured ${tab.name}`);
-}
+// Capture both light and dark variants — landing page swaps srcs on toggle
+for (const colorScheme of ['light', 'dark']) {
+  const browser = await puppeteer.launch({
+    executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
+  });
 
-await browser.close();
+  const page = await browser.newPage();
+  await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 2 });
+  await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: colorScheme }]);
+
+  // App uses a swipe carousel (no URL routing) — click tab buttons to navigate
+  await page.goto('http://localhost:47320', { waitUntil: 'networkidle2', timeout: 20000 });
+  await new Promise(r => setTimeout(r, 1500));
+
+  for (const tab of tabs) {
+    await page.evaluate((i) => {
+      const btns = document.querySelectorAll('.bottom-nav button');
+      if (btns[i]) btns[i].click();
+    }, tab.index);
+    await new Promise(r => setTimeout(r, 1200));
+    await page.screenshot({ path: path.join(OUT, `${tab.name}-${colorScheme}.png`), fullPage: false });
+    console.log(`captured ${tab.name}-${colorScheme}`);
+  }
+
+  await browser.close();
+}
 ```
 
 ### Commit the updated images
