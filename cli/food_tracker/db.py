@@ -16,6 +16,7 @@ SELECT
     c.id          AS catalog_id,
     c.name,
     c.brand,
+    c.category,
     c.protein_per_serving,
     c.carbs_per_serving,
     c.fat_per_serving,
@@ -25,7 +26,7 @@ SELECT
 FROM pantry_transactions t
 JOIN food_catalog c ON c.id = t.catalog_id
 GROUP BY t.catalog_id
-HAVING SUM(t.delta) > 0
+HAVING SUM(t.delta) >= 0.05
 """
 
 def _make_engine(path: str):
